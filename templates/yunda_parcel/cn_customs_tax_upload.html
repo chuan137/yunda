@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Sender templates" %}{% endblock %}
+{% block content_title %}<h1>{% trans "Sender templates" %}</h1>{% endblock %}
+{% block content %}
+<div class="row">
+       <form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
+  {% csrf_token %}
+  
+  
+    {% bootstrap_form form layout="horizontal" horizontal_label_class='col-sm-2 col-md-2 col-lg-2' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}    
+  
+    {% buttons submit='OK' reset='Cancel' layout='horizontal' %}{% endbuttons %}
+</form>
+</div>
+
+{% endblock %}
+
+

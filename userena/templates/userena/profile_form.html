@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load url from future %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Account setup" %}{% endblock %}
+
+{% block content_title %}<h2>{% blocktrans with profile.user.username as username %}Account &raquo; {{ username }}{% endblocktrans %}</h2>{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>
+        {% trans 'Edit invoice address' %} <small> <i
+            class="ace-icon fa fa-angle-double-right"></i> {% trans 'Can not create new parcel when there is no invoice address information' %}
+        </small>
+    </h1>
+</div>
+<form action="" enctype="multipart/form-data" method="post" class="form" style="max-width:380px;">
+  {% csrf_token %}
+  <fieldset>
+    {% bootstrap_form form %}
+  </fieldset>
+  <button class="btn btn-sm btn-danger btn-block" type="submit">{% trans "Save changes" %}</button>
+</form>
+{% endblock %}
+
+{% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-user-center').addClass('active open');
+    $('#sidebar-1-user-center-profile-edit').addClass('active');
+    
+  });
+</script>
+
+{% endblock %}
+
+

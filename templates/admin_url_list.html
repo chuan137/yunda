@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>  
+  <meta charset="utf-8" />
+  <title>管理地址列表！</title>
+
+</head>
+<body>
+    <ul>
+        <li>
+            <a target="_blank" href="{% url 'tracking_push_to_gss' %}">tracking_push_to_gss</a>
+        </li><li>
+            <a target="_blank" href="{% url 'mail_mawb_report' %}?ids=">mail_mawb_report</a>
+        </li><li>
+            <a target="_blank" href="{% url 'add_to_jiankong' %}?start=0&end=100">add_to_jiankong</a>
+        </li><li>    
+            <a target="_blank" href="{% url 'jiankong' %}?max_number=60">jiankong</a>
+        </li><li>    
+            <a target="_blank" href="{% url 'set_mawb' %}?is_all=no">set_mawb</a>
+        </li><li>
+            <a target="_blank" href="{% url 'excel_need_check' %}">excel_need_check</a>
+        </li><li>
+            <a target="_blank" href="{% url 'set_mawb_intl_parcel' %}">set_mawb_intl_parcel</a>
+        </li><li>
+            <a target="_blank" href="{% url 'admin_excel_users' %}">admin_excel_users</a>
+        </li><li>
+            <a target="_blank" href="{% url 'excel_mawb_report' %}">excel_mawb_report</a>
+        </li>
+    </ul>
+    <p>上传银行excel文件</p>
+    <form method="post" action="{% url 'admin_customer_number_excel' %}" target="blank" enctype="multipart/form-data">
+        <input name="file" id="file" type="file" size="50" > 
+        <button type="submit">Submit</button>
+    
+    </form>    
+</body>
+</html>

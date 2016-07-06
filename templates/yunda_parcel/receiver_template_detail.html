@@ -1,0 +1,48 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Receiver adress template" %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+        <h1>
+            {% trans 'Receiver address template' %}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {% trans 'Detail' %}
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        {% trans 'Name' %}: {{ template.receiver_name }}<br>
+        {% trans 'Company' %}: {{ template.receiver_company }}<br>
+        {% trans 'Province' %}: {{ template.receiver_province }}<br>
+        {% trans 'City' %}: {{ template.receiver_city }}<br>
+        {% trans 'District' %}: {{ template.receiver_district }}<br>
+        {% trans 'Postcode' %}: {{ template.receiver_postcode }}<br>
+        {% trans 'Address' %}: {{ template.receiver_address }}<br>
+        {% trans 'Address line2' %}: {{ template.receiver_address2 }}<br>
+        {% trans 'Mobile' %}: {{ template.receiver_mobile }}<br>
+        {% trans 'Email' %}: {{ template.receiver_email }}<br>
+        {% trans 'Country' %}: {{ template.sender_country }}<br>
+            
+    </div>
+</div>
+
+<div class="form-actions">
+    <div class="btn-group">
+	    <a class="btn btn-sm" href="{% url 'receiver_template_edit' template.yde_number %}">{% trans 'Edit' %}</a>
+	    
+	</div>
+</div>
+{% endblock %}
+{% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-address-template').addClass('active open');
+  });
+</script>
+
+{% endblock %}

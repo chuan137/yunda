@@ -1,0 +1,59 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Sender adress template" %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+        <h1>
+            {% trans 'Sender address template' %}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {% trans 'Detail' %}
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        {% trans 'Name' %}: {{ template.sender_name }}<br>
+        {% if template.sender_name2 %}
+            {% trans 'Name2' %}: {{ template.sender_name2 }}<br>
+        {% endif %}
+        {% if template.sender_company %}
+            {% trans 'Company' %}: {{ template.sender_company }}<br>
+        {% endif %}
+        {% trans 'Street' %}: {{ template.sender_street }}<br>
+        {% if template.sender_hause_number %}
+            {% trans 'Hause number' %}: {{ template.sender_hause_number }}
+        {% endif %}<br>
+        {% if template.sender_add %}
+            {% trans 'Addition' %}: {{ template.sender_add }}<br>
+        {% endif %}
+        {% trans 'Postcode' %}: {{ template.sender_postcode }}<br>
+        {% trans 'City' %}: {{ template.sender_city }}<br>
+        Germany<br>
+        {% if template.sender_tel %}
+            {% trans "Tel:" %} {{ template.sender_tel }}<br>
+        {% endif %}
+        {% if template.sender_email %}
+            {% trans "Mail:" %} {{ template.sender_email }}<br>
+        {% endif %}        
+    </div>
+</div>
+
+<div class="form-actions">
+    <div class="btn-group">
+	    <a class="btn btn-sm" href="{% url 'sender_template_edit' template.yde_number %}">{% trans 'Edit' %}</a>
+	    
+	</div>
+</div>
+{% endblock %}
+{% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-address-template').addClass('active open');
+  });
+</script>
+
+{% endblock %}

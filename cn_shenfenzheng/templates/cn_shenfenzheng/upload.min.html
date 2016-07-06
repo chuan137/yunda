@@ -1,0 +1,107 @@
+{% extends 'base/ace-base-no-nav.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block title %}上传身份证图片{% endblock %}
+{% block add_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/guillotine/css/jquery.guillotine.css' %}" />
+<style type="text/css">
+@media (max-width: 588px) {
+    #input-div{
+        width:100%;
+    }
+    #qr-div{
+        display: none !important;
+        visibility: hidden;
+    }
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>上传身份证图片</h1>
+</div>
+<!-- /.page-header -->
+<form action="" method="post" enctype="multipart/form-data" id="form">
+    <div class="row">
+        <div class="well well-sm">
+            根据中国海关最新规定，为配合进口货物查验，证明包裹物品确系个人自用，办理海关入境清关手续时需要提交收件人身份证明。海关相关规定请参考 <a
+                href="http://www.customs.gov.cn/publish/portal0/tab517/info265077.htm"
+                target="_blank"> 《中华人民共和国海关对进出境快件监管办法》 <i
+                class="fa fa-external-link bigger-110"></i>
+            </a> 第二十二条，或致电海关咨询：12360。<br /> <b>注意：字体头像还有身份证有效期必须要清晰可辨。</b><br />
+            韵达快递<u>郑重承诺</u>：所有图片均添加“仅限中国海关清关使用”字样的水印，并妥善保存所有信息，直接提交给海关进行查验，绝不用做其它途径。<br />
+            如果提交不成功，烦请以附件的形式发送至身份证专用邮箱：sfz@yunda-express.eu。邮件标题格式为：收件人姓名+收件人手机11位号码+身份证号码 
+        </div>
+        {% csrf_token %}
+        <div id="input-div" class="col-xs-9 col-sm-5 col-md-4 col-lg-3">
+            <div class="form-group">
+                {{ form.name.errors }} <label for="{{ form.name.id_for_label }}">姓名：</label>
+                {{ form.name }} <span id="name-span" class='hidden'></span>
+            </div>
+    
+            <div class="form-group">
+                {{ form.mobile.errors }} <label for="{{ form.mobile.id_for_label }}">手机号码：</label>
+                {{ form.mobile }} <span id="mobile-span" class='hidden'></span>
+            </div>
+    
+            <div class="form-group">
+                {{ form.number.errors }} <label for="{{ form.number.id_for_label }}">身份证号码：</label>
+                {{ form.number }} <span id="number-span" class='hidden'></span>
+            </div>
+        </div>
+        <div id="qr-div" class="col-xs-3 col-sm-6">
+             <div id="qrcode"></div>
+             <p>手机/平板扫码上传</p>
+        </div>
+
+
+
+    </div>
+
+
+<div class="row">
+    <div class="hr hr16 hr-dotted"></div>
+    <label class="btn btn-sm btn-danger" for="sfz-zm-file"><i class="ace-icon fa fa-folder-open"></i> 第一步：选择并调整正面图片..</label>
+    <input id="sfz-zm-file" style="visibility: hidden;" type="file" accept="image/*">
+    
+    <div class="space-2"></div>
+</div>
+<div class="row" id="gt-sfz-zm-box">
+</div>
+
+<div class="row">
+    <div class="hr hr16 hr-dotted"></div>
+    <label class="btn btn-sm btn-danger" for="sfz-fm-file"><i class="ace-icon fa fa-folder-open"></i> 第二步：选择并调整反面图片..</label>
+    <input id="sfz-fm-file" style="visibility: hidden;" type="file" accept="image/*">
+    <div class="space-2"></div>
+</div>
+<div class="row" id="gt-sfz-fm-box">
+</div>
+<div class="row">
+    <div class="hr hr16 hr-dotted"></div>
+    <div class="form-group">
+        <button type="button" class="btn btn-danger btn-sm" id="preview"><i class="ace-icon fa fa-search-plus"></i> 第三步：添加水印文字并预览</button>
+    </div>
+</div>
+<div class="row" id="preview-box">
+    <div class="hr hr16 hr-dotted"></div>
+</div>
+<div class="row">
+    <div class="hr hr16 hr-dotted"></div>
+    <div class="form-group">
+        <button type="button" class="btn btn-danger btn-sm" id="submit" disabled><i class="ace-icon fa fa-arrow-right"></i> 第四步：确认以上图片清晰完整，点击上传</button>
+    </div>
+</div>
+</form>
+{% endblock %} {% block footer-script %}
+
+<script type="text/javascript"
+    src="{% static 'assets/guillotine/js/jquery.guillotine.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/jquery.qrcode.min.js' %}"></script>
+<script type="text/javascript">
+function readImage(t,a){if(t.files&&t.files[0]){var e=new FileReader;e.onload=function(t){$(a).attr("src",t.target.result),console.log(t.target.result)},e.readAsDataURL(t.files[0])}}function isImage(t){return file_name_array=t.split("."),file_ex=file_name_array[file_name_array.length-1],file_ex=file_ex.toLowerCase(),"jpeg"==file_ex||"jpg"==file_ex||"png"==file_ex||"gif"==file_ex?!0:void console.log("no image")}$.extend({getUrlVars:function(){for(var t,a=[],e=window.location.href.slice(window.location.href.indexOf("?")+1),n=decodeURIComponent(e).split("&"),i=0;i<n.length;i++)t=n[i].split("="),a.push(t[0]),a[t[0]]=t[1];return a},getUrlVar:function(t){return $.getUrlVars()[t]}});var standard_w=600,standard_h=380,has_sfz1,has_sfz2;jQuery(function(t){function a(a,e){var n=t('<canvas width="'+standard_w+'" height="'+standard_h+'"></canvas>')[0],i=n.getContext("2d"),l=a.naturalWidth,r=a.naturalHeight;if(0==e.angle){var o=e.x/e.scale,d=e.y/e.scale,s=Math.floor(standard_w/e.scale),f=Math.floor(standard_h/e.scale);i.drawImage(a,o,d,s,f,0,0,standard_w,standard_h)}else if(90==e.angle){i.save();var c=e.x/e.scale,g=e.y/e.scale,u=Math.floor(standard_w/e.scale),h=Math.floor(standard_h/e.scale);o=g,d=r-c-u,s=h,f=u,i.rotate(90*Math.PI/180),i.drawImage(a,o,d,s,f,0,-standard_w,standard_h,standard_w),i.restore()}else if(180==e.angle){i.save();var c=e.x/e.scale,g=e.y/e.scale,u=Math.floor(standard_w/e.scale),h=Math.floor(standard_h/e.scale);o=l-c-u,d=r-g-h,s=u,f=h,i.rotate(180*Math.PI/180),i.drawImage(a,o,d,s,f,-standard_w,-standard_h,standard_w,standard_h),i.restore()}else if(270==e.angle){i.save();var c=e.x/e.scale,g=e.y/e.scale,u=Math.floor(standard_w/e.scale),h=Math.floor(standard_h/e.scale);o=l-g-h,d=c,s=h,f=u,i.rotate(270*Math.PI/180),i.drawImage(a,o,d,s,f,0-standard_h,0,standard_h,standard_w),i.restore()}return n}var e="<div id='gt-sfz-fm' class='gt-content'><div class='gt-frame'></div><div class='gt-controls'><button id='rotate_left' type='button' title='Rotate left'>";e+="<i class='ace-icon fa fa-rotate-left'></i></button><button id='zoom_out' type='button' title='Zoom out'><i class='ace-icon fa fa-search-minus'></i>",e+="</button><button id='fit' type='button' title='Fit image'><i class='ace-icon fa fa-arrows-alt'></i></button>",e+="<button id='zoom_in' type='button' title='Zoom in'><i class='ace-icon fa fa-search-plus'></i></button><button id='rotate_right' type='button' title='Rotate right'>",e+="<i class='ace-icon fa fa-rotate-right'></i></button>",e+="</div></div>";var n=!1,i=!1,l=!1,r=!1,o=!1;t("#sfz-zm-file").change(function(){if(console.log(t(this).val()),file_name=t(this).val(),1==isImage(file_name)){var a=this.files[0],i=new FileReader;i.onload=function(a){url=a.target.result,n=t(e);var i=t("<img src='"+url+"'></img>").one("load",function(){i.guillotine({eventOnChange:"guillotinechange",width:standard_w,height:standard_h}),n.find("#rotate_left").click(function(){i.guillotine("rotateLeft")}),n.find("#rotate_right").click(function(){i.guillotine("rotateRight")}),n.find("#fit").click(function(){i.guillotine("fit")}),n.find("#zoom_in").click(function(){i.guillotine("zoomIn")}),n.find("#zoom_out").click(function(){i.guillotine("zoomOut")}),l=i,t("#submit").attr("disabled",!0)});n.find(".gt-frame").append(i),t("#gt-sfz-zm-box").empty(),t("#gt-sfz-zm-box").append(n),i.on("guillotinechange",function(){t("#submit").attr("disabled",!0)})},i.readAsDataURL(a)}}),t("#sfz-fm-file").change(function(){if(console.log(t(this).val()),file_name=t(this).val(),1==isImage(file_name)){var a=this.files[0],n=new FileReader;n.onload=function(a){url=a.target.result,i=t(e);var n=t("<img src='"+url+"'></img>");i.find(".gt-frame").append(n),t("#gt-sfz-fm-box").empty(),t("#gt-sfz-fm-box").append(i),n.one("load",function(){n.guillotine({eventOnChange:"guillotinechange",width:standard_w,height:standard_h}),i.find("#rotate_left").click(function(){n.guillotine("rotateLeft")}),i.find("#rotate_right").click(function(){n.guillotine("rotateRight")}),i.find("#fit").click(function(){n.guillotine("fit")}),i.find("#zoom_in").click(function(){n.guillotine("zoomIn")}),i.find("#zoom_out").click(function(){n.guillotine("zoomOut")}),r=n,t("#submit").attr("disabled",!0)}),n.on("guillotinechange",function(){t("#submit").attr("disabled",!0)})},n.readAsDataURL(a)}}),t("#preview").click(function(){if(n)if(i){var e=l.guillotine("getData");zm_base64url=a(l[0],e);var d=r.guillotine("getData");fm_base64url=a(r[0],d);var s=t('<canvas width="'+standard_w+'" height="'+(2*standard_h+2)+'"></canvas>')[0],f=s.getContext("2d");f.drawImage(zm_base64url,0,0,standard_w,standard_h,0,0,standard_w,standard_h),f.drawImage(fm_base64url,0,0,standard_w,standard_h,0,standard_h+2,standard_w,standard_h),f.rotate(-45*Math.PI/180),txt="仅供中国海关清关使用",f.fillStyle="rgba(0, 0, 0, 0.25)",f.font="20px sans-serif",f.fillText(txt,2,standard_h),f.fillText(txt,-310,2*standard_h-90),f.fillStyle="rgba(255, 255, 255, 0.25)",f.fillText(txt,0,standard_h-2),f.fillText(txt,-312,2*standard_h-92),t("#preview-box").empty(),t("#preview-box").append(s),o=s.toDataURL("image/jpeg"),t("#submit").attr("disabled",!1)}else t.smkAlert({text:"很抱歉，无反面图片",type:"warning",time:5});else t.smkAlert({text:"很抱歉，无正面图片",type:"warning",time:5})}),t("#submit").click(function(){var a=new FormData(document.getElementById("form")),e=o.split(",")[1];e=window.atob(e);for(var n=new Uint8Array(e.length),i=0;i<e.length;i++)n[i]=e.charCodeAt(i);var l=new Blob([n],{type:"image/jpeg"});a.append("shenfenzheng",l),t.ajax({url:"{% url 'cn_shenfenzheng_ajax_upload_image' %}",type:"POST",data:a,success:function(a){a.result?(t.smkAlert({text:"非常感谢，身份证图片已经提交成功",type:"success",time:5}),prepage=!1,prepage?setTimeout("javascript:location.href='"+prepage+"'",1e3):setTimeout("javascript:location.href='/shenfenzheng/'",1e3)):t.smkAlert({text:"非常抱歉，提交不成功： "+a.info,type:"warning",time:5})},processData:!1,contentType:!1,dataType:"JSON"})});var d=t.getUrlVar("name"),s=t.getUrlVar("number"),f=t.getUrlVar("mobile"),c={};d&&(t("#id_name").val(decodeURI(d)).addClass("hidden"),t("#name-span").removeClass("hidden").html(decodeURI(d)),c.name=d),s&&(t("#id_number").val(decodeURI(s)).addClass("hidden"),t("#number-span").removeClass("hidden").html(decodeURI(s)),c.number=s),f&&(t("#id_mobile").val(decodeURI(f)).addClass("hidden"),t("#mobile-span").removeClass("hidden").html(decodeURI(f)),c.mobile=f);var g="{{sfz_upload_url}}?"+t.param(c);t("#qrcode").qrcode({width:128,height:128,text:g})});
+</script>
+
+{% endblock %}

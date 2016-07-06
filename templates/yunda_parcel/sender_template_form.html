@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load url from future %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Sender address" %}{% endblock %}
+
+{% block content_title %}<h2>{% blocktrans with profile.user.username as username %}Account &raquo; {{ username }}{% endblocktrans %}</h2>{% endblock %}
+
+{% block content %}
+
+<form action="" enctype="multipart/form-data" method="post" class="form" style="max-width:380px;">
+  {% csrf_token %}
+  <fieldset>
+    <legend>{% trans "Sender address" %}</legend>
+    {% bootstrap_form form %}
+  </fieldset>
+  <button class="btn btn-sm btn-danger btn-block" type="submit">{% trans "Submit" %}</button>
+</form>
+{% endblock %}
+
+{% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-address-template').addClass('active open');
+  });
+</script>
+
+{% endblock %}
+
+

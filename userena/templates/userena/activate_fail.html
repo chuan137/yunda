@@ -1,0 +1,25 @@
+{% extends 'userena/base_userena.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Account activation failed." %}{% endblock %}
+{% block content_title %}<h2>激活链接失效了</h2>{% endblock %}
+
+{% block content %}
+<p>可能有如下原因</p>
+<p>
+    <ul>
+        <li>账号已经被激活。请尝试直接登录</li>
+        <li>距离申请账号超过7天。请尝试更换邮箱再次注册。</li>
+        <li>如果以上方法均不能解决，请联系我们的客服MM，她们会热情帮忙解决(联系方式见页面底部->联系我们)。</li>
+    </ul>
+</p>
+<div class="row">
+    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <p class="forgot-password"><a href="{% url 'userena_signin' %}" title="{% trans 'Signin' %}">{% trans "Return to signin" %}</a></p>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <p class="new-signup pull-right"><a href="{% url 'userena_signup' %}" title="{% trans 'Signup' %}">{% trans "Signup new account" %}</a></p>
+        </div>  
+    </div>
+</div>
+{% endblock %}

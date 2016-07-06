@@ -1,0 +1,117 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}
+    {% trans 'Retoure label' %} - {% trans 'YUNDA Europe' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>
+            {% trans "Retoure label" %}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {% trans "List" %}
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+    <div class="row">
+        <div class="col-xs-12">
+        {% if label_list %}
+	        <table id="simple-table" class="table table-striped table-bordered table-hover">
+	          <thead>
+	              <tr>
+	                  <th class="center">
+                        <label class="pos-rel">
+                            <input type="checkbox" class="ace" />
+                            <span class="lbl"></span>
+                        </label>
+	                  </th>
+	                  <th>{% trans "YDE" %}</th>
+	                  <th class="hidden-480">{% trans "Tracking number" %}</th>
+	                  <th class="hidden-480">{% trans "Sender name" %}</th>
+	                  <th class="hidden-480">{% trans "Sender postcode" %}</th>
+	                  <th class="hidden-480">{% trans "Sender city" %}</th>
+	                  <th class="hidden-480">{% trans "Already printed" %}</th>
+	                  <th>{% trans "Options" %}</th>
+	              </tr>
+	          </thead>
+	          <tbody>
+	          {% for parcel in label_list %}
+	              <tr>
+	                  <td class="center">
+                        <label class="pos-rel">
+                            <input type="checkbox" class="ace" />
+                            <span class="lbl"></span>
+                        </label>
+                      </td>
+	                  <td>{{parcel.retoure_yde_number }}</td>
+	                  <td class="hidden-480">{{parcel.tracking_number }}</td>
+	                  <td class="hidden-480">{{parcel.sender_name }}</td>
+	                  <td class="hidden-480">{{parcel.sender_postcode }}</td>
+	                  <td class="hidden-480">{{parcel.sender_city }}</td>
+	                  <td class="hidden-480">{{parcel.is_print }}</td>
+	                  <td>
+	                  <div class="btn-group">
+		                  <a class="btn btn-xs btn-white btn-inverse" href="{% url 'dhl_retoure_label_detail' parcel.retoure_yde_number %}">{% trans 'Detail' %}</a>
+	                      {% for action in parcel.get_current_usable_actions %}
+	                           <a class="btn btn-xs btn-white btn-inverse" href="{% url 'dhl_retoure_label_detail' parcel.retoure_yde_number %}{{action.url}}/">{{action.name}}</a>
+	                      {% endfor %}
+                      </div>
+	                  
+					  </td>
+	              </tr>
+	          {% endfor %}
+	          </tbody>          
+	        </table>   
+	       {% if is_paginated %}
+	            <div class="pagination">
+		            <span class="page-links">
+		                {% if page_obj.has_previous %}
+		                    <a href="?s={{ sub_sidebar_name }}&page={{ page_obj.previous_page_number }}">previous</a>
+		                {% endif %}
+		                <span class="page-current">
+		                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+		                </span>
+		                {% if page_obj.has_next %}
+		                    <a href="?s={{ sub_sidebar_name }}&page={{ page_obj.next_page_number }}">next</a>
+		                {% endif %}
+		            </span>
+		        </div>
+	       {% endif %}
+	    {% else %}
+	        <p>{% trans 'No retoure label found.' %}</p>
+	    {% endif %}
+	   </div>	
+	</div> 	    
+	    
+    </div>
+{% endblock %}
+
+    {% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-retoure-label').addClass('active open');
+    $('#sidebar-1-retoure-label-{{ sub_sidebar_name }}').addClass('active');
+    
+    var active_class = 'success';
+    $('#simple-table > thead > tr > th input[type=checkbox]').eq(0).on('click', function(){
+        var th_checked = this.checked;//checkbox inside "TH" table header
+        
+        $(this).closest('table').find('tbody > tr').each(function(){
+            var row = this;
+            if(th_checked) $(row).addClass(active_class).find('input[type=checkbox]').eq(0).prop('checked', true);
+            else $(row).removeClass(active_class).find('input[type=checkbox]').eq(0).prop('checked', false);
+        });
+    });
+    
+    //select/deselect a row when the checkbox is checked/unchecked
+    $('#simple-table').on('click', 'td input[type=checkbox]' , function(){
+        var $row = $(this).closest('tr');
+        if(this.checked) $row.addClass(active_class);
+        else $row.removeClass(active_class);
+    });
+  });
+</script>
+
+{% endblock %}

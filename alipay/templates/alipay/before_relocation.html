@@ -1,0 +1,20 @@
+{% extends 'userena/base_userena.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+
+{% block title %}支付宝充值{% endblock %}
+{% block content_title %}
+    <img src="{% static 'assets/images/alipay-logo.png' %}"/>
+{% endblock %}
+{% block content %}
+<p>
+            本次充值金额为{{amount}} 欧元。是否确认转到支付宝收银台进行付款？
+        </p>
+        <form action="{{gateway_url}}" method='get'>
+            {% for key, value in to_sign.items %}
+                <input type="hidden" name="{{key}}" value="{{value}}"></input>
+            {% endfor %}
+            <button type="submit" class="btn btn-sm btn-danger btn-block">确 认</button>
+        </form>
+{% endblock %}

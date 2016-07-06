@@ -1,0 +1,408 @@
+{% extends 'base/ace-base-no-nav.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block title %}上传身份证图片{% endblock %}
+{% block add_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/guillotine/css/jquery.guillotine.css' %}" />
+<style type="text/css">
+@media (max-width: 588px) {
+    #input-div{
+        width:100%;
+    }
+    #qr-div{
+        display: none !important;
+        visibility: hidden;
+    }
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+	<h1>上传身份证图片</h1>
+</div>
+<!-- /.page-header -->
+<form action="" method="post" enctype="multipart/form-data" id="form">
+	<div class="row">
+		<div class="well well-sm">
+			根据中国海关最新规定，为配合进口货物查验，证明包裹物品确系个人自用，办理海关入境清关手续时需要提交收件人身份证明。海关相关规定请参考 <a
+				href="http://www.customs.gov.cn/publish/portal0/tab517/info265077.htm"
+				target="_blank"> 《中华人民共和国海关对进出境快件监管办法》 <i
+				class="fa fa-external-link bigger-110"></i>
+			</a> 第二十二条，或致电海关咨询：12360。<br /> <b>注意：字体头像还有身份证有效期必须要清晰可辨。</b><br />
+			韵达快递<u>郑重承诺</u>：所有图片均添加“仅限中国海关清关使用”字样的水印，并妥善保存所有信息，直接提交给海关进行查验，绝不用做其它途径。<br />
+			如果提交不成功，烦请以附件的形式发送至身份证专用邮箱：sfz@yunda-express.eu。邮件标题格式为：收件人姓名+收件人手机11位号码+身份证号码 
+		</div>
+		{% csrf_token %}
+		<div id="input-div" class="col-xs-9 col-sm-5 col-md-4 col-lg-3">
+            <div class="form-group">
+                {{ form.name.errors }} <label for="{{ form.name.id_for_label }}">姓名：</label>
+                {{ form.name }} <span id="name-span" class='hidden'></span>
+            </div>
+    
+            <div class="form-group">
+                {{ form.mobile.errors }} <label for="{{ form.mobile.id_for_label }}">手机号码：</label>
+                {{ form.mobile }} <span id="mobile-span" class='hidden'></span>
+            </div>
+    
+            <div class="form-group">
+                {{ form.number.errors }} <label for="{{ form.number.id_for_label }}">身份证号码：</label>
+                {{ form.number }} <span id="number-span" class='hidden'></span>
+            </div>
+        </div>
+        <div id="qr-div" class="col-xs-3 col-sm-6">
+             <div id="qrcode"></div>
+             <p>手机/平板扫码上传</p>
+        </div>
+
+
+
+	</div>
+
+
+<div class="row">
+	<div class="hr hr16 hr-dotted"></div>
+	<label class="btn btn-sm btn-danger" for="sfz-zm-file"><i class="ace-icon fa fa-folder-open"></i> 第一步：选择并调整正面图片..</label>
+	<input id="sfz-zm-file" style="visibility: hidden;" type="file" accept="image/*">
+	
+	<div class="space-2"></div>
+</div>
+<div class="row" id="gt-sfz-zm-box">
+</div>
+
+<div class="row">
+    <div class="hr hr16 hr-dotted"></div>
+    <label class="btn btn-sm btn-danger" for="sfz-fm-file"><i class="ace-icon fa fa-folder-open"></i> 第二步：选择并调整反面图片..</label>
+    <input id="sfz-fm-file" style="visibility: hidden;" type="file" accept="image/*">
+    <div class="space-2"></div>
+</div>
+<div class="row" id="gt-sfz-fm-box">
+</div>
+<div class="row">
+    <div class="hr hr16 hr-dotted"></div>
+    <div class="form-group">
+        <button type="button" class="btn btn-danger btn-sm" id="preview"><i class="ace-icon fa fa-search-plus"></i> 第三步：添加水印文字并预览</button>
+    </div>
+</div>
+<div class="row" id="preview-box">
+    <div class="hr hr16 hr-dotted"></div>
+</div>
+<div class="row">
+    <div class="hr hr16 hr-dotted"></div>
+    <div class="form-group">
+        <button type="button" class="btn btn-danger btn-sm" id="submit" disabled><i class="ace-icon fa fa-arrow-right"></i> 第四步：确认以上图片清晰完整，点击上传</button>
+    </div>
+</div>
+</form>
+{% endblock %} {% block footer-script %}
+
+<script type="text/javascript"
+	src="{% static 'assets/guillotine/js/jquery.guillotine.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/jquery.qrcode.min.js' %}"></script>
+<script type="text/javascript">
+$.extend({
+  getUrlVars: function(){
+    var vars = [], hash;
+    var aaa=window.location.href.slice(window.location.href.indexOf('?') + 1)
+    var hashes = decodeURIComponent(aaa).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  },
+  getUrlVar: function(name){
+    return $.getUrlVars()[name];
+  }
+});
+var standard_w=600, standard_h=380;
+var has_sfz1;
+var has_sfz2;
+function readImage(input, img_frame) {
+    if ( input.files && input.files[0] ) {
+        var FR= new FileReader();
+        FR.onload = function(e) {
+             $(img_frame).attr( "src", e.target.result );
+             console.log(e.target.result);
+        };       
+        FR.readAsDataURL( input.files[0] );
+    }
+}
+
+function isImage(file_name){
+    file_name_array=file_name.split('.');
+    file_ex=file_name_array[file_name_array.length-1];
+    file_ex=file_ex.toLowerCase();
+    if (file_ex=='jpeg' || file_ex=='jpg' || file_ex=='png' || file_ex=='gif') {
+        return true;
+    }else{
+        console.log('no image');
+    }
+}
+
+jQuery(function($){
+
+    var html="<div id='gt-sfz-fm' class='gt-content'><div class='gt-frame'></div><div class='gt-controls'><button id='rotate_left' type='button' title='Rotate left'>";
+	html+="<i class='ace-icon fa fa-rotate-left'></i></button><button id='zoom_out' type='button' title='Zoom out'><i class='ace-icon fa fa-search-minus'></i>";
+	html+="</button><button id='fit' type='button' title='Fit image'><i class='ace-icon fa fa-arrows-alt'></i></button>";
+	html+="<button id='zoom_in' type='button' title='Zoom in'><i class='ace-icon fa fa-search-plus'></i></button><button id='rotate_right' type='button' title='Rotate right'>";
+	html+="<i class='ace-icon fa fa-rotate-right'></i></button>";
+	html+="</div></div>";
+	var $zm_box=false;
+	var $fm_box=false;
+	var $zm_picture=false;
+	var $fm_picture=false;
+	var result_base64=false;
+    
+    $("#sfz-zm-file").change(function(){
+        console.log($(this).val());
+        file_name=$(this).val();
+        if (isImage(file_name)==true){
+            //readImage( this,'#sfz-zm-pic');
+            var file=this.files[0];
+            var FR= new FileReader();
+	        FR.onload = function(e) {
+	             url=e.target.result;	             
+	             // init guillotime
+	             $zm_box=$(html);
+	             var $picture=$("<img src='"+url+"'></img>").one("load",function(){
+                     $picture.guillotine({eventOnChange: 'guillotinechange', width: standard_w, height: standard_h});
+                     // Bind button actions
+                     $zm_box.find('#rotate_left').click(function(){ $picture.guillotine('rotateLeft'); });
+                     $zm_box.find('#rotate_right').click(function(){ $picture.guillotine('rotateRight'); });
+                     $zm_box.find('#fit').click(function(){ $picture.guillotine('fit'); });
+                     $zm_box.find('#zoom_in').click(function(){ $picture.guillotine('zoomIn'); });
+                     $zm_box.find('#zoom_out').click(function(){ $picture.guillotine('zoomOut'); });
+                     // end Bind button actions 
+                     $zm_picture=$picture;
+                     $('#submit').attr('disabled',true);
+                 });
+	             $zm_box.find('.gt-frame').append($picture);
+	             $('#gt-sfz-zm-box').empty();
+	             $('#gt-sfz-zm-box').append($zm_box);
+	             // Make sure the image is completely loaded before calling the plugin
+                 $picture.on('guillotinechange', function(ev, data, action) {
+			        $('#submit').attr('disabled',true);
+			     });
+                     
+	             // end init guillotime
+	        };       
+	        FR.readAsDataURL(file);
+	        
+	        
+        }
+        
+    });
+    
+    $("#sfz-fm-file").change(function(){
+        console.log($(this).val());
+        file_name=$(this).val();
+        if (isImage(file_name)==true){
+            //readImage( this,'#sfz-fm-pic');
+            var file=this.files[0];
+            var FR= new FileReader();
+            FR.onload = function(e) {
+                 url=e.target.result;
+                 // init guillotime
+                 $fm_box=$(html);
+                 var $picture=$("<img src='"+url+"'></img>");
+                 $fm_box.find('.gt-frame').append($picture);
+                 $('#gt-sfz-fm-box').empty();
+                 $('#gt-sfz-fm-box').append($fm_box);
+                 
+                 // Make sure the image is completely loaded before calling the plugin
+                 $picture.one("load",function(){
+	                 $picture.guillotine({eventOnChange: 'guillotinechange', width: standard_w, height: standard_h});
+	                 // Bind button actions
+	                 $fm_box.find('#rotate_left').click(function(){ $picture.guillotine('rotateLeft'); });
+	                 $fm_box.find('#rotate_right').click(function(){ $picture.guillotine('rotateRight'); });
+	                 $fm_box.find('#fit').click(function(){ $picture.guillotine('fit'); });
+	                 $fm_box.find('#zoom_in').click(function(){ $picture.guillotine('zoomIn'); });
+	                 $fm_box.find('#zoom_out').click(function(){ $picture.guillotine('zoomOut'); });
+	                 // end Bind button actions 
+	                 $fm_picture=$picture;
+	                 $('#submit').attr('disabled',true);
+	             });
+                 $picture.on('guillotinechange', function(ev, data, action) {
+                    $('#submit').attr('disabled',true);
+                 });      
+                 // end init guillotime
+            };       
+            FR.readAsDataURL(file);           
+        }
+        
+    });
+    
+    function getImageBase64(image,data){
+        var canvas=$('<canvas width="'+standard_w+'" height="'+standard_h+'"></canvas>')[0];
+        var ctx=canvas.getContext('2d');
+        var natural_w=image.naturalWidth;
+        var natural_h=image.naturalHeight;
+        if (data.angle==0){
+            var sx=data.x/data.scale;
+            var sy=data.y/data.scale;
+            var sw=Math.floor(standard_w/data.scale);
+            var sh=Math.floor(standard_h/data.scale);
+            ctx.drawImage(image,sx,sy,sw,sh,0,0,standard_w,standard_h);
+            
+        }else if (data.angle==90){
+            ctx.save();
+            var ssx=data.x/data.scale;
+            var ssy=data.y/data.scale;
+            var ssw=Math.floor(standard_w/data.scale);
+            var ssh=Math.floor(standard_h/data.scale);
+            sx=ssy;
+            sy=natural_h-ssx-ssw;
+            sw=ssh;
+            sh=ssw;
+            ctx.rotate(90*Math.PI/180);
+            ctx.drawImage(image,sx,sy,sw,sh,0,-standard_w,standard_h,standard_w);
+            ctx.restore();
+                    
+        }else if (data.angle==180){
+            ctx.save();
+            var ssx=data.x/data.scale;
+            var ssy=data.y/data.scale;
+            var ssw=Math.floor(standard_w/data.scale);
+            var ssh=Math.floor(standard_h/data.scale);
+            sx=natural_w-ssx-ssw;
+            sy=natural_h-ssy-ssh;
+            sw=ssw;
+            sh=ssh;
+            ctx.rotate(180*Math.PI/180);
+            ctx.drawImage(image,sx,sy,sw,sh,-standard_w,-standard_h,standard_w,standard_h);
+            ctx.restore();
+                    
+        }else if (data.angle==270){
+            ctx.save();
+            var ssx=data.x/data.scale;
+            var ssy=data.y/data.scale;
+            var ssw=Math.floor(standard_w/data.scale);
+            var ssh=Math.floor(standard_h/data.scale);
+            sx=natural_w-ssy-ssh;
+            sy=ssx;
+            sw=ssh;
+            sh=ssw;
+            ctx.rotate(270*Math.PI/180);
+            ctx.drawImage(image,sx,sy,sw,sh,0-standard_h,0,standard_h,standard_w);
+            ctx.restore();            
+        }
+        return canvas//.toDataURL();
+        
+    }
+    
+    // preview pic
+    $("#preview").click(function(){
+        if (!$zm_box){
+            $.smkAlert({text:"很抱歉，无正面图片", type:'warning', time: 5});
+        }else if (!$fm_box){
+            $.smkAlert({text:"很抱歉，无反面图片", type:'warning', time: 5});
+        }else{
+            //var $zm_img=$zm_box.find("img");
+            //var $fm_img=$fm_box.find("img");
+            var zm_data = $zm_picture.guillotine('getData');
+            zm_base64url=getImageBase64($zm_picture[0], zm_data);
+            var fm_data = $fm_picture.guillotine('getData');
+            fm_base64url=getImageBase64($fm_picture[0], fm_data);
+            
+            var canvas=$('<canvas width="'+standard_w+'" height="'+(standard_h*2+2)+'"></canvas>')[0];
+            var ctx=canvas.getContext('2d');
+            //image=new Image();
+            //image.src=zm_base64url;
+            ctx.drawImage(zm_base64url,0,0,standard_w,standard_h,0,0,standard_w,standard_h);
+            //image2=new Image();
+            //image2.src=fm_base64url;
+            ctx.drawImage(fm_base64url,0,0,standard_w,standard_h,0,standard_h+2,standard_w,standard_h);
+            
+            //add watermark
+            ctx.rotate(-45*Math.PI/180);
+            txt="仅供中国海关清关使用";
+            ctx.fillStyle    = 'rgba(0, 0, 0, 0.25)';
+            ctx.font         = '20px sans-serif';
+            ctx.fillText(txt, 2,standard_h);
+            ctx.fillText(txt, -310,standard_h*2-90);
+            ctx.fillStyle    = 'rgba(255, 255, 255, 0.25)';
+            ctx.fillText(txt, 0,standard_h-2);
+            ctx.fillText(txt, -312,standard_h*2-92);            
+            $("#preview-box").empty();
+            $("#preview-box").append(canvas);
+            result_base64=canvas.toDataURL("image/jpeg");
+            $('#submit').attr('disabled',false);
+        }
+        
+    });
+    // end preview pic
+    
+    // submit data
+    $("#submit").click(function(){
+        var fd = new FormData(document.getElementById('form'));
+        //var fd = new FormData($('form')[0]);
+        
+        var data=result_base64.split(',')[1];
+		data=window.atob(data);
+		var ia = new Uint8Array(data.length);
+		for (var i = 0; i < data.length; i++) {
+		    ia[i] = data.charCodeAt(i);
+		};
+		var blob=new Blob([ia], {type:"image/jpeg"});
+		fd.append('shenfenzheng',blob);
+		$.ajax({
+		    url:"{% url 'cn_shenfenzheng_ajax_upload_image' %}",
+		    type:"POST",
+		    data:fd,
+		    success:function(re){
+		      if (re.result){
+		          $.smkAlert({text:"非常感谢，身份证图片已经提交成功", type:'success', time: 5});
+		          prepage=false;
+		          //prepage=$.getUrlVar('prepage'); 
+		          if (prepage){
+	                  setTimeout("javascript:location.href='"+prepage+"'", 1000);                        
+		          }else{
+		              setTimeout("javascript:location.href='/shenfenzheng/'", 1000);
+		          }
+		          
+		      }else{
+		          $.smkAlert({text:"非常抱歉，提交不成功： "+re.info, type:'warning', time: 5});
+		      }
+		      
+		    },
+		    processData: false,
+		    contentType: false,
+		    dataType: 'JSON'
+		});
+		
+		
+				
+    });
+    // end submit data
+        
+    var name=$.getUrlVar('name');
+    var number=$.getUrlVar('number');
+    var mobile=$.getUrlVar('mobile');
+    var urlSearchObject={};
+    if (name){
+        $('#id_name').val(decodeURI(name)).addClass('hidden');
+        $('#name-span').removeClass('hidden').html(decodeURI(name));
+        urlSearchObject.name=name;
+        }
+    if (number){
+        $('#id_number').val(decodeURI(number)).addClass('hidden');
+        $('#number-span').removeClass('hidden').html(decodeURI(number));
+        urlSearchObject.number=number;
+        }
+    if (mobile){
+        $('#id_mobile').val(decodeURI(mobile)).addClass('hidden');
+        $('#mobile-span').removeClass('hidden').html(decodeURI(mobile));
+        urlSearchObject.mobile=mobile;
+        }
+    // qr code
+    var sfz_upload_url="{{sfz_upload_url}}?"+$.param(urlSearchObject);
+    $('#qrcode').qrcode({width: 128,height: 128,text: sfz_upload_url});
+    // end qr code  
+});
+</script>
+
+{% endblock %}

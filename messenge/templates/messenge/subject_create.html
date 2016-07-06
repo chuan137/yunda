@@ -1,0 +1,115 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block title %}新建客服工单{% endblock %}
+{% block add_head %}
+
+{% endblock %}
+{% block content %}
+<div class="page-header">
+	<h1>新建客服工单</h1>
+</div>
+<!-- /.page-header -->
+<form class="form-horizontal" action="" method="post" enctype="multipart/form-data" id="form">
+	<div class="row">
+	    {% csrf_token %}
+
+		<div class="form-group bootstrap3-required">
+			  <label class="col-sm-2 control-label no-padding-right" for="subject-type">新工单类型</label>
+			  <div class="col-sm-10">
+			      <select id="subject-type" required>
+		                 <option></option>
+		                 <option>物流</option>
+		                 <option>关税</option>
+		                 <option>其它</option>
+		              </select>
+			  </div>
+         </div>
+         <div class="form-group">              
+              <label id="yde-number-label" class="col-sm-2 control-label no-padding-right" for="yde-number">相关韵达编号</label>
+              <div class="col-sm-10">
+                  <input id="yde-number" type="text"></input>
+              </div>
+         </div>
+         <div class="form-group bootstrap3-required">              
+              <label class="col-sm-2 control-label no-padding-right" for="new-subject">主题</label>
+              <div class="col-sm-10">
+                  <input id="new-subject" type="text" class="col-xs-10 col-sm-6" required></input>
+              </div>
+              {{ form_subject.title.errors }}
+         </div>
+         {% bootstrap_field form_messenge.content form_group_class="form-group" layout="horizontal" horizontal_label_class='col-sm-2 control-label no-padding-right' horizontal_field_class='col-sm-8' %}
+         {% bootstrap_field form_subject.title form_group_class="hidden" layout="horizontal" horizontal_label_class='col-sm-2 control-label no-padding-right' horizontal_field_class='col-sm-8' %}
+         
+         <div class="form-group">             
+              <div class="col-sm-10 col-sm-offset-2">
+                   <button type="submit" class="btn btn-danger btn-sm">提交</button>
+                   <button type="reset" class="btn btn-cancel btn-sm">重置表格</button>
+              </div>
+         </div>
+	</div>
+</form>
+{% endblock %} {% block footer-script %}
+
+
+<script type="text/javascript">
+$.extend({
+  getUrlVars: function(){
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  },
+  getUrlVar: function(name){
+    result=$.getUrlVars()[name];
+    if (result)
+        return decodeURIComponent(result).replace(/^\s+|\s+$/gm,'');
+    else return false;
+  }
+});
+$(document).ready(function(){
+    $('#sidebar-1-customer-service').addClass('active open');
+    $('#sidebar-1-customer-service-create').addClass('active');
+    
+    var type=$.getUrlVar('type');
+    var yde_number=$.getUrlVar('ydenumber');
+    var warehause=$.getUrlVar('warehause');
+    if (type){
+        $("select#subject-type").val(type);
+        }
+    console.log(yde_number);
+    if (yde_number){
+        $("input#yde-number").val(yde_number);
+        }
+    if (warehause){
+        $("select#warehause").val(warehause);
+        }
+    
+    
+    subject_changed=function(){
+        text="";
+        s_type=$("select#subject-type").val();
+        s_yde_number=$("input#yde-number").val().replace(/^\s+|\s+$/gm,'');
+        s_subject=$("input#new-subject").val().replace(/^\s+|\s+$/gm,'');
+        if (s_type) text+="["+s_type+"]";
+        if (s_yde_number) text+="["+s_yde_number+"]";
+        if (s_subject) {
+            text+=s_subject;
+            $("input#id_title").val(text);
+        }
+    }
+    $("select#subject-type").change(subject_changed).change();
+    $("input#yde-number").change(subject_changed).change();
+    $("input#new-subject").change(subject_changed).change();
+    
+});
+</script>
+
+{% endblock %}

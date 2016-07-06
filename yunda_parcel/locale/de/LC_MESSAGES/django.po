@@ -1,0 +1,437 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-02-07 01:33+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/yunda_user/login.html:13
+msgid "login - YUNDA Express"
+msgstr "Anmelden"
+
+#: templates/yunda_user/login.html:119 templates/yunda_user/login.html:124
+msgid "Welcome to our page"
+msgstr "Willkommen"
+
+#: yunda_commen/models.py:12
+msgid "None"
+msgstr ""
+
+#: yunda_commen/models.py:13
+msgid "By year"
+msgstr ""
+
+#: yunda_commen/models.py:14
+msgid "By Month"
+msgstr ""
+
+#: yunda_commen/models.py:15
+msgid "By Day"
+msgstr ""
+
+#: yunda_commen/models.py:18 yunda_commen/models.py:19
+msgid "Year-%y/%Y, Month-%m, Day-%d"
+msgstr ""
+
+#: yunda_parcel/models.py:7 yunda_parcel/models.py:18
+msgid "Name"
+msgstr ""
+
+#: yunda_parcel/models.py:8 yunda_parcel/models.py:90 yunda_user/models.py:67
+#: yunda_user/models.py:87
+msgid "Description"
+msgstr ""
+
+#: yunda_parcel/models.py:9
+msgid "Destination country"
+msgstr ""
+
+#: yunda_parcel/models.py:9
+msgid "ISO country code."
+msgstr ""
+
+#: yunda_parcel/models.py:10
+msgid "Max weight (kg)"
+msgstr ""
+
+#: yunda_parcel/models.py:11
+msgid "Need shenfenzheng"
+msgstr ""
+
+#: yunda_parcel/models.py:12
+msgid "Customs "
+msgstr ""
+
+#: yunda_parcel/models.py:12 yunda_parcel/models.py:85
+msgid "Use comma between different customs."
+msgstr ""
+
+#: yunda_parcel/models.py:20 yunda_parcel/models.py:62
+msgid "Start price (EUR)"
+msgstr ""
+
+#: yunda_parcel/models.py:21 yunda_parcel/models.py:63
+msgid "Start weight (KG)"
+msgstr ""
+
+#: yunda_parcel/models.py:22 yunda_parcel/models.py:64
+msgid "Continuing price (EUR)"
+msgstr ""
+
+#: yunda_parcel/models.py:23 yunda_parcel/models.py:65
+msgid "Continuing weight (KG)"
+msgstr ""
+
+#: yunda_parcel/models.py:24 yunda_parcel/models.py:66
+msgid "Volume weight rate"
+msgstr ""
+
+#: yunda_parcel/models.py:25
+msgid "Is default"
+msgstr ""
+
+#: yunda_parcel/models.py:32
+msgid "Sender name"
+msgstr ""
+
+#: yunda_parcel/models.py:33
+msgid "Sender name2"
+msgstr ""
+
+#: yunda_parcel/models.py:34
+msgid "Sender company"
+msgstr ""
+
+#: yunda_parcel/models.py:35
+msgid "Sender state"
+msgstr ""
+
+#: yunda_parcel/models.py:36
+msgid "Sender city"
+msgstr ""
+
+#: yunda_parcel/models.py:37
+msgid "Sender postcode"
+msgstr ""
+
+#: yunda_parcel/models.py:38
+msgid "Sender street"
+msgstr ""
+
+#: yunda_parcel/models.py:39
+msgid "Sender street addition"
+msgstr ""
+
+#: yunda_parcel/models.py:40
+msgid "Sender hause number"
+msgstr ""
+
+#: yunda_parcel/models.py:41
+msgid "Sender telephone"
+msgstr ""
+
+#: yunda_parcel/models.py:42
+msgid "Sender email"
+msgstr ""
+
+#: yunda_parcel/models.py:44
+msgid "Receiver name"
+msgstr ""
+
+#: yunda_parcel/models.py:45
+msgid "Receiver company"
+msgstr ""
+
+#: yunda_parcel/models.py:46
+msgid "Receiver province"
+msgstr ""
+
+#: yunda_parcel/models.py:47
+msgid "Receiver city"
+msgstr ""
+
+#: yunda_parcel/models.py:48
+msgid "Receiver district"
+msgstr ""
+
+#: yunda_parcel/models.py:49
+msgid "Receiver postcode"
+msgstr ""
+
+#: yunda_parcel/models.py:50
+msgid "Receiver address"
+msgstr ""
+
+#: yunda_parcel/models.py:51
+msgid "Receiver address2"
+msgstr ""
+
+#: yunda_parcel/models.py:52
+msgid "Receiver mobilephone"
+msgstr ""
+
+#: yunda_parcel/models.py:53
+msgid "Receiver email"
+msgstr ""
+
+#: yunda_parcel/models.py:55
+msgid "Length (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:56
+msgid "Width (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:57
+msgid "Height (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:58
+msgid "Real Length (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:59
+msgid "Real Width (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:60
+msgid "Real Height (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:68 yunda_parcel/models.py:69
+msgid "Tracking number"
+msgstr ""
+
+#: yunda_parcel/models.py:70 yunda_user/models.py:81 yunda_user/models.py:90
+msgid "Ref number"
+msgstr ""
+
+#: yunda_parcel/models.py:71 yunda_user/models.py:66 yunda_user/models.py:86
+msgid "Created at"
+msgstr ""
+
+#: yunda_parcel/models.py:78 yunda_parcel/models.py:98
+#: yunda_parcel/models.py:103
+msgid "Chinese name"
+msgstr ""
+
+#: yunda_parcel/models.py:79 yunda_parcel/models.py:99
+msgid "English name"
+msgstr ""
+
+#: yunda_parcel/models.py:80
+msgid "CN custom number"
+msgstr ""
+
+#: yunda_parcel/models.py:81
+msgid "HS code"
+msgstr ""
+
+#: yunda_parcel/models.py:82
+msgid "Tax rate"
+msgstr ""
+
+#: yunda_parcel/models.py:83
+msgid "Standard unit price (CNY)"
+msgstr ""
+
+#: yunda_parcel/models.py:84
+msgid "Charge by weight"
+msgstr ""
+
+#: yunda_parcel/models.py:85
+msgid "Forbidden customs "
+msgstr ""
+
+#: yunda_parcel/models.py:92
+msgid "Qty"
+msgstr ""
+
+#: yunda_parcel/models.py:93
+msgid "Item net weight (KG)"
+msgstr ""
+
+#: yunda_parcel/models.py:94
+msgid "Item price (EUR)"
+msgstr ""
+
+#: yunda_parcel/models.py:95
+msgid "Original country"
+msgstr ""
+
+#: yunda_parcel/models.py:102
+msgid "Shenfengzheng number"
+msgstr ""
+
+#: yunda_parcel/models.py:104
+msgid "Mobilephone"
+msgstr ""
+
+#: yunda_parcel/models.py:105
+msgid "Image"
+msgstr ""
+
+#: yunda_user/models.py:8
+msgid "Customer number"
+msgstr ""
+
+#: yunda_user/models.py:9 yunda_user/models.py:44
+msgid "Company"
+msgstr ""
+
+#: yunda_user/models.py:10 yunda_user/models.py:45
+msgid "Street"
+msgstr ""
+
+#: yunda_user/models.py:11 yunda_user/models.py:46
+msgid "Hause number"
+msgstr ""
+
+#: yunda_user/models.py:12 yunda_user/models.py:47
+msgid "Addtion"
+msgstr ""
+
+#: yunda_user/models.py:13 yunda_user/models.py:48
+msgid "Postcode"
+msgstr ""
+
+#: yunda_user/models.py:14 yunda_user/models.py:49
+msgid "City"
+msgstr ""
+
+#: yunda_user/models.py:15 yunda_user/models.py:50
+msgid "State"
+msgstr ""
+
+#: yunda_user/models.py:17 yunda_user/models.py:52
+msgid "Germany"
+msgstr ""
+
+#: yunda_user/models.py:18 yunda_user/models.py:53
+msgid "China"
+msgstr ""
+
+#: yunda_user/models.py:19 yunda_user/models.py:54
+msgid "Hongkong"
+msgstr ""
+
+#: yunda_user/models.py:20 yunda_user/models.py:55
+msgid "Taiwan"
+msgstr ""
+
+#: yunda_user/models.py:21 yunda_user/models.py:56
+msgid "Macau"
+msgstr ""
+
+#: yunda_user/models.py:23 yunda_user/models.py:58
+msgid "Country"
+msgstr ""
+
+#: yunda_user/models.py:24 yunda_user/models.py:59
+msgid "Telphone"
+msgstr ""
+
+#: yunda_user/models.py:25 yunda_user/models.py:60
+msgid "Fax"
+msgstr ""
+
+#: yunda_user/models.py:26 yunda_user/models.py:61
+msgid "Vat ID"
+msgstr ""
+
+#: yunda_user/models.py:29
+msgid "EUR"
+msgstr ""
+
+#: yunda_user/models.py:30
+msgid "CNY"
+msgstr ""
+
+#: yunda_user/models.py:32
+msgid "Currency type"
+msgstr ""
+
+#: yunda_user/models.py:33
+msgid "Current fund"
+msgstr ""
+
+#: yunda_user/models.py:34
+msgid "Frozen fund"
+msgstr ""
+
+#: yunda_user/models.py:38
+msgid "Salesman number"
+msgstr ""
+
+#: yunda_user/models.py:42
+msgid "Branch name"
+msgstr ""
+
+#: yunda_user/models.py:43
+msgid "Branch number"
+msgstr ""
+
+#: yunda_user/models.py:62
+msgid "Register number"
+msgstr ""
+
+#: yunda_user/models.py:68 yunda_user/models.py:88
+msgid "Amount"
+msgstr ""
+
+#: yunda_user/models.py:70
+msgid "Credit entry"
+msgstr ""
+
+#: yunda_user/models.py:71
+msgid "Credit withdraw"
+msgstr ""
+
+#: yunda_user/models.py:72
+msgid "Alipay entry"
+msgstr ""
+
+#: yunda_user/models.py:73
+msgid "Alipay withdraw"
+msgstr ""
+
+#: yunda_user/models.py:74
+msgid "Parcel payment"
+msgstr ""
+
+#: yunda_user/models.py:75
+msgid "Customs payment"
+msgstr ""
+
+#: yunda_user/models.py:76
+msgid "Parcel payment canceled"
+msgstr ""
+
+#: yunda_user/models.py:77
+msgid "Others"
+msgstr ""
+
+#: yunda_user/models.py:79
+msgid "Type"
+msgstr ""
+
+#: yunda_user/models.py:82 yunda_user/models.py:91
+msgid "Ref type"
+msgstr ""
+
+#: yunda_user/views.py:9
+msgid "Welcome"
+msgstr "Willkommen"

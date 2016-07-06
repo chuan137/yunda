@@ -1,0 +1,1425 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-24 09:26+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: templates/base/ace-base.html:75
+msgid "Shipping System"
+msgstr "在线下单系统"
+
+#: templates/base/ace-base.html:95
+msgid "Your Customer no."
+msgstr "您的客户编号"
+
+#: templates/base/ace-base.html:106
+msgid "Signout"
+msgstr "登出"
+
+#: templates/base/ace-base.html:164
+#: templates/yunda_parcel/parcel_intl_create_form.html:10
+#: templates/yunda_parcel/parcel_intl_detail.html:10
+#: templates/yunda_parcel/parcel_intl_edit_form.html:10
+msgid "Intl. shipment"
+msgstr "国际段邮单"
+
+#: templates/base/ace-base.html:176
+#, fuzzy
+#| msgid "Create a new intl. shipment"
+msgid "Create new shipment"
+msgstr "新建国际邮单"
+
+#: templates/base/ace-base.html:185 templates/base/ace-base.html.py:253
+msgid "Draft"
+msgstr "草稿"
+
+#: templates/base/ace-base.html:194 templates/base/ace-base.html.py:262
+msgid "Paid"
+msgstr "已付款"
+
+#: templates/base/ace-base.html:203
+msgid "Waiting sender pay rest"
+msgstr "待发件人支付余额"
+
+#: templates/base/ace-base.html:212
+msgid "Waiting receiver pay"
+msgstr "待收件人支付"
+
+#: templates/base/ace-base.html:221 templates/base/ace-base.html.py:271
+msgid "All"
+msgstr "所有"
+
+#: templates/base/ace-base.html:233
+#: templates/yunda_parcel/retoure_label_create_form.html:10
+#: templates/yunda_parcel/retoure_label_list.html:6
+msgid "Retoure label"
+msgstr "回邮单"
+
+#: templates/base/ace-base.html:244 templates/base/base.bak.html:61
+#: templates/yunda_parcel/retoure_label_create_form.html:5
+msgid "Create retoure label"
+msgstr "新建回邮单"
+
+#: templates/base/ace-base.html:282
+msgid "Address book"
+msgstr "地址簿"
+
+#: templates/base/ace-base.html:293
+#: templates/yunda_parcel/parcel_intl_detail.html:19
+#: templates/yunda_parcel/sender_template_form.html:6
+#: templates/yunda_parcel/sender_template_form.html:15
+#: templates/yunda_parcel/sender_template_list.html:5
+#: templates/yunda_parcel/sender_template_list.html:6
+msgid "Sender address"
+msgstr "发件人地址"
+
+#: templates/base/ace-base.html:302
+#: templates/yunda_parcel/parcel_intl_detail.html:44
+#: templates/yunda_parcel/receiver_template_form.html:6
+#: templates/yunda_parcel/receiver_template_form.html:13
+#: templates/yunda_parcel/receiver_template_list.html:5
+#: templates/yunda_parcel/receiver_template_list.html:6
+msgid "Receiver address"
+msgstr "收件人地址"
+
+#: templates/base/ace-base.html:313
+msgid "User center"
+msgstr "用户中心"
+
+#: templates/base/ace-base.html:324
+msgid "Deposit & price"
+msgstr "账户余额及邮单价格"
+
+#: templates/base/ace-base.html:333
+msgid "Deposit transfers"
+msgstr "资金记录"
+
+#: templates/base/ace-base.html:342
+msgid "Invoice address"
+msgstr "账单地址"
+
+#: templates/base/ace-base.html:350
+msgid "Change invoice address"
+msgstr "修改账单地址"
+
+#: templates/base/ace-base.html:358 templates/base/base.bak.html:97
+msgid "Change password"
+msgstr "修改密码"
+
+#: templates/base/ace-base.html:392
+msgid "Home"
+msgstr "首页"
+
+#: templates/base/ace-base.html:440
+#: templates/base/base-no-frame4userena.html:124
+#: templates/base/base.bak.html:102 templates/base/base.bak.html.py:112
+#: templates/help.html:6
+msgid "Help"
+msgstr ""
+
+#: templates/base/ace-base.html:444
+#: templates/base/base-no-frame4userena.html:128 templates/help.html:43
+msgid "Contact us"
+msgstr ""
+
+#: templates/base/base-no-frame4userena.html:81
+msgid "YUNDA Shipping System"
+msgstr "韵达在线下单系统"
+
+#: templates/base/base.bak.html:52
+msgid "Create transport"
+msgstr ""
+
+#: templates/base/base.bak.html:54
+msgid "International transport"
+msgstr ""
+
+#: templates/base/base.bak.html:55
+msgid "Create international shipment"
+msgstr ""
+
+#: templates/base/base.bak.html:56
+msgid "All paid shipments"
+msgstr ""
+
+#: templates/base/base.bak.html:57
+msgid "All unpaid shipments"
+msgstr ""
+
+#: templates/base/base.bak.html:58
+msgid "All shipments"
+msgstr ""
+
+#: templates/base/base.bak.html:60
+msgid "Inland transport"
+msgstr ""
+
+#: templates/base/base.bak.html:62
+msgid "All retoure labels"
+msgstr ""
+
+#: templates/base/base.bak.html:63
+msgid "All unpaid retoure labels"
+msgstr ""
+
+#: templates/base/base.bak.html:65
+msgid "Address template"
+msgstr ""
+
+#: templates/base/base.bak.html:66
+#: templates/yunda_parcel/parcel_intl_create_form.html:540
+#: templates/yunda_parcel/parcel_intl_edit_form.html:524
+#: templates/yunda_parcel/retoure_label_create_form.html:270
+msgid "Sender template"
+msgstr ""
+
+#: templates/base/base.bak.html:67
+#: templates/yunda_parcel/parcel_intl_create_form.html:648
+#: templates/yunda_parcel/parcel_intl_edit_form.html:632
+#: templates/yunda_parcel/retoure_label_create_form.html:327
+msgid "Receiver template"
+msgstr ""
+
+#: templates/base/base.bak.html:71
+msgid "Tracking and trace"
+msgstr ""
+
+#: templates/base/base.bak.html:73
+msgid "Delayed"
+msgstr ""
+
+#: templates/base/base.bak.html:74
+msgid "Delayed at Frankfurt"
+msgstr ""
+
+#: templates/base/base.bak.html:75
+msgid "Delayed at customs"
+msgstr ""
+
+#: templates/base/base.bak.html:76
+msgid "Due to customs tax"
+msgstr ""
+
+#: templates/base/base.bak.html:78
+msgid "Service ticket"
+msgstr ""
+
+#: templates/base/base.bak.html:79
+msgid "Create ticket"
+msgstr ""
+
+#: templates/base/base.bak.html:80
+msgid "All open tickets"
+msgstr ""
+
+#: templates/base/base.bak.html:81
+msgid "Finished tickets"
+msgstr ""
+
+#: templates/base/base.bak.html:85
+msgid "Price and payment"
+msgstr ""
+
+#: templates/base/base.bak.html:87
+msgid "My price and fund"
+msgstr ""
+
+#: templates/base/base.bak.html:93
+msgid "My account"
+msgstr ""
+
+#: templates/base/base.bak.html:95
+msgid "View profile"
+msgstr ""
+
+#: templates/base/base.bak.html:96
+msgid "Edit profile"
+msgstr ""
+
+#: templates/base/base.bak.html:98
+msgid "Change email"
+msgstr ""
+
+#: templates/base/base.bak.html:104 templates/base/base.bak.html.py:114
+msgid "FAQ"
+msgstr ""
+
+#: templates/base/base.bak.html:105 templates/base/base.bak.html.py:115
+msgid "Chinese customs policy"
+msgstr ""
+
+#: templates/base/base.bak.html:109
+msgid "About YUNDA"
+msgstr ""
+
+#: templates/base/base.bak.html:110
+msgid "Services"
+msgstr ""
+
+#: templates/base/base_webapp.html:13
+msgid "- YUNDA Express(Europe)"
+msgstr ""
+
+#: templates/base/error-400.html:6
+msgid "400 Bad request"
+msgstr ""
+
+#: templates/base/error-400.html:6 templates/base/error-404.html:6
+#: templates/base/error-500.html:6 templates/help.html:6
+#: templates/imprint.html:6 templates/yunda_parcel/parcel_list.html:6
+#: templates/yunda_parcel/retoure_label_list.html:6
+#: templates/yunda_user/deposit_transfer_list.html:6
+msgid "YUNDA Europe"
+msgstr "韵达欧洲"
+
+#: templates/base/error-400.html:17
+msgid "Bad request"
+msgstr ""
+
+#: templates/base/error-400.html:21
+msgid ""
+"The server cannot process the request due to something that is perceived to "
+"be a client error"
+msgstr ""
+
+#: templates/base/error-400.html:27 templates/base/error-404.html:27
+#: templates/base/error_info.html:26
+msgid "Try one of the following"
+msgstr ""
+
+#: templates/base/error-400.html:33 templates/base/error-404.html:37
+#: templates/base/error-500.html:34 templates/base/error_info.html:36
+msgid "Read the faq"
+msgstr ""
+
+#: templates/base/error-400.html:38 templates/base/error-404.html:42
+#: templates/base/error_info.html:41
+msgid "Tell us about it"
+msgstr ""
+
+#: templates/base/error-400.html:49 templates/base/error-404.html:53
+#: templates/base/error-500.html:50 templates/base/error_info.html:52
+msgid "Go Back"
+msgstr ""
+
+#: templates/base/error-404.html:6
+msgid "404 Page not found"
+msgstr ""
+
+#: templates/base/error-404.html:17
+msgid "Page Not Found"
+msgstr ""
+
+#: templates/base/error-404.html:21
+msgid "We looked everywhere but we couldn't find it!"
+msgstr ""
+
+#: templates/base/error-404.html:32 templates/base/error_info.html:31
+msgid "Re-check the url for typos"
+msgstr ""
+
+#: templates/base/error-500.html:6
+msgid "500 Error"
+msgstr ""
+
+#: templates/base/error-500.html:17
+msgid "Something Went Wrong"
+msgstr ""
+
+#: templates/base/error-500.html:22
+msgid "But we are working on it!"
+msgstr ""
+
+#: templates/base/error-500.html:29
+msgid "Meanwhile, try one of the following"
+msgstr ""
+
+#: templates/base/error-500.html:39
+msgid "Give us more info on how this specific error occurred!"
+msgstr ""
+
+#: templates/base/error_info.html:16
+msgid "Error"
+msgstr ""
+
+#: templates/help.html:11
+#, fuzzy
+#| msgid "User center"
+msgid "Help center"
+msgstr "用户中心"
+
+#: templates/help.html:28 templates/help.html.py:55
+#, fuzzy
+#| msgid "Intl. shipment"
+msgid "Shipment"
+msgstr "国际段邮单"
+
+#: templates/help.html:36
+#, fuzzy
+#| msgid "Deposit & price"
+msgid "Deposit"
+msgstr "账户余额及邮单价格"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:5
+#: templates/yunda_parcel/cn_customs_tax_list.html:6
+#: templates/yunda_parcel/cn_customs_tax_upload.html:5
+#: templates/yunda_parcel/cn_customs_tax_upload.html:6
+msgid "Sender templates"
+msgstr "发件人地址"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:12
+msgid "CN name"
+msgstr "中文名称"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:13
+msgid "CN customs number"
+msgstr "中国海关号"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:14
+msgid "Tax rate"
+msgstr "税率"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:15
+msgid "Standard unit price (CNY)"
+msgstr "海关参考价"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:16
+msgid "Charge by weight?"
+msgstr "按重量计税？"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:17
+msgid "Is forbidden"
+msgstr "禁止进口"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:37
+#: templates/yunda_user/fund_transfer_list.html:37
+msgid "Previous page"
+msgstr "前一页"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:41
+#: templates/yunda_user/fund_transfer_list.html:41
+msgid "Page"
+msgstr "页"
+
+#: templates/yunda_parcel/cn_customs_tax_list.html:46
+#: templates/yunda_user/fund_transfer_list.html:46
+msgid "Next page"
+msgstr "下一页"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:5
+#: templates/yunda_parcel/parcel_intl_edit_form.html:5
+msgid "Create International Parcel"
+msgstr "新建国际邮单"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:11
+#: templates/yunda_parcel/parcel_intl_edit_form.html:11
+msgid "Create a new intl. shipment"
+msgstr "新建国际邮单"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:30
+#: templates/yunda_parcel/parcel_intl_detail.html:91
+#: templates/yunda_parcel/parcel_intl_edit_form.html:23
+#: templates/yunda_parcel/retoure_label_create_form.html:23
+msgid "Sender"
+msgstr "发件人"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:32
+#: templates/yunda_parcel/retoure_label_create_form.html:25
+msgid "Please input the sender address in german or english."
+msgstr ""
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:36
+#: templates/yunda_parcel/parcel_intl_create_form.html:69
+#: templates/yunda_parcel/parcel_intl_edit_form.html:26
+#: templates/yunda_parcel/parcel_intl_edit_form.html:56
+#: templates/yunda_parcel/retoure_label_create_form.html:27
+msgid "Select from my templates"
+msgstr "从地址簿选择"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:56
+#: templates/yunda_parcel/parcel_intl_create_form.html:89
+#: templates/yunda_parcel/parcel_intl_edit_form.html:46
+#: templates/yunda_parcel/parcel_intl_edit_form.html:76
+msgid "Save as Template"
+msgstr "存入地址簿"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:63
+#: templates/yunda_parcel/parcel_intl_detail.html:92
+#: templates/yunda_parcel/parcel_intl_edit_form.html:53
+msgid "Receiver"
+msgstr "收件人"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:65
+msgid "Please input the receiver address in chinese."
+msgstr ""
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:96
+#: templates/yunda_parcel/parcel_intl_edit_form.html:83
+#: templates/yunda_user/deposit_transfer_list.html:33
+#: templates/yunda_user/fund_transfer_list.html:15
+msgid "Reference"
+msgstr "参考号码"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:100
+#: templates/yunda_parcel/parcel_intl_edit_form.html:87
+msgid "Dimension and Weight"
+msgstr "重量和尺寸"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:128
+#: templates/yunda_parcel/parcel_intl_edit_form.html:115
+msgid "Parcel item"
+msgstr "货物详情"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:130
+msgid "Please input the goods description in german or english."
+msgstr ""
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:135
+#: templates/yunda_parcel/parcel_intl_detail.html:104
+#: templates/yunda_parcel/parcel_intl_edit_form.html:119
+msgid "Description"
+msgstr "物品描述"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:136
+#: templates/yunda_parcel/parcel_intl_edit_form.html:120
+msgid "Main Catalog"
+msgstr "一级分类"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:137
+#: templates/yunda_parcel/parcel_intl_create_form.html:152
+#: templates/yunda_parcel/parcel_intl_detail.html:106
+#: templates/yunda_parcel/parcel_intl_edit_form.html:121
+#: templates/yunda_parcel/parcel_intl_edit_form.html:136
+msgid "Catalog"
+msgstr "二级分类"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:138
+#: templates/yunda_parcel/parcel_intl_detail.html:107
+#: templates/yunda_parcel/parcel_intl_edit_form.html:122
+msgid "QTY"
+msgstr "数量"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:139
+#: templates/yunda_parcel/parcel_intl_detail.html:108
+#: templates/yunda_parcel/parcel_intl_edit_form.html:123
+msgid "Unit net weight (kg)"
+msgstr "单位净重/kg"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:140
+#: templates/yunda_parcel/parcel_intl_detail.html:109
+#: templates/yunda_parcel/parcel_intl_edit_form.html:124
+msgid "Unit price (EUR)"
+msgstr "单价/Eur"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:141
+#: templates/yunda_parcel/parcel_intl_detail.html:110
+#: templates/yunda_parcel/parcel_intl_edit_form.html:125
+msgid "Origin country"
+msgstr "原产国"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:147
+#: templates/yunda_parcel/parcel_intl_detail.html:105
+#: templates/yunda_parcel/parcel_intl_edit_form.html:131
+msgid "Main catalog"
+msgstr "一级分类"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:163
+#: templates/yunda_parcel/parcel_intl_edit_form.html:147
+msgid "Delete"
+msgstr "删除"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:172
+#: templates/yunda_parcel/parcel_intl_edit_form.html:156
+#: templates/yunda_parcel/receiver_template_form.html:16
+#: templates/yunda_parcel/retoure_label_create_form.html:39
+#: templates/yunda_parcel/sender_template_form.html:18
+msgid "Submit"
+msgstr "提交"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:173
+#: templates/yunda_parcel/parcel_intl_edit_form.html:157
+#: templates/yunda_parcel/retoure_label_create_form.html:40
+msgid "Reset"
+msgstr "重置"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:267
+#: templates/yunda_parcel/parcel_intl_create_form.html:305
+#: templates/yunda_parcel/parcel_intl_edit_form.html:251
+#: templates/yunda_parcel/parcel_intl_edit_form.html:289
+#: templates/yunda_parcel/retoure_label_create_form.html:82
+#: templates/yunda_parcel/retoure_label_create_form.html:121
+msgid "Warning"
+msgstr "警告"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:268
+#: templates/yunda_parcel/parcel_intl_edit_form.html:252
+#: templates/yunda_parcel/retoure_label_create_form.html:83
+msgid "You have to enter at least one parcel detail item!"
+msgstr "最少需要输入1个货物详情"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:306
+#: templates/yunda_parcel/parcel_intl_edit_form.html:290
+msgid "Sorry, you can only enter maximal 8 detail items."
+msgstr "对不起，最多只能输入8行货物详情"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:347
+#: templates/yunda_parcel/parcel_intl_create_form.html:424
+#: templates/yunda_parcel/parcel_intl_edit_form.html:331
+#: templates/yunda_parcel/parcel_intl_edit_form.html:408
+#: templates/yunda_parcel/retoure_label_create_form.html:139
+#: templates/yunda_parcel/retoure_label_create_form.html:192
+msgid "No record."
+msgstr "没有记录"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:349
+#: templates/yunda_parcel/parcel_intl_create_form.html:426
+#: templates/yunda_parcel/parcel_intl_edit_form.html:333
+#: templates/yunda_parcel/parcel_intl_edit_form.html:410
+#: templates/yunda_parcel/receiver_template_detail.html:19
+#: templates/yunda_parcel/receiver_template_list.html:22
+#: templates/yunda_parcel/retoure_label_create_form.html:141
+#: templates/yunda_parcel/retoure_label_create_form.html:194
+#: templates/yunda_parcel/sender_template_detail.html:19
+#: templates/yunda_parcel/sender_template_list.html:22
+msgid "Name"
+msgstr "姓名"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:349
+#: templates/yunda_parcel/parcel_intl_edit_form.html:333
+#: templates/yunda_parcel/receiver_template_detail.html:22
+#: templates/yunda_parcel/receiver_template_list.html:25
+#: templates/yunda_parcel/retoure_label_create_form.html:141
+#: templates/yunda_parcel/sender_template_detail.html:34
+#: templates/yunda_parcel/sender_template_list.html:23
+msgid "City"
+msgstr "城市"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:349
+#: templates/yunda_parcel/parcel_intl_edit_form.html:333
+#: templates/yunda_parcel/retoure_label_create_form.html:141
+#: templates/yunda_parcel/sender_template_list.html:24
+msgid "Tel"
+msgstr "电话"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:426
+#: templates/yunda_parcel/parcel_intl_edit_form.html:410
+#: templates/yunda_parcel/receiver_template_detail.html:21
+#: templates/yunda_parcel/receiver_template_list.html:24
+#: templates/yunda_parcel/retoure_label_create_form.html:194
+msgid "Province"
+msgstr "省/直辖市/自治区"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:426
+#: templates/yunda_parcel/parcel_intl_edit_form.html:410
+#: templates/yunda_parcel/receiver_template_detail.html:27
+#: templates/yunda_parcel/receiver_template_list.html:27
+#: templates/yunda_parcel/retoure_label_create_form.html:194
+msgid "Mobile"
+msgstr "手机号码"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:509
+#: templates/yunda_parcel/parcel_intl_create_form.html:510
+#: templates/yunda_parcel/parcel_intl_create_form.html:618
+#: templates/yunda_parcel/parcel_intl_create_form.html:619
+#: templates/yunda_parcel/parcel_intl_edit_form.html:493
+#: templates/yunda_parcel/parcel_intl_edit_form.html:494
+#: templates/yunda_parcel/parcel_intl_edit_form.html:602
+#: templates/yunda_parcel/parcel_intl_edit_form.html:603
+#: templates/yunda_parcel/retoure_label_create_form.html:252
+#: templates/yunda_parcel/retoure_label_create_form.html:253
+msgid "No address found."
+msgstr "没有发现地址"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:546
+#: templates/yunda_parcel/parcel_intl_create_form.html:654
+#: templates/yunda_parcel/parcel_intl_edit_form.html:530
+#: templates/yunda_parcel/parcel_intl_edit_form.html:638
+#: templates/yunda_parcel/retoure_label_create_form.html:275
+#: templates/yunda_parcel/retoure_label_create_form.html:331
+msgid "Previous"
+msgstr "前一页"
+
+#: templates/yunda_parcel/parcel_intl_create_form.html:571
+#: templates/yunda_parcel/parcel_intl_create_form.html:679
+#: templates/yunda_parcel/parcel_intl_edit_form.html:555
+#: templates/yunda_parcel/parcel_intl_edit_form.html:663
+#: templates/yunda_parcel/retoure_label_create_form.html:288
+#: templates/yunda_parcel/retoure_label_create_form.html:344
+msgid "Next"
+msgstr "下一页"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:5
+msgid "Parcel detail"
+msgstr "货物详情"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:13
+#: templates/yunda_parcel/parcel_list.html:62
+#: templates/yunda_parcel/receiver_template_detail.html:13
+#: templates/yunda_parcel/receiver_template_list.html:42
+#: templates/yunda_parcel/retoure_label_list.html:56
+#: templates/yunda_parcel/sender_template_detail.html:13
+#: templates/yunda_parcel/sender_template_list.html:36
+#: templates/yunda_user/fund_transfer_list.html:25
+msgid "Detail"
+msgstr "详情"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:37
+#: templates/yunda_parcel/retoure_label_detail.html:28
+#: templates/yunda_parcel/sender_template_detail.html:37
+msgid "Tel:"
+msgstr "电话:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:40
+#: templates/yunda_parcel/parcel_intl_detail.html:67
+#: templates/yunda_parcel/retoure_label_detail.html:31
+#: templates/yunda_parcel/sender_template_detail.html:40
+msgid "Mail:"
+msgstr "邮件:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:62
+msgid "Postcode:"
+msgstr "邮编:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:64
+msgid "Mobile phone:"
+msgstr "手机号码:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:73
+msgid "More information"
+msgstr "更多信息"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:74
+msgid "Ref:"
+msgstr "参考号码:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:75
+msgid "Weight (kg):"
+msgstr "重量/kg:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:76
+msgid "Length (cm):"
+msgstr "长度/cm:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:77
+msgid "Width (cm):"
+msgstr "宽度/cm:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:78
+msgid "Height:"
+msgstr "高度:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:79
+msgid "YDE:"
+msgstr "YDE编号:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:80
+msgid "Tracking number:"
+msgstr "跟踪号:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:81
+msgid "Created at:"
+msgstr "生成时间:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:85
+msgid "Charge information"
+msgstr "付款信息"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:86
+msgid "Fee (EUR):"
+msgstr "运费/Eur:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:87
+msgid "Goods value (CNY):"
+msgstr "货物价值/CNY:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:88
+msgid "Customs tax (CNY):"
+msgstr "关税预估/CNY:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:89
+msgid "Due customs tax (CNY):"
+msgstr "预估应缴关税/CNY:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:90
+msgid "CN customs tax go to:"
+msgstr "关税付款人:"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:100
+msgid "Item details"
+msgstr "货物详情"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:135
+#: templates/yunda_parcel/retoure_label_detail.html:48
+msgid "History"
+msgstr "历史记录"
+
+#: templates/yunda_parcel/parcel_intl_detail.html:153
+msgid "Created"
+msgstr "新建生成"
+
+#: templates/yunda_parcel/parcel_list.html:6
+msgid "All intl. shipments"
+msgstr "全部国际邮单"
+
+#: templates/yunda_parcel/parcel_list.html:30
+#: templates/yunda_parcel/retoure_label_list.html:30
+msgid "YDE"
+msgstr "YDE"
+
+#: templates/yunda_parcel/parcel_list.html:31
+#: templates/yunda_parcel/retoure_label_detail.html:38
+#: templates/yunda_parcel/retoure_label_list.html:31
+msgid "Tracking number"
+msgstr "跟踪号码"
+
+#: templates/yunda_parcel/parcel_list.html:32
+msgid "Your ref."
+msgstr "您的参考号码"
+
+#: templates/yunda_parcel/parcel_list.html:33
+#: templates/yunda_parcel/retoure_label_list.html:32
+msgid "Sender name"
+msgstr "发件人姓名"
+
+#: templates/yunda_parcel/parcel_list.html:34
+msgid "Receiver name"
+msgstr "收件人姓名"
+
+#: templates/yunda_parcel/parcel_list.html:35
+msgid "Receiver province"
+msgstr "省/直辖市/自治区"
+
+#: templates/yunda_parcel/parcel_list.html:36
+msgid "Receiver mobilephone"
+msgstr "手机号码"
+
+#: templates/yunda_parcel/parcel_list.html:37
+#: templates/yunda_user/my_price_and_fund.html:48
+msgid "Parcel type"
+msgstr "运输类型"
+
+#: templates/yunda_parcel/parcel_list.html:38
+#: templates/yunda_parcel/retoure_label_list.html:35
+msgid "Already printed"
+msgstr "已打印"
+
+#: templates/yunda_parcel/parcel_list.html:39
+#: templates/yunda_parcel/receiver_template_list.html:28
+#: templates/yunda_parcel/retoure_label_list.html:36
+#: templates/yunda_parcel/sender_template_list.html:25
+msgid "Options"
+msgstr "选项"
+
+#: templates/yunda_parcel/parcel_list.html:89
+msgid "No parcel found."
+msgstr "无邮单"
+
+#: templates/yunda_parcel/receiver_template_detail.html:5
+msgid "Receiver adress template"
+msgstr "收件人地址模板"
+
+#: templates/yunda_parcel/receiver_template_detail.html:10
+msgid "Receiver address template"
+msgstr "收件人地址模板"
+
+#: templates/yunda_parcel/receiver_template_detail.html:20
+#: templates/yunda_parcel/receiver_template_list.html:23
+#: templates/yunda_parcel/sender_template_detail.html:24
+msgid "Company"
+msgstr "公司"
+
+#: templates/yunda_parcel/receiver_template_detail.html:23
+#: templates/yunda_parcel/receiver_template_list.html:26
+msgid "District"
+msgstr "区"
+
+#: templates/yunda_parcel/receiver_template_detail.html:24
+#: templates/yunda_parcel/sender_template_detail.html:33
+msgid "Postcode"
+msgstr "邮编"
+
+#: templates/yunda_parcel/receiver_template_detail.html:25
+#: templates/yunda_parcel/retoure_label_detail.html:10
+msgid "Address"
+msgstr "地址"
+
+#: templates/yunda_parcel/receiver_template_detail.html:26
+msgid "Address line2"
+msgstr "地址行2"
+
+#: templates/yunda_parcel/receiver_template_detail.html:28
+msgid "Email"
+msgstr "电子邮件"
+
+#: templates/yunda_parcel/receiver_template_detail.html:29
+msgid "Country"
+msgstr "国家"
+
+#: templates/yunda_parcel/receiver_template_detail.html:36
+#: templates/yunda_parcel/receiver_template_list.html:43
+#: templates/yunda_parcel/sender_template_detail.html:47
+#: templates/yunda_parcel/sender_template_list.html:37
+msgid "Edit"
+msgstr "编辑"
+
+#: templates/yunda_parcel/receiver_template_list.html:66
+#: templates/yunda_parcel/sender_template_list.html:60
+msgid "No template found."
+msgstr "无模板"
+
+#: templates/yunda_parcel/retoure_label_create_form.html:11
+msgid "Create a new retoure label"
+msgstr "新建回邮单"
+
+#: templates/yunda_parcel/retoure_label_create_form.html:122
+msgid "Sorry, you can only enter a maximum of ten detail items."
+msgstr ""
+
+#: templates/yunda_parcel/retoure_label_detail.html:5
+msgid "Retoure label detail"
+msgstr "详情"
+
+#: templates/yunda_parcel/retoure_label_detail.html:35
+msgid "Info"
+msgstr "回邮单信息"
+
+#: templates/yunda_parcel/retoure_label_detail.html:36
+msgid "YDE number"
+msgstr "YDE编号"
+
+#: templates/yunda_parcel/retoure_label_detail.html:40
+msgid "Created at"
+msgstr "生成时间"
+
+#: templates/yunda_parcel/retoure_label_detail.html:66
+msgid "Created."
+msgstr "已生成"
+
+#: templates/yunda_parcel/retoure_label_list.html:33
+msgid "Sender postcode"
+msgstr "发件人邮编"
+
+#: templates/yunda_parcel/retoure_label_list.html:34
+msgid "Sender city"
+msgstr "发件人城市"
+
+#: templates/yunda_parcel/retoure_label_list.html:83
+#: templates/yunda_user/deposit_transfer_list.html:70
+msgid "No retoure label found."
+msgstr "未发现回邮单"
+
+#: templates/yunda_parcel/sender_template_detail.html:5
+msgid "Sender adress template"
+msgstr "发件人地址模板"
+
+#: templates/yunda_parcel/sender_template_detail.html:10
+msgid "Sender address template"
+msgstr "发件人地址模板"
+
+#: templates/yunda_parcel/sender_template_detail.html:21
+msgid "Name2"
+msgstr "名称行2"
+
+#: templates/yunda_parcel/sender_template_detail.html:26
+msgid "Street"
+msgstr "街道"
+
+#: templates/yunda_parcel/sender_template_detail.html:28
+msgid "Hause number"
+msgstr "门牌号"
+
+#: templates/yunda_parcel/sender_template_detail.html:31
+msgid "Addition"
+msgstr "附加信息"
+
+#: templates/yunda_parcel/sender_template_form.html:8
+#, python-format
+msgid "Account &raquo; %(username)s"
+msgstr ""
+
+#: templates/yunda_user/deposit_transfer_list.html:6
+msgid "Deposit transfer"
+msgstr "资金往来"
+
+#: templates/yunda_user/deposit_transfer_list.html:30
+#: templates/yunda_user/fund_transfer_list.html:12
+msgid "Date time"
+msgstr "时间"
+
+#: templates/yunda_user/deposit_transfer_list.html:31
+#: templates/yunda_user/fund_transfer_list.html:14
+msgid "Type"
+msgstr "类型"
+
+#: templates/yunda_user/deposit_transfer_list.html:32
+#: templates/yunda_user/fund_transfer_list.html:13
+msgid "Amount (EUR)"
+msgstr "金额/Eur"
+
+#: templates/yunda_user/index.html:5
+msgid "Account"
+msgstr ""
+
+#: templates/yunda_user/index.html:32 templates/yunda_user/index.html.py:37
+#: templates/yunda_user/login2.html:32 templates/yunda_user/login2.html:37
+msgid "Welcome to our page"
+msgstr ""
+
+#: templates/yunda_user/login2.html:5
+msgid "Login"
+msgstr ""
+
+#: templates/yunda_user/my_price_and_fund.html:10
+msgid "Deposit and price"
+msgstr "账户余额及邮单价格"
+
+#: templates/yunda_user/my_price_and_fund.html:13
+msgid "Current deposit and price list"
+msgstr "当前账户余额及邮单价格列表"
+
+#: templates/yunda_user/my_price_and_fund.html:23
+#, fuzzy
+#| msgid "Your current deposit (EUR)"
+msgid "Current deposit (EUR)"
+msgstr "您当前的账户余额/Eur"
+
+#: templates/yunda_user/my_price_and_fund.html:24
+#, fuzzy
+#| msgid "Item price (EUR)"
+msgid "DHL retoure label price (EUR)"
+msgstr "单件价格/Eur"
+
+#: templates/yunda_user/my_price_and_fund.html:39
+msgid "Transport price form YUNDA german operation center to receiver in China"
+msgstr ""
+
+#: templates/yunda_user/my_price_and_fund.html:42
+msgid "Customs tax in China not included"
+msgstr ""
+
+#: templates/yunda_user/my_price_and_fund.html:49
+msgid "Start weight (kg)"
+msgstr "首重/kg"
+
+#: templates/yunda_user/my_price_and_fund.html:50
+msgid "Start price (EUR)"
+msgstr "首重价格/Eur"
+
+#: templates/yunda_user/my_price_and_fund.html:51
+msgid "Continuing weight (kg)"
+msgstr "续重/kg"
+
+#: templates/yunda_user/my_price_and_fund.html:52
+msgid "Continuing price (EUR)"
+msgstr "续重价格/Eur"
+
+#: templates/yunda_user/my_price_and_fund.html:53
+msgid "DIM"
+msgstr "体积重量系数"
+
+#: templates/yunda_user/signup.html:6
+msgid "Sign Up"
+msgstr "注册新账号"
+
+#: templates/yunda_user/signup.html:11
+msgid "Create a new account"
+msgstr "注册新账号"
+
+#: templates/yunda_user/signup.html:16
+msgid "Create"
+msgstr "建立"
+
+#: yunda_admin/models.py:14 yunda_admin/models.py:47
+msgid "EUR"
+msgstr "EUR"
+
+#: yunda_admin/models.py:15
+msgid "CNY"
+msgstr "CNY"
+
+#: yunda_admin/models.py:17 yunda_admin/models.py:49
+msgid "Deposit currency type"
+msgstr "充值货币类型"
+
+#: yunda_commen/models.py:13
+msgid "None"
+msgstr "无"
+
+#: yunda_commen/models.py:14
+msgid "By year"
+msgstr "按年"
+
+#: yunda_commen/models.py:15
+msgid "By Month"
+msgstr "按月"
+
+#: yunda_commen/models.py:16
+msgid "By Day"
+msgstr "按天"
+
+#: yunda_commen/models.py:19 yunda_commen/models.py:20
+msgid "Year-%y/%Y, Month-%m, Day-%d"
+msgstr ""
+
+#: yunda_ticket/models.py:8
+msgid "Parcel YDE Number"
+msgstr "YDE编号"
+
+#: yunda_ticket/models.py:9
+msgid "YUNDA tracking number"
+msgstr "韵达追踪号"
+
+#: yunda_ticket/models.py:10
+msgid "Retoure label number"
+msgstr "回邮单号"
+
+#: yunda_ticket/models.py:11
+msgid "Invoice number"
+msgstr ""
+
+#: yunda_ticket/models.py:12
+msgid "Others"
+msgstr "其它"
+
+#~ msgid "Cn customs tax pay by"
+#~ msgstr "关税付款人"
+
+#~ msgid "Only alphabeta, numbers, and \",.-()äÄöÖüÜ\" allowed: %(value)s"
+#~ msgstr "仅允许英文、德文字母、数字及标点\",.-()\": %(value)s"
+
+#~ msgid "Only chinese allowed: %(value)s"
+#~ msgstr "请输入中文: %(value)s"
+
+#~ msgid "Only chinese, alphabeta, number and \"-,.()\" allowed: %(value)s"
+#~ msgstr "仅允许中文、英文字母、数字和标点符号 \"-,.()\": %(value)s"
+
+#~ msgid "Chinese mobile number wrong.pls without 0086 or +86: %(value)s"
+#~ msgstr "中国手机号码有误，请勿输入0086或+86: %(value)s"
+
+#~ msgid "Chinese postcode should be 6 digits, not with 0 start: %(value)s"
+#~ msgstr "中国邮编输入有误: %(value)s"
+
+#~ msgid "German postcode should be 5 digits: %(value)s"
+#~ msgstr "德国邮编输入有误: %(value)s"
+
+#~ msgid "Code"
+#~ msgstr "代码"
+
+#~ msgid "Destination country"
+#~ msgstr "目的国家"
+
+#~ msgid "ISO country code."
+#~ msgstr "ISO国家编码"
+
+#~ msgid "Max weight (kg)"
+#~ msgstr "最大重量/kg"
+
+#~ msgid "Need shenfenzheng"
+#~ msgstr "需要身份证"
+
+#~ msgid "Customs "
+#~ msgstr "海关"
+
+#~ msgid "Use comma between different customs."
+#~ msgstr "不同海关之间使用小写逗号分隔"
+
+#~ msgid "Has CN customs tax"
+#~ msgstr "需要缴纳关税"
+
+#~ msgid "Start weight (KG)"
+#~ msgstr "首重/kg"
+
+#~ msgid "Continuing weight (KG)"
+#~ msgstr "续重/kg"
+
+#~ msgid "Volume weight rate"
+#~ msgstr "体积重量系数"
+
+#~ msgid "Branch start price (EUR)"
+#~ msgstr "分部首重价格/Eur"
+
+#~ msgid "Branch start weight (KG)"
+#~ msgstr "分部首重/kg"
+
+#~ msgid "Branch continuing price (EUR)"
+#~ msgstr "分部续重价格/Eur"
+
+#~ msgid "Branch continuing weight (KG)"
+#~ msgstr "分部续重/kg"
+
+#~ msgid "Branch volume weight rate"
+#~ msgstr "分部体积重量系数"
+
+#~ msgid "Monthly minimal qty"
+#~ msgstr "月度最小量"
+
+#~ msgid "Need pay rest"
+#~ msgstr "余款未付"
+
+#~ msgid "Complete"
+#~ msgstr "完成"
+
+#~ msgid "Paid by sender"
+#~ msgstr "发件人已支付"
+
+#~ msgid "Need pay rest by sender"
+#~ msgstr "需发件人支付余款"
+
+#~ msgid "No Tax"
+#~ msgstr "无关税"
+
+#~ msgid "Need pay"
+#~ msgstr "待付款"
+
+#~ msgid "Receiver will pay"
+#~ msgstr "收件人支付"
+
+#~ msgid "Need pay by receiver"
+#~ msgstr "待收件人付款"
+
+#~ msgid "At sender"
+#~ msgstr "未发货"
+
+#~ msgid "Way from sender to operation center"
+#~ msgstr "发件人已发货"
+
+#~ msgid "At operation center"
+#~ msgstr "已到处理中心"
+
+#~ msgid "Waiting to export"
+#~ msgstr "等待出口清关"
+
+#~ msgid "Flied"
+#~ msgstr "已起飞"
+
+#~ msgid "At destination customs"
+#~ msgstr "已到目的国海关"
+
+#~ msgid "At destination yunda"
+#~ msgstr "目的国韵达已收货"
+
+#~ msgid "Canceled"
+#~ msgstr "已取消"
+
+#~ msgid "Payment status"
+#~ msgstr "付款状态"
+
+#~ msgid "Position status"
+#~ msgstr "位置状态"
+
+#~ msgid "CN tax status"
+#~ msgstr "关税支付状态"
+
+#~ msgid "Sender name2"
+#~ msgstr "发件人名称行2"
+
+#~ msgid "Sender company"
+#~ msgstr "发件人公司"
+
+#~ msgid "Sender state"
+#~ msgstr "发件人州"
+
+#~ msgid "Sender street"
+#~ msgstr "发件人街道"
+
+#~ msgid "Sender street addition"
+#~ msgstr "发件人街道附加信息"
+
+#~ msgid "Sender hause number"
+#~ msgstr "发件人门牌号"
+
+#~ msgid "Sender telephone"
+#~ msgstr "发件人电话"
+
+#~ msgid "Sender email"
+#~ msgstr "发件人电邮"
+
+#~ msgid "Sender country"
+#~ msgstr "发件人国家"
+
+#~ msgid "Receiver company"
+#~ msgstr "收件人公司"
+
+#~ msgid "Receiver city"
+#~ msgstr "收件人城市"
+
+#~ msgid "Receiver district"
+#~ msgstr "收件人区/县"
+
+#~ msgid "Receiver postcode"
+#~ msgstr "收件人邮编"
+
+#~ msgid "Receiver address2"
+#~ msgstr "收件人地址行2"
+
+#~ msgid "Receiver email"
+#~ msgstr "收件人电邮"
+
+#~ msgid "Receiver country"
+#~ msgstr "收件人国家"
+
+#~ msgid "Ref number"
+#~ msgstr "参考号码"
+
+#~ msgid "Weight (kg)"
+#~ msgstr "重量/kg"
+
+#~ msgid "Length (cm)"
+#~ msgstr "长度/cm"
+
+#~ msgid "Width (cm)"
+#~ msgstr "宽度/cm"
+
+#~ msgid "Height (cm)"
+#~ msgstr "高度/cm"
+
+#~ msgid "Printed at"
+#~ msgstr "打印时间"
+
+#~ msgid "Pay"
+#~ msgstr "付款"
+
+#~ msgid "Print again"
+#~ msgstr "重新打印"
+
+#~ msgid "Print"
+#~ msgstr "打印"
+
+#~ msgid "Pay rest"
+#~ msgstr "支付余款"
+
+#~ msgid "Already deleted"
+#~ msgstr "已经删除"
+
+#~ msgid "More than one piece when > 1000 CNY."
+#~ msgstr "货物价值高于1000CNY，并且多于一件物品"
+
+#~ msgid "is forbidden by chinese customs."
+#~ msgstr "中国海关禁止进口"
+
+#~ msgid "Short of deposit."
+#~ msgstr "余额不足"
+
+#~ msgid "Chinese name"
+#~ msgstr "中文名称"
+
+#~ msgid "English name"
+#~ msgstr "英文名称"
+
+#~ msgid "CN custom number"
+#~ msgstr "中国海关编号"
+
+#~ msgid "Charge by weight"
+#~ msgstr "按重量计税"
+
+#~ msgid "Forbidden customs "
+#~ msgstr "禁止海关"
+
+#~ msgid "Qty"
+#~ msgstr "数量"
+
+#~ msgid "Item net weight (KG)"
+#~ msgstr "单件净重/kg"
+
+#~ msgid "Original country"
+#~ msgstr "原产国"
+
+#~ msgid "Shenfengzheng number"
+#~ msgstr "身份证号码"
+
+#~ msgid "Mobilephone"
+#~ msgstr "手机号码"
+
+#~ msgid "Image"
+#~ msgstr "图片"
+
+#~ msgid "Already paid"
+#~ msgstr "已付款"
+
+#~ msgid "Short of fund."
+#~ msgstr "余额不足"
+
+#~ msgid "Branch name"
+#~ msgstr "分部名称"
+
+#~ msgid "Branch number"
+#~ msgstr "分部编号"
+
+#~ msgid "Addtion"
+#~ msgstr "地址行2"
+
+#~ msgid "State"
+#~ msgstr "省/州"
+
+#~ msgid "Germany"
+#~ msgstr "德国"
+
+#~ msgid "China"
+#~ msgstr "中国"
+
+#~ msgid "Hongkong"
+#~ msgstr "香港"
+
+#~ msgid "Taiwan"
+#~ msgstr "台湾"
+
+#~ msgid "Macau"
+#~ msgstr "澳门"
+
+#~ msgid "Telphone"
+#~ msgstr "电话"
+
+#~ msgid "Fax"
+#~ msgstr "传真"
+
+#~ msgid "Vat ID"
+#~ msgstr "增值税号"
+
+#~ msgid "Register number"
+#~ msgstr "公司注册号"
+
+#~ msgid "Staff number"
+#~ msgstr "员工编号"
+
+#~ msgid "Amount"
+#~ msgstr "金额"
+
+#~ msgid "deposit entry"
+#~ msgstr "充值"
+
+#~ msgid "deposit withdraw"
+#~ msgstr "提现"
+
+#~ msgid "Parcel payment"
+#~ msgstr "支付国际邮单"
+
+#~ msgid "Parcel canceled"
+#~ msgstr "国际邮单取消"
+
+#~ msgid "Customs payment"
+#~ msgstr "支付关税"
+
+#~ msgid "Customs pay_back"
+#~ msgstr "关税退回"
+
+#~ msgid "Retoure label payment"
+#~ msgstr "支付回邮单"
+
+#~ msgid "Parcel"
+#~ msgstr "国际邮单"
+
+#~ msgid "CN tax"
+#~ msgstr "中国关税"

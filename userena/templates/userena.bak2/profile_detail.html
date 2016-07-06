@@ -1,0 +1,84 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block title %}{% blocktrans with profile.user.username as username %}{{ username }}'s profile.{% endblocktrans %}{% endblock %}
+{% block content_title %}<h2>{{ profile.user.username }} {% if profile.user.get_full_name %}({{ profile.user.get_full_name }}){% endif %}</h2>{% endblock %}
+
+{% block content %}
+  <div class="white-box">
+
+    <div id="details">
+      {% block profile_details %}
+        
+        <dl>
+          {% block profile_definition_list %}
+            {% if profile.user.email and not hide_email %}
+              <dt>{% trans "Email" %}</dt>
+              <dd>{{ profile.user.email }}</dd>
+            {% endif %}
+            {% if profile.user.get_full_name %}
+              <dt>{% trans "Name" %}</dt>
+              <dd>{{ profile.user.get_full_name }}</dd>
+            {% endif %}            
+            {% if profile.company %}
+              <dt>{% trans "Company" %}</dt>
+              <dd>{{ profile.company }}</dd>
+            {% endif %}
+            {% if profile.street %}
+              <dt>{% trans "Street" %}</dt>
+              <dd>{{ profile.street }}</dd>
+            {% endif %}
+            {% if profile.hause_number %}
+              <dt>{% trans "Hause number" %}</dt>
+              <dd>{{ profile.hause_number }}</dd>
+            {% endif %}
+            {% if profile.street_add %}
+              <dt>{% trans "Street addition" %}</dt>
+              <dd>{{ profile.street_add }}</dd>
+            {% endif %}
+            {% if profile.postcode %}
+              <dt>{% trans "Postcode" %}</dt>
+              <dd>{{ profile.postcode }}</dd>
+            {% endif %}
+            {% if profile.city %}
+              <dt>{% trans "City" %}</dt>
+              <dd>{{ profile.city }}</dd>
+            {% endif %}
+            {% if profile.state %}
+              <dt>{% trans "State" %}</dt>
+              <dd>{{ profile.state }}</dd>
+            {% endif %}
+            {% if profile.country_code %}
+              <dt>{% trans "Country" %}</dt>
+              <dd>{{ profile.get_country_code_display }}</dd>
+            {% endif %}
+            {% if profile.tel %}
+              <dt>{% trans "Telephone" %}</dt>
+              <dd>{{ profile.tel }}</dd>
+            {% endif %}
+            {% if profile.fax %}
+              <dt>{% trans "Fax" %}</dt>
+              <dd>{{ profile.fax }}</dd>
+            {% endif %}
+            {% if profile.vat_id %}
+              <dt>{% trans "Vat id" %}</dt>
+              <dd>{{ profile.vat_id }}</dd>
+            {% endif %}
+          {% endblock %}
+        </dl>
+      {% endblock %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-user-center').addClass('active open');
+    $('#sidebar-1-user-center-profile').addClass('active');
+    
+  });
+</script>
+
+{% endblock %}

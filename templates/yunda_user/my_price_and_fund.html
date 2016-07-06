@@ -1,0 +1,90 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{{page_title}}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+        <h1>
+            {% trans 'Deposit and price' %}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {% trans 'Current deposit and price list' %}
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+
+    
+    <div class="row">
+        <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>{% trans "Current deposit (EUR)" %}</th>
+                  <th>{% trans "DHL retoure label price (EUR)" %}</th>
+                  <th>{% trans "Current CNY to EUR changing rate" %}**</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <th>{{ user.userprofile.current_deposit|floatformat:2 }}</th>
+                  <th>{{ retoure_price|floatformat:2 }}</th>
+                  <th>1/{{ eur_to_cny_rate|floatformat:2 }}</th>
+                  </th>
+              </tr>
+          </tbody>          
+        </table>   
+        
+    </div>
+    
+    <div class="row">
+        <h3><i class="ace-icon fa fa-angle-double-down"></i> {% trans "Transport price form YUNDA german operation center to receiver in China" %}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {% trans 'Customs tax in China not included' %}
+            </small>
+        </h3>
+        <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>{% trans "Parcel type" %}</th>
+                  <th>{% trans "Start weight (kg)" %}</th>
+                  <th>{% trans "Start price (EUR)" %}</th>
+                  <th>{% trans "Continuing weight (kg)" %}</th>
+                  <th>{% trans "Continuing price (EUR)" %}</th>
+                  <th>{% trans "DIM" %}**</th>
+              </tr>
+          </thead>
+          <tbody>
+          {% for myprice in myprices%}
+              <tr>
+                  <th>{{myprice.parcel_type }}</th>
+                  <th>{{myprice.start_weight_kg|floatformat:3 }}</th>
+                  <th>{{myprice.start_price_eur|floatformat:2 }}</th>
+                  <th>{{myprice.continuing_weight_kg|floatformat:3 }}</th>
+                  <th>{{myprice.continuing_price_eur|floatformat:2 }}</th>
+                  <th>{{myprice.volume_weight_rate|floatformat:0 }}</th>
+				  </th>
+              </tr>
+          {% endfor %}
+          </tbody>          
+        </table>   
+		
+	</div>
+    <div class="row">
+       <p>
+         ** {% trans "Please read the help." %}  <a href="{% url 'help' %}">{% trans 'Click' %}</a>
+       </p> 
+        
+    </div>
+    
+{% endblock %}
+{% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-user-center').addClass('active open');
+    $('#sidebar-1-user-center-my-price').addClass('active');
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'userena/base_userena.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Signup" %}{% endblock %}
+{% block content_title %}
+    <i class="ace-icon fa fa-coffee red"></i>
+    {% trans 'Create new account' %}
+{% endblock %}
+{% block content %}
+	<form action="" method="post" class="form">
+	  {% csrf_token %}
+	  <fieldset>
+	     
+	    {{ form.non_field_errors }}
+	    {% for field in form %}
+	    {{ field.errors }}
+	    {% comment %} Displaying checkboxes differently {% endcomment %}
+	    {% if field.name == 'tos' %}
+	    <p class="checkbox">
+	    <label for="id_{{ field.name }}">{% bootstrap_field field %} {{ field.label }}</label>
+	    </p>
+	    {% else %}
+	    <p>
+	   
+	    {% bootstrap_field field %}
+	    </p>
+	    {% endif %}
+	    {% endfor %}
+	    
+	  </fieldset>
+	  <button type="submit" class="btn btn-sm btn-danger btn-block">
+           <span class="bigger-110"><b>{% trans "Accept the terms and signup" %}</b></span>
+      </button>
+	  
+	</form>
+	<div class="row">
+	    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+	        <p class="forgot-password"><a href="{% url 'userena_password_reset' %}" title="{% trans 'Forgot your password?' %}">{% trans "Forgot your password?" %}</a></p>
+	    </div>
+	    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+	        <p class="new-signup pull-right"><a href="{% url 'userena_signin' %}" title="{% trans 'Signin' %}">{% trans "Return to signin" %}</a></p>
+	    </div>  
+	</div>
+{% endblock %}

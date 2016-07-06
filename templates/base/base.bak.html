@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>{% block title %}Userena{% endblock %}</title>
+  {% block meta %}{% endblock %}
+  <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'bootstrap/css/navbar-fixed-top.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/signin.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/bootstrap-dialog.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="{% static 'bootstrap/assets/js/ie8-responsive-file-warning.js' %}"></script><![endif]-->
+    <script src="{% static 'bootstrap/assets/js/ie-emulation-modes-warning.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    
+
+</head>
+<body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
+  <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'home' %}">YUNDA Express</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            {% if request.user.is_authenticated %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans 'Create transport' %}<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header">{% trans 'International transport' %}</li>
+                <li><a href="{% url 'intl_parcel_create' %}">{% trans 'Create international shipment' %}</a></li>
+                <li><a href="{% url 'completed_intl_parcel_list' %}">{% trans 'All paid shipments' %}</a></li>
+                <li><a href="{% url 'unpaid_intl_parcel_list' %}">{% trans 'All unpaid shipments' %}</a></li>
+                <li><a href="{% url 'intl_parcel_list' %}">{% trans 'All shipments' %}</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">{% trans 'Inland transport' %}</li>
+                <li><a href="{% url 'create_dhl_retoure_label' %}">{% trans 'Create retoure label' %}</a></li>
+                <li><a href="{% url 'retoure_label_list' %}">{% trans 'All retoure labels' %}</a></li>
+                <li><a href="{% url 'unpaid_retoure_label_list' %}">{% trans 'All unpaid retoure labels' %}</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">{% trans 'Address template' %}</li>
+                <li><a href="{% url 'sender_template_list' %}">{% trans 'Sender template' %}</a></li>
+                <li><a href="{% url 'receiver_template_list' %}">{% trans 'Receiver template' %}</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans 'Tracking and trace' %}<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header">{% trans 'Delayed' %}</li>
+                <li><a href="#">{% trans 'Delayed at Frankfurt' %}</a></li>
+                <li><a href="#">{% trans 'Delayed at customs' %}</a></li>
+                <li><a href="#">{% trans 'Due to customs tax' %}</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">{% trans 'Service ticket' %}</li>
+                <li><a href="#">{% trans 'Create ticket' %}</a></li>
+                <li><a href="#">{% trans 'All open tickets' %}</a></li>
+                <li><a href="#">{% trans 'Finished tickets' %}</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans 'Price and payment' %}<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">      
+                <li><a href="#">{% trans 'My price and fund' %}</a></li>
+
+              </ul>
+            </li>
+            
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "My account" %}<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li class="first"><a href="{% url 'userena_profile_detail' user.username %}"><span>{% trans 'View profile' %}</span></a></li>
+			    <li class="selected"><a href="{% url 'userena_profile_edit' user.username %}">{% trans "Edit profile" %}</a></li>
+			    <li><a href="{% url 'userena_password_change' user.username %}">{% trans "Change password" %}</a></li>
+			    <li class="last"><a href="{% url 'userena_email_change' user.username %}">{% trans "Change email" %}</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Help" %}<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">{% trans "FAQ" %}</a></li>
+                <li><a href="#">{% trans "Chinese customs policy" %}</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li><a href="#">{% trans "About YUNDA" %}</a></li>
+            <li><a href="#">{% trans "Services" %}</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Help" %}<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">{% trans "FAQ" %}</a></li>
+                <li><a href="#">{% trans "Chinese customs policy" %}</a></li>
+              </ul>
+            </li>
+            {% endif %}
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            {% if request.user.is_authenticated %}
+            <li><a href="{% url 'userena_signout' %}">Sign out</a></li>
+            {% else %}
+            <li><a href="{% url 'userena_signin' %}">Sign in</a></li>
+            <li><a href="{% url 'userena_signup' %}">New account</a></li>
+            {% endif %}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+  <div id="body" class="container">
+    {% block body %}
+      <div class="content_title">
+        {% block content_title %}{% endblock %}
+      </div>
+      <div class="content">
+        {% block content %}{% endblock %}
+      </div>
+    {% endblock %}
+  </div>
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'bootstrap/assets/js/ie10-viewport-bug-workaround.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap-dialog.min.js' %}"></script>
+    {% block footer-script %}{% endblock %}
+</body>
+</html>

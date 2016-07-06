@@ -1,0 +1,61 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block content %}
+<!-- #section:pages/error -->
+                                <div class="error-container">
+    <div class="well">
+                                        <h1 class="grey lighter smaller">
+                                            <span class="red bigger-125">
+                                                <i class="ace-icon fa fa-exclamation-triangle"></i>
+                                            </span>
+                                            {% trans 'Error' %}
+                                        </h1>
+
+                                        <hr />
+                                        <h3 class="lighter smaller">{{ msg }}</h3>
+
+                                        <div>
+                                           
+
+                                            <div class="space"></div>
+                                            <h4 class="smaller">{% trans 'Try one of the following' %}:</h4>
+
+                                            <ul class="list-unstyled spaced inline bigger-110 margin-15">
+                                                <li>
+                                                    <i class="ace-icon fa fa-hand-o-right red"></i>
+                                                    {% trans 'Re-check the url for typos' %}
+                                                </li>
+
+                                                <li>
+                                                    <i class="ace-icon fa fa-hand-o-right red"></i>
+                                                    {% trans 'Read the faq' %}
+                                                </li>
+
+                                                <li>
+                                                    <i class="ace-icon fa fa-hand-o-right red"></i>
+                                                    {% trans 'Tell us about it' %}
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <hr />
+                                        <div class="space"></div>
+
+                                        <div class="left">
+                                            <a href="javascript:history.back()" class="btn btn-danger">
+                                                <i class="ace-icon fa fa-arrow-left"></i>
+                                                {% trans 'Go Back' %}
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                <!-- /section:pages/error -->
+{% endblock %}
+

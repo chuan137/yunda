@@ -1,0 +1,208 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Parcel detail" %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+        <h1>
+            {% trans 'Intl. shipment' %}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {% trans 'Detail' %}
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+<div class="row page-header">
+      <span class="label label-xlg label-warning arrowed-right">{% trans 'Fill parcel information' %}</span>
+      <span class="label label-xlg label-warning arrowed-in arrowed-right">{% trans 'Check information' %}</span>
+      <span class="label label-xlg label-warning arrowed-in arrowed-right">{% trans 'Pay' %}</span>
+      <span class="label label-xlg label-warning arrowed-in arrowed-right">{% trans 'Print label' %}</span>
+      <span class="label label-xlg label-warning arrowed-in arrowed-right">{% trans 'Paste label at parcel' %}</span>
+      <span class="label label-xlg label-warning arrowed-in arrowed-right">{% trans 'Send to YUNDA operation center' %}</span>
+</div>
+<div class="row page-header">
+    <div class="btn-group">
+    
+         {% for action in parcel.get_current_usable_actions %}
+               <a class="btn btn-sm btn-danger" href="{% url 'parcel_intl_detail' parcel.yde_number %}{{action.url}}/">{{action.name}}</a>
+    
+         {% endfor %}
+     </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <legend>{% trans "Sender address" %}</legend>
+        {{ parcel.sender_name }}<br>
+        {% if parcel.sender_name2 %}
+            {{ parcel.sender_name2 }}<br>
+        {% endif %}
+        {% if parcel.sender_company %}
+            {{ parcel.sender_company }}<br>
+        {% endif %}
+        {{ parcel.sender_street }}
+        {% if parcel.sender_hause_number %}
+            {{ parcel.sender_hause_number }}
+        {% endif %}<br>
+        {% if parcel.sender_add %}
+            {{ parcel.sender_add }}<br>
+        {% endif %}
+        {{ parcel.sender_postcode }} {{ parcel.sender_city }}<br>
+        Germany<br>
+        {% if parcel.sender_tel %}
+            {% trans "Tel:" %} {{ parcel.sender_tel }}<br>
+        {% endif %}
+        {% if parcel.sender_email %}
+            {% trans "Mail:" %} {{ parcel.sender_email }}<br>
+        {% endif %}        
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <legend>{% trans "Receiver address" %}</legend>
+        {{ parcel.receiver_name }}<br>
+        {% if parcel.receiver_company %}
+            {{ parcel.receiver_company }}<br>
+        {% endif %}
+        {% if parcel.receiver_province %}
+            {{ parcel.receiver_province }}
+        {% endif %}
+        {% if parcel.receiver_city %}
+            {{ parcel.receiver_city }}
+        {% endif %}
+        {% if parcel.receiver_district %}
+            {{ parcel.receiver_district }}
+        {% endif %}<br>
+        {{ parcel.receiver_address }}<br>
+        {% if parcel.receiver_address2 %}
+            {{ parcel.receiver_address2 }}<br>
+        {% endif %}
+        {% trans "Postcode:" %} {{ parcel.receiver_postcode }}<br>
+        {% if parcel.receiver_mobile %}
+            {% trans "Mobile phone:" %} {{ parcel.receiver_mobile }}<br>
+        {% endif %}
+        {% if parcel.receiver_email %}
+            {% trans "Mail:" %} {{ parcel.receiver_email }}<br>
+        {% endif %}        
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+        <legend>{% trans "More information" %}</legend>
+        {% trans "Ref:" %} {{ parcel.ref }}<br>
+        {% trans "Weight (kg):" %} {{ parcel.weight_kg|floatformat:-3 }}<br>
+        {% trans "Length (cm):" %} {{ parcel.length_cm|floatformat:0 }}<br>
+        {% trans "Width (cm):" %} {{ parcel.width_cm|floatformat:0}}<br>
+        {% trans "Height (cm):" %} {{ parcel.height_cm|floatformat:0 }}<br>
+        {% trans "YDE:" %} {{ parcel.yde_number }}<br>
+        {% trans "Tracking number:" %} {{ parcel.tracking_number }}<br>
+        {% trans "Created at:" %} {{ parcel.created_at }}<br>
+        
+    </div>
+    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+        <legend>{% trans "Charge information" %}</legend>
+        <b>**{% trans "Fee (EUR):" %} {{ parcel.get_fee_eur|floatformat:2 }}**</b><br>
+        {% trans "Goods value (CNY):" %} {{ parcel.get_value_cny|floatformat:2 }}<br>         
+        {% trans "Customs tax (CNY):" %} {{ parcel.get_cn_customs_tax_cny|floatformat:2 }}<br> 
+        <b>**{% trans "Due customs tax (CNY):" %} {{ parcel.get_due_cn_customs_tax_cny|floatformat:2 }}**</b><br> 
+        {% trans "CN customs tax go to:" %} 
+        {% if parcel.sender_pay_cn_customs %}{% trans 'Sender' %}
+        {% else %}{% trans 'Receiver' %}
+        {% endif %}
+        <br> 
+    </div>
+    
+</div>
+<div class='row'>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <legend>{% trans "Item details" %}</legend>
+        <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>{% trans "Description" %}</th>
+                  <th>{% trans "Main catalog" %}</th>
+                  <th>{% trans "Catalog" %}</th>
+                  <th>{% trans "Tax rate" %}</th>
+                  <th>{% trans "QTY" %}</th>
+                  <th>{% trans "Unit net weight (kg)" %}</th>
+                  <th>{% trans "Unit price (EUR)" %}</th>
+                  <th>{% trans "Origin country" %}</th>
+              </tr>
+          </thead>
+          <tbody>
+          {% for detail in parcel.details.all %}
+              <tr>
+                  <th>{{detail.description}}</th>
+                  <th>{{detail.cn_customs_tax.categories.first }}</th>
+                  <th>{{detail.cn_customs_tax}}</th>
+                  <th>{{detail.cn_customs_tax.get_tax_rate_to_display}}</th>
+                  <th>{{detail.qty|floatformat:0}}</th>
+                  <th>{{detail.item_net_weight_kg|floatformat:-3}}</th>
+                  <th>{{detail.item_price_eur|floatformat:2}}</th>
+                  <th>{{detail.original_country}}</th>
+              </tr>
+          {% endfor %}
+          </tbody>
+          
+        </table>      
+    </div>
+</div>
+<div class='row'>
+    <div class="col-xs-12 col-sm-6 widget-container-col">
+	    <div class="widget-box">
+	        <!-- #section:custom/widget-box.header.options -->
+	        <div class="widget-header widget-header-small">
+	            <h4 class="widget-title">{% trans 'History' %}</h4>
+	
+	            <div class="widget-toolbar">	
+	                <a data-action="collapse" href="#">
+	                    <i class="ace-icon fa fa-chevron-up"></i>
+	                </a>
+	            </div>
+	        </div>
+	
+	        <!-- /section:custom/widget-box.header.options -->
+	        <div class="widget-body">
+	            <div class="widget-main">
+	               <div class="alert alert-info">
+                        <div class="time">
+                            <i class="ace-icon fa fa-clock-o"></i>
+                            <span class="green">{{ parcel.created_at }}</span>
+                        </div>
+
+                        <div class="name">{% trans 'Created' %}.
+                        </div>
+                    </div>
+	               {% for history in parcel.parcelstatushistory_set.all %}
+	                <div class="alert alert-info">
+	                    <div class="time">
+                            <i class="ace-icon fa fa-clock-o"></i>
+                            <span class="green">{{ history.create_at }}</span>
+                        </div>
+
+                        <div class="name">{{ history.get_type_display }}: {{ history.get_status_display }}.
+                        </div>
+	                </div>
+	               {% endfor %}
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>
+<div class="form-actions">
+    <div class="btn-group">
+    
+	     {% for action in parcel.get_current_usable_actions %}
+	           <a class="btn btn-sm btn-danger" href="{% url 'parcel_intl_detail' parcel.yde_number %}{{action.url}}/">{{action.name}}</a>
+	
+	     {% endfor %}
+     </div>
+</div>
+{% endblock %}
+{% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-intl-shipment').addClass('active open');
+  });
+</script>
+
+{% endblock %}

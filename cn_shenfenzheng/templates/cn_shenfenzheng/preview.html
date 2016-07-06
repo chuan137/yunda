@@ -1,0 +1,115 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Receiver adress template" %}{% endblock %}
+{% block add_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/picEdit/css/picedit.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+        <h1>
+            上传身份证图片
+        </h1>
+    </div><!-- /.page-header -->
+    <form action="{% url 'cn_shenfenzheng_ajax_upload' %}" method="post" enctype="multipart/form-data">
+<div class="row">
+    <div class="well well-sm">
+            根据中国海关最新规定，为配合进口货物查验，证明包裹物品确系个人自用，办理海关入境清关手续时需要提交收件人身份证明。海关相关规定请参考<a href="http://www.customs.gov.cn/publish/portal0/tab517/info265077.htm" target="_blank">
+                《中华人民共和国海关对进出境快件监管办法》
+                <i class="fa fa-external-link bigger-110"></i>
+            </a>第二十二条，或致电海关咨询：12360。<br />
+            <b>注意：字体头像还有身份证有效期必须要清晰可辨。</b><br />
+            韵达快递承诺妥善保存所有信息，直接提交给海关进行查验，绝不用做其它途径，其他任何人均无法查看。
+            
+    </div>
+    
+	
+	    {% csrf_token %}
+	    <div class="row">
+	    {% bootstrap_field form.name layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}<div id="name-span" class='col-sm-7 col-md-7 col-lg-7 hidden'></div>	    
+	    </div><div class="row">
+	    {% bootstrap_field form.mobile layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}<div id="mobile-span" class='col-sm-7 col-md-7 col-lg-7 hidden'></div>
+	    </div><div class="row">
+	    {% bootstrap_field form.number layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}<div id="number-span" class='col-sm-7 col-md-7 col-lg-7 hidden'></div>
+	    </div><div class="row">
+		    <input type="file" name="shenfenzheng1" id="id_shenfenzheng1"></input>
+		    <input type="file" name="shenfenzheng2" id="id_shenfenzheng2"></input>
+		</div>
+</div>
+<div class="row">
+<div class="col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-7 col-md-7 col-lg-7">
+            <button type="submit" class="btn btn-danger btn-sm">{% trans "Submit" %}</button>
+            <button type="reset" class="btn btn-cancel btn-sm">{% trans "Reset" %}</button>
+        </div></div>
+</form>
+<div class="row">
+<div class="col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-7 col-md-7 col-lg-7">
+            <p id="upload-result"></p>
+        </div></div>
+{% endblock %}
+{% block footer-script %}
+
+<script type="text/javascript" src="{% static 'assets/picEdit/js/picedit.js' %}"></script>
+<script type="text/javascript">
+$.extend({
+  getUrlVars: function(){
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  },
+  getUrlVar: function(name){
+    return $.getUrlVars()[name];
+  }
+});
+jQuery(function($){
+    $('#id_shenfenzheng1').picEdit({
+        maxWidth:400,
+        maxHeight:180,
+        formSubmitted: function(response){
+            alert('Form submitted!');
+        }
+    });
+    $('#id_shenfenzheng2').picEdit({
+        maxWidth:400,
+        maxHeight:180,
+        formSubmitted: function(response){
+            alert('Form submitted2!');
+            console.log(response);
+            result=JSON.parse(response.response)
+            if (result.result){
+                $('#upload-result').html('上传成功')
+            }
+            else{
+                $('#upload-result').html('上传失败：'+result.info)
+            }
+            console.log(result.info);
+        }
+    });
+    var name=$.getUrlVar('name');
+    var number=$.getUrlVar('number');
+    var mobile=$.getUrlVar('mobile');
+    if (name){
+        $('#id_name').val(decodeURI(name)).addClass('hidden');
+        $('#name-span').removeClass('hidden').html(decodeURI(name));
+        }
+    if (number){
+        $('#id_number').val(decodeURI(number)).addClass('hidden');
+        $('#number-span').removeClass('hidden').html(decodeURI(number));
+        }
+    if (mobile){
+        $('#id_mobile').val(decodeURI(mobile)).addClass('hidden');
+        $('#mobile-span').removeClass('hidden').html(decodeURI(mobile));
+        }        
+});
+</script>
+
+{% endblock %}

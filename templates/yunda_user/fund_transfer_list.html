@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{{page_title}}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>{% trans "Date time" %}</th>
+                  <th>{% trans "Amount (EUR)" %}</th>
+                  <th>{% trans "Type" %}</th>
+                  <th>{% trans "Reference" %}</th>
+              </tr>
+          </thead>
+          <tbody>
+          {% for transfer in transfers%}
+              <tr>
+                  <th>{{transfer.created_at }}</th>
+                  <th>{{transfer.amount }}</th>
+                  <th>{{transfer.get_type_display }}</th>
+                  <th>{{transfer.ref }}</th>
+                  <th><a href="#">{% trans 'Detail' %}</a>
+				  </th>
+              </tr>
+          {% endfor %}
+          </tbody>          
+        </table>   
+		
+	</div>
+    
+    <div class="row">
+	    {% ifnotequal curPage 1 %}  
+	        <a href="?curPage={{ curPage }}&&allPage={{ allPage }}&&pageType=pageUp">  
+	            {% trans 'Previous page' %}   
+	        </a>  
+	    {% endifnotequal %}   
+	  
+	        {% trans 'Page' %} {{ curPage }}/{{ allPage }}
+	  
+	         <!-- 如果当前是最后一页，就不显示【下一页】链接 -->  
+	    {% ifnotequal curPage allPage %}  
+	        <a href="?curPage={{ curPage }}&&allPage={{ allPage }}&&pageType=pageDown">  
+	            {% trans 'Next page' %}  
+	        </a>  
+	    {% endifnotequal %} 
+    </div>
+{% endblock %}

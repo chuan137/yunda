@@ -1,0 +1,511 @@
+{% extends 'base/ace-base-no-nav.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}
+    {% trans 'Help' %} - {% trans 'YUNDA Europe' %}
+{% endblock %}
+{% block content %}
+<div class="page-header">
+                            <h1>
+                                {% trans 'Help center' %}
+                                <small>
+                                    <i class="ace-icon fa fa-angle-double-right"></i>
+                                    FAQ
+                                </small>
+                            </h1>
+                        </div><!-- /.page-header -->
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <!-- PAGE CONTENT BEGINS -->
+                                <div class="tabbable">
+                                    <!-- #section:pages/faq -->
+                                    <ul class="nav nav-tabs padding-18 tab-size-bigger" id="myTab">
+                                        <li class="active">
+                                            <a data-toggle="tab" href="#faq-tab-1">
+                                                <i class="red ace-icon fa fa-plane bigger-120"></i>
+                                                {% trans 'Shipment' %}
+                                            </a>
+                                        </li>
+
+
+                                        <li>
+                                            <a data-toggle="tab" href="#faq-tab-3">
+                                                <i class="green ace-icon fa fa-eur bigger-120"></i>
+                                                {% trans 'Deposit' %}
+                                            </a>
+                                        </li>
+                                        
+                                        <li>
+                                            <a data-toggle="tab" href="#faq-tab-4">
+                                                <i class="orange ace-icon fa fa-envelope-o bigger-120"></i>
+                                                {% trans 'Contact us' %}
+                                            </a>
+                                        </li>
+
+                                        
+                                    </ul>
+
+                                    <!-- /section:pages/faq -->
+                                    <div class="tab-content no-border padding-24">
+                                        <div id="faq-tab-1" class="tab-pane fade in active">
+                                            <h4 class="red">
+                                                <i class="ace-icon fa fa-plane bigger-110"></i>
+                                                {% trans 'Shipment' %}
+                                            </h4>
+
+                                            <div class="space-8"></div>
+
+                                            <div id="faq-list-1" class="panel-group accordion-style1 accordion-style2">
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-1" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 寄送流程是什么?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-1">
+                                                        <div class="panel-body">
+                                                            新建国际邮单->核对邮单信息->使用余额付款->打印粘贴邮单->交寄包裹->收到包裹<br>
+                                                            建议下单前确保账户内有足够的余额。如果您的账户没有余额，将不能打印邮单。
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-2" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 怎样交寄包裹?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-2">
+                                                        <div class="panel-body">
+                                                            交寄包裹有三种方法：<br />
+                                                            方法1：在本站购买DHL retoure回邮单，然后将包裹交寄至德国邮政门店、德国邮政合作商点或Packstation等任何德国邮政支持的接收点。<br />
+                                                            方法2：在本站购买DHL retoure回邮单，并在德国邮政网站预定上门取货服务（需直接向DHL支付取货服务费），等待DHL上门取货。预定地址请点击<a target="_blank" href="https://www.dhl.de/popweb/maptos.entry?PARAMETERSET_VERSION_NO=1.0&PARTNER_ID=DHLANON&WORKFLOW_SHOW_PAGE=CollectionOnly">这里</a>，或者<a target="_blank" href="http://www.dhl.de">www.dhl.de</a><br />
+                                                            方法3：自行将包裹运送至韵达德国处理中心。<br />
+                                                            处理中心地址为：<br />
+                                                            <small>YUNDA Express Europe GmbH<br />
+                                                            Operation Center<br />
+                                                            Hessenring 23<br />
+                                                            64546 Moerfelden-Walldorf<br />
+                                                            Tel: 06105 7178 770<br /><br /></small>
+                                                            *注： 每个回邮单最高可以邮寄30kg物品，您也可以将多个小包裹装在一个大包裹内邮寄到处理中心（务必注明“一箱多票”，否则处理中心无法及时拆分包裹）。大包裹长宽高不能超过120x60x60cm，否则没有办法进行邮寄。
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-3" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 下单时使用什么语言填写信息?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-3">
+                                                        <div class="panel-body">
+                                                            发件人信息请使用德语或者英语填写，收件人信息请使用中文填写，货物描述请用英文填写。
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-4" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 是否需要收件人身份证?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-4">
+                                                        <div class="panel-body">
+                                                            下单时并不需要上传收件人身份证。韵达国内总部会短信通知收件人上传身份证图片，上传地址见<a target="_blank" href="http://yundaex.com/de/admin/idcard/idCard.php">这里（服务器在国内，德国访问可能网速较慢）</a>。
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-5" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 包裹内容及物品价值如何填写?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-5">
+                                                        <div class="panel-body">
+                                                            包裹内容及物品价值必须如实填写。<br />
+                                                            中国海关对物品价值的限制政策是：单个包裹折合价值不能超过1000人民币；如果包裹内仅一件不可分割物品，折合价值可以超过1000人民币。（奶粉、咖啡、茶为特殊物品，不管品牌、产地和购买价格，统一按200人民币/kg计算包裹物品折合价值）<br />
+                                                            如果海关检查发现漏报物品、或者故意减少申报价值，会要求发件人提供购物账单或小票。<br />
+                                                            **请务必如实正确填写物品价值，一旦海关发现有误，会大大延长通关时效，甚至可能罚没全部物品**
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-6" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 中国海关如何确定关税？如何缴纳?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-6">
+                                                        <div class="panel-body">
+                                                            中国海关关于关税税率的公告见<a target="_blank" href="http://www.customs.gov.cn/publish/portal0/tab3889/module1188/info362458.htm">海关公告</a>附件2。<br />
+                                                            按该公告附件2《中华人民共和国进境物品完税价格表》计算应缴税金：<br />
+                                                            如果应缴税金小于等于50人民币，免征关税放行；<br />
+                                                            如果大于50人民币，根据下单选择的关税缴纳人，韵达快递会通知收件人缴纳，或在发件人账户扣除关税，然后代缴关税，包裹放行，并进入派送流程。<br />
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-7" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 邮单打印有什么要求?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-7">
+                                                        <div class="panel-body">
+                                                            用A4或者A5打印即可
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-8" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 哪些物品不能邮寄?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-8">
+                                                        <div class="panel-body">
+                                                            禁寄物品列表<br/>
+                                                            <table class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>序号</th>
+                                                                        <th>品类</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>1</td>
+                                                                        <td>一线品牌（奢侈品）箱包,衣裤,鞋子,手表</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>2</td>
+                                                                        <td>手机</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>3</td>
+                                                                        <td>烟草类</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>4</td>
+                                                                        <td>酒类</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>5</td>
+                                                                        <td>摄影器材</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>6</td>
+                                                                        <td>书籍</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>7</td>
+                                                                        <td>光盘</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>8</td>
+                                                                        <td>唱片</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>9</td>
+                                                                        <td>二手电器</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>10</td>
+                                                                        <td>农副水产品、濒危物品等。如干海参、干鱼翅、象牙制品等</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>11</td>
+                                                                        <td>中国海关限制进口的物品。如仿真枪械、时政报纸杂志、宗教出版物等</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>12</td>
+                                                                        <td>活体的动植物产品、水果等、液体乳制品、植物种子</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>13</td>
+                                                                        <td>危害航空及道路运输安全的、航空公司及卡车公司禁止运输的物品。如粉末类、液体类、电池类产品等。</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <br/>*一线品牌包括：
+LV
+路易威登
+,
+CHANEL
+香奈尔
+,
+PRADA
+普拉达
+,
+DIOR
+迪奥
+,
+VERSACE
+范思哲
+,
+GUCCI
+古琦
+,
+HERMES
+爱马仕
+,
+GIVENCHY
+纪梵希
+,
+ARMANI
+阿玛尼
+,
+D&G
+杜嘉班纳
+,
+BURBERRY
+巴宝莉
+,
+KENZO
+,
+ANNA SUI
+安娜苏
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-9" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 韵达邮单及回邮单的有效期是多久?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-9">
+                                                        <div class="panel-body">
+                                                            韵达邮单和DHL回邮单的有效期均为1个月，收到邮单后一个月内均可以使用。
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-10" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 包裹保险政策如何?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-10">
+                                                        <div class="panel-body">
+                                                            韵达邮单自带最高100欧元包裹丢失保险。包裹25天未到，请提供采购小票、包裹交寄证明（比如邮政门店回执单等），邮件至investigation@yunda-express.eu，申请包裹调查，进入理赔程序。<br />
+                                                            国际运输，长途跋涉，务必打包结实，以免内件损坏。
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-1-11" data-parent="#faq-list-1" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 包裹尺寸、重量有什么规定? 什么是体积重量系数？
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-1-11">
+                                                        <div class="panel-body">
+                                                            包裹最高不能超过20kg。打包时尽量使用大小合适的纸箱。<br>
+                                                            体积重量系数，用于计算包裹的体积重量。计算方法为：长cm*宽cm*高cm/体积重量系数<br>
+                                                            航空舱位成本高昂，需取实际重量和体积重量较大者计费。<br>
+                                                            例如：包裹重量2kg，长30cm，宽20cm，高10cm，其体积重量为：30x20x10/6000=1kg，计费时取实际重量：2kg
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                
+                                            </div>
+                                        </div>
+
+                                        <div id="faq-tab-3" class="tab-pane fade">
+                                            <h4 class="blue">
+                                                <i class="orange ace-icon fa fa-credit-card bigger-110"></i>
+                                                {% trans 'Payment Questions' %}
+                                            </h4>
+
+                                            <div class="space-8"></div>
+
+                                            <div id="faq-list-3" class="panel-group accordion-style1 accordion-style2">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-3-1" data-parent="#faq-list-3" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 可以使用哪些币种充值?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-3-1">
+                                                        <div class="panel-body">
+                                                            可以使用人民币或欧元充值。欧元为在线下单系统结算货币，如使用人民币充值，系统会自动将其转换为欧元。<br>
+                                                            由于货币兑换手续费、以及汇率变动风险，韵达欧洲对使用人民币充值的用户收取3%汇兑风险及手续费。<br>
+                                                            账户一旦注册成功，充值使用货币便不可更改，如需更改充值使用币种，烦请注册一个新账户<br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-3-2" data-parent="#faq-list-3" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 如何充值?
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-3-2">
+                                                        <div class="panel-body">
+                                                            韵达快递欧洲有限公司目前提供银行转帐的方式充值。<br>
+                                                            欧元充值：请转帐至：<br>
+                                                            &nbsp;&nbsp;收款人： YUNDA Express Europe GmbH<br>
+															&nbsp;&nbsp;IBAN: DE76 5085 0150 0000 7522 74<br>
+															&nbsp;&nbsp;BIC: HELADEF1DAS<br>
+															&nbsp;&nbsp;务必填写您的客户编号作为汇款附言<br>转账成功后，请发送截图至sales@yunda-express.eu，以便款项能够及时准确充到您的账户。<br><br>
+															
+															人民币充值：请转帐至：<br>
+                                                            &nbsp;&nbsp;收款人：吴蕴岭<br>
+															&nbsp;&nbsp;账号：6217 8608 0000 0200 408<br>
+															&nbsp;&nbsp;开户行：中国银行上海市闵行支行<br>
+															转账成功后，务必发送截图至sales@yunda-express.eu，以便款项能够及时准确充到您的账户。<br><br>
+                                                            账户一旦注册成功，充值使用货币便不可更改，如需更改充值使用币种，烦请重新注册一个账户<br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                        </div>
+
+                                        <div id="faq-tab-4" class="tab-pane fade">
+                                            <h4 class="red">
+                                                <i class="purple ace-icon fa fa-magic bigger-110"></i>
+                                                联系我们
+                                            </h4>
+
+                                            <div class="space-8"></div>
+                                            <div id="faq-list-4" class="panel-group accordion-style1 accordion-style2">
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-4-1" data-parent="#faq-list-4" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 联系邮箱（推荐）
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-4-1">
+                                                        <div class="panel-body">
+                                                            充值、下单：<a href="mailto:sales@yunda-express.eu">sales@yunda-express.eu</a><br>
+                                                            包裹调查：<a href="mailto:investigation@yunda-express.eu">investigation@yunda-express.eu</a><br>
+                                                            投诉、客服主管：<a href="mailto:csd@yunda-express.eu">csd@yunda-express.eu</a><br>
+                                                            合作：<a href="mailto:cooperation@yunda-express.eu">cooperation@yunda-express.eu</a><br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-4-2" data-parent="#faq-list-4" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; QQ联系
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-4-2">
+                                                        <div class="panel-body">
+                                                            客服QQ：2565697281<br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-4-3" data-parent="#faq-list-4" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 联系电话
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-4-3">
+                                                        <div class="panel-body">
+                                                            客服电话：06105-7178 778<br>
+                                                            传真：06105-7178 779<br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-4-4" data-parent="#faq-list-4" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 联系地址
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-4-4">
+                                                        <div class="panel-body">
+                                                            办公室地址：<br>
+                                                            YUNDA Express Europe GmbH<br>
+                                                            Hessenring 23<br>
+                                                            64546 Moerfelden-Walldorf<br><br>
+                                                            处理中心地址：<br>
+                                                            YUNDA Express Europe GmbH<br>
+                                                            Operation Center<br>
+                                                            Hessenring 23<br>
+                                                            64546 Moerfelden-Walldorf<br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                             <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a href="#faq-4-5" data-parent="#faq-list-4" data-toggle="collapse" class="accordion-toggle collapsed">
+                                                            <i class="ace-icon fa fa-chevron-right smaller-80" data-icon-hide="ace-icon fa fa-chevron-down align-top" data-icon-show="ace-icon fa fa-chevron-right"></i>&nbsp;
+                                                            &nbsp; 工作时间
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="panel-collapse collapse" id="faq-4-5">
+                                                        <div class="panel-body">
+                                                            德国工作日 9:00 - 17:00
+                                                        </div>
+                                                    </div>
+                                                </div></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PAGE CONTENT ENDS -->
+                            </div><!-- /.col -->
+                        </div><!-- /.row -->
+                    
+{% endblock %}
+

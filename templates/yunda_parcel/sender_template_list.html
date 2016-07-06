@@ -1,0 +1,93 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Sender address" %}{% endblock %}
+{% block content_title %}<h1>{% trans "Sender address" %}</h1>{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>
+            {% trans "Sender address" %}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {% trans "List" %}
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+<div class="row">
+    {% if template_list %}
+        <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>{% trans "Name" %}</th>
+                  <th>{% trans "City" %}</th>
+                  <th>{% trans "Tel" %}</th>
+                  <th>{% trans "Options" %}</th>
+              </tr>
+          </thead>
+          <tbody>
+          {% for template in template_list %}
+              <tr>
+                <th>{{ template.sender_name}}</th>
+                <th>{{ template.sender_city}}</th>
+                <th>{{ template.sender_tel}}</th>
+                <th>
+                    <div class="btn-group">
+                          <a class="btn btn-xs btn-white btn-inverse" href="{% url 'sender_template_detail' template.yde_number %}">{% trans 'Detail' %}</a>
+                          <a class="btn btn-xs btn-white btn-inverse" href="{% url 'sender_template_edit' template.yde_number %}">{% trans 'Edit' %}</a>
+                      </div>
+                </th>
+              </tr>
+          {% endfor %}
+          </tbody>          
+        </table>
+        {% if is_paginated %}
+            <div class="pagination">
+                <span class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+            </div>
+       {% endif %}
+    {% else %}
+        <p>{% trans 'No template found.' %}</p>
+    {% endif %}
+</div>
+
+{% endblock %}
+{% block footer-script %}
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-address-template').addClass('active open');
+    $('#sidebar-1-address-template-{{ sub_sidebar_name }}').addClass('active');
+    
+    var active_class = 'success';
+    $('#simple-table > thead > tr > th input[type=checkbox]').eq(0).on('click', function(){
+        var th_checked = this.checked;//checkbox inside "TH" table header
+        
+        $(this).closest('table').find('tbody > tr').each(function(){
+            var row = this;
+            if(th_checked) $(row).addClass(active_class).find('input[type=checkbox]').eq(0).prop('checked', true);
+            else $(row).removeClass(active_class).find('input[type=checkbox]').eq(0).prop('checked', false);
+        });
+    });
+    
+    //select/deselect a row when the checkbox is checked/unchecked
+    $('#simple-table').on('click', 'td input[type=checkbox]' , function(){
+        var $row = $(this).closest('tr');
+        if(this.checked) $row.addClass(active_class);
+        else $row.removeClass(active_class);
+    });
+  });
+</script>
+
+{% endblock %}
+
+

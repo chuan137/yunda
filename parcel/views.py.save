@@ -1,0 +1,2265 @@
+# -*- coding: utf-8 -*-
+from django.shortcuts import render, get_object_or_404
+from yunda_commen.decorators import json_response
+from userena.decorators import secure_required
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from parcel.models import Level, ParcelType, PriceLevel, IntlParcel, History, \
+    add_to_mawb, Mawb, Batch
+from parcel.forms import IntlParcelForm, ParcelDetailForm, MawbForm, BatchForm
+import hashlib
+from yunda_parcel.models import SenderTemplate, ReceiverTemplate, \
+    DhlRetoureLabel, RetoureHistory, CnCustomsTax
+import re
+from yunda_commen.commen_utils import get_seq_by_code, get_retoure_price, \
+    deposit_deduct, deposit_increase
+from datetime import datetime
+import math
+import pytz
+from django.conf import settings
+from django.db.models import Q
+from yunda_parcel.lbl_retoure_label import Dhl_Retoure
+from yunda_parcel.forms import DhlRetoureLabelForm, SenderTemplateForm, \
+    ReceiverTemplateForm
+from wkhtmltopdf.views import PDFTemplateView
+from django.utils.decorators import method_decorator
+from django.http import Http404
+from parcel.tools import create_retoure_label, get_parcel_numbers, tracking_push,\
+    tracking_fetch, query_parcel
+from django.views.decorators.csrf import csrf_exempt
+from parcel.excel_import import get_parcel_infos_from_excel
+from django.contrib.admin.views.decorators import staff_member_required
+from messenge.models import write_new_subject_to_customer
+from xlwt import Workbook
+from django.http.response import HttpResponse
+from userena.models import UserProfile
+from xlrd import open_workbook
+import types
+from django.core.mail import send_mail
+
+import logging
+import base64
+from contextlib import closing
+logger = logging.getLogger('django')
+from django.core.mail.message import EmailMessage
+from email.mime.base import MIMEBase
+from StringIO import StringIO
+import zipfile
+try:
+    import zlib
+    compression = zipfile.ZIP_DEFLATED
+except:
+    compression = zipfile.ZIP_STORED
+
+# Create your views here.
+
+################################################################################
+# # part retoure label
+# #
+################################################################################
+@json_response
+@secure_required
+@login_required
+def json_post_retoure(request):
+    user_id = request.session.get('_auth_user_id')
+    user = User.objects.get(id=user_id)
+    if request.method == 'POST':    
+        parcel_form = DhlRetoureLabelForm(request.POST, request.FILES)
+        
+        is_valid = True
+        
+        if not parcel_form.is_valid():
+            is_valid = False
+            parcel_errors = parcel_form.errors
+        
+        if is_valid:
+            parcel_clean_data = parcel_form.clean()
+            yid = request.POST.get('yid', False)
+            if yid:
+                # edit a parcel
+                try:
+                    parcel = DhlRetoureLabel.objects.get(user_id=user_id, yid=yid, is_deleted=False)
+                    if parcel.status in ['draft']:
+                        # update intel parcel
+                        update_parcel_form = DhlRetoureLabelForm(request.POST, instance=parcel)
+                        update_parcel_form.save()
+                        
+                        
+                        
+                        # create sender and receiver template if checked
+                        if parcel_clean_data['save_sender'] == "true":
+                            try:
+                                template = SenderTemplate.objects.create(
+                                    user=user,
+                                    sender_name=parcel_clean_data['sender_name'],
+                                    sender_name2=parcel_clean_data['sender_name2'],
+                                    sender_company=parcel_clean_data['sender_company'],
+                                    sender_city=parcel_clean_data['sender_city'],
+                                    sender_postcode=parcel_clean_data['sender_postcode'],
+                                    sender_street=parcel_clean_data['sender_street'],
+                                    sender_add=parcel_clean_data['sender_add'],
+                                    sender_hause_number=parcel_clean_data['sender_hause_number'],
+                                    sender_tel=parcel_clean_data['sender_tel'],
+                                    sender_email=parcel_clean_data['sender_email'],
+                                    )
+                                template.yid = hashlib.md5("sendertemplate%d" % template.id).hexdigest()
+                                template.save()
+                            except Exception as e:
+                                logger.debug(e)
+                        
+                        
+                        return dict(state="success",
+                            yid=parcel.yid)
+                        
+                    else:
+                        return dict(state="error",
+                            msg=u"回邮单已提交，不能被修改")
+                except DhlRetoureLabel.DoesNotExist:
+                    return dict(state="error",
+                            msg=u"回邮单不存在或者已被删除")
+            else:
+                # create a new parcel
+                
+                parcel = parcel_form.save(commit=False)
+                parcel.user_id = user_id                
+                currency_type = user.userprofile.deposit_currency_type
+                parcel.currency_type = currency_type
+                parcel.price = get_retoure_price(currency_type)
+                parcel.created_at = datetime.now()
+                parcel.save()
+                parcel.yid = hashlib.md5("retoure%d" % parcel.id).hexdigest()
+                parcel.save()
+               
+                
+                if parcel_clean_data['save_sender'] == "true":
+                    try:
+                        template = SenderTemplate.objects.create(
+                            user=user,
+                            sender_name=parcel_clean_data['sender_name'],
+                            sender_name2=parcel_clean_data['sender_name2'],
+                            sender_company=parcel_clean_data['sender_company'],
+                            sender_city=parcel_clean_data['sender_city'],
+                            sender_postcode=parcel_clean_data['sender_postcode'],
+                            sender_street=parcel_clean_data['sender_street'],
+                            sender_add=parcel_clean_data['sender_add'],
+                            sender_hause_number=parcel_clean_data['sender_hause_number'],
+                            sender_tel=parcel_clean_data['sender_tel'],
+                            sender_email=parcel_clean_data['sender_email'],
+                            )
+                        template.yid = hashlib.md5("sendertemplate%d" % template.id).hexdigest()
+                        template.save()
+                    except Exception as e:
+                        logger.debug(e)
+                
+                return dict(state="success",
+                            yid=parcel.yid)
+        else:
+            return dict(state='error',
+                        parcel_errors=parcel_errors)
+            
+            # user = form.save()  
+    else:
+        return {'error':True}
+
+def get_retoure_info(parcel, local=None):
+    result = {}
+    
+    if not local:
+        tz = getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+        local = pytz.timezone(tz)
+    local_dt = parcel.created_at.astimezone(local)
+    
+    result['created_at'] = parcel.created_at.astimezone(local).strftime("%Y-%m-%d %H:%M")
+    
+    result['sender_name'] = parcel.sender_name
+    result['sender_name2'] = parcel.sender_name2
+    result['sender_company'] = parcel.sender_company
+    result['sender_city'] = parcel.sender_city
+    result['sender_postcode'] = parcel.sender_postcode
+    result['sender_street'] = parcel.sender_street
+    result['sender_add'] = parcel.sender_add
+    result['sender_hause_number'] = parcel.sender_hause_number
+    result['sender_tel'] = parcel.sender_tel
+    result['sender_email'] = parcel.sender_email
+    
+    result['yde_number'] = parcel.retoure_yde_number or u"草稿,未生成订单号"
+    result['yid'] = parcel.yid
+    
+    result['tracking_number'] = parcel.tracking_number
+   
+    result['status'] = parcel.status
+    result['currency_type'] = parcel.currency_type
+    result['price'] = parcel.price
+    return result
+
+@json_response
+@secure_required
+@login_required
+def json_get_retoure(request, yid):
+    user_id = request.session.get('_auth_user_id')
+        
+    if yid:
+        try:
+            tz = getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+            local = pytz.timezone(tz)
+            
+            parcel = DhlRetoureLabel.objects.get(yid=yid, user_id=user_id, is_deleted=False)
+            result = get_retoure_info(parcel, local)            
+            
+            
+            histories = []
+            for history in parcel.histories.filter(visible_to_customer=True).order_by('created_at'):
+                histories.append({
+                    "created_at":history.created_at.astimezone(local).strftime("%Y-%m-%d %H:%M"),
+                    "description":history.description, })
+            result['histories'] = histories
+            
+            return {"state":'success', "parcel":result}
+            
+            
+            
+        except DhlRetoureLabel.DoesNotExist:
+            return dict(state="error", msg=u"未找到该回邮单")
+
+
+@json_response
+@secure_required
+@login_required
+def json_confirm_retoure(request):
+    if request.method == 'POST':
+        results = []
+        user_id = request.session.get('_auth_user_id')
+        user = User.objects.get(id=user_id)
+        yids = request.POST.get('yids', False)
+        p = re.compile(u'^[a-zA-Z0-9\+]+$')
+        if yids and p.match(yids):
+            yids = yids.split('+')
+            for yid in yids:
+                try:
+                    parcel = DhlRetoureLabel.objects.get(yid=yid, user_id=user_id, status='draft')
+                    if not parcel.retoure_yde_number:
+                        parcel.retoure_yde_number = get_seq_by_code('drn_seq', True)                    
+                    parcel.save()
+                    # 扣款
+                    (success, msg) = user.userprofile.deposit_deduct(parcel.price or 3.9, parcel.retoure_yde_number, u"德国境内回邮单。订单号：" + parcel.retoure_yde_number,)
+                    if success:
+                        # 扣款成功
+                        # TODO
+                        #attributes = {'idc':'123456789789',
+                        #            'routingCode':'64546.211.011.33 7'
+                        #            }
+                        #pdf = "abc"
+                        attributes, pdf = create_retoure_label(parcel.retoure_yde_number, parcel)
+                        if attributes:
+                            parcel.status = 'confirmed'
+                            RetoureHistory.objects.create(description=u"扣款成功，生成回邮单。追踪号：" + attributes['idc'],
+                                       retoure=parcel,
+                                       created_at=datetime.now())
+                            parcel.tracking_number = attributes['idc']
+                            parcel.routing_code = attributes['routingCode']
+                            parcel.created_at = datetime.now()
+                            parcel.pdf_file = pdf                            
+                            parcel.save()
+                            
+                            results.append({'yid':yid,
+                                        'yde_number':parcel.retoure_yde_number,
+                                        'tracking_number':attributes['idc']})
+                           
+                        else:  # 未生成回邮单号，退回扣款
+                            user.userprofile.deposit_increase(parcel.price or 3.9, parcel.retoure_yde_number, u"德国境内回邮单。订单号：" + parcel.retoure_yde_number,)
+                        
+                        
+                    else:
+                        # 扣款不成功
+                        pass
+                    
+                except DhlRetoureLabel.DoesNotExist:
+                    pass  # TODO make log
+            return results
+@json_response
+@secure_required
+@login_required
+def json_remove_retoure(request):
+    if request.method == 'POST':
+        results = []
+        user_id = request.session.get('_auth_user_id')
+        yids = request.POST.get('yids', False)
+        p = re.compile(u'^[a-zA-Z0-9\+]+$')
+        if yids and p.match(yids):
+            yids = yids.split('+')
+            for yid in yids:
+                try:
+                    parcel = DhlRetoureLabel.objects.get(yid=yid, user_id=user_id, status='draft')
+                    parcel.is_deleted = True
+                    parcel.save()
+                    results.append({'yid':yid})
+                except DhlRetoureLabel.DoesNotExist:
+                    pass  # TODO make log
+            return results
+@json_response
+@secure_required
+@login_required
+def json_search_retoure(request):
+    user_id = request.session.get('_auth_user_id')
+    
+    if request.method == 'GET': 
+        q = DhlRetoureLabel.objects.filter(user_id=user_id, is_deleted=False)       
+        page = int(request.GET.get('page', 1))
+        rows = int(request.GET.get('rows', 10))
+        
+        s = request.GET.get('s', False)        
+        if s:
+            q = q.filter(Q(yde_number__contains=s) | 
+                           Q(tracking_number__contains=s) | 
+                           Q(sender_name__contains=s) | 
+                           Q(sender_company__contains=s) | 
+                           Q(sender_city__contains=s) | 
+                           Q(sender_postcode__contains=s) | 
+                           Q(sender_tel__contains=s) | 
+                           Q(sender_street__contains=s)                            
+                           )
+        else:       
+            sender_name = request.GET.get('sender_name', False)
+            sender_company = request.GET.get('sender_company', False)
+            sender_city = request.GET.get('sender_city', False)
+            sender_postcode = request.GET.get('sender_postcode', False)
+            sender_tel = request.GET.get('sender_tel', False)
+            sender_street = request.GET.get('sender_street', False)
+            
+            status = request.GET.get('status', False)
+            number = request.GET.get('number', False)
+                    
+            
+            if sender_name:
+                q = q.filter(sender_name__contains=sender_name)
+            if sender_company:
+                q = q.filter(sender_company__contains=sender_company)
+            if sender_city:
+                q = q.filter(sender_city__contains=sender_city)
+            if sender_postcode:
+                q = q.filter(sender_postcode__contains=sender_postcode)
+            if sender_tel:
+                q = q.filter(sender_tel__contains=sender_tel)
+            if sender_street:
+                q = q.filter(sender_street__contains=sender_street)
+            
+            if status:
+                q = q.filter(status=status)
+            if number:
+                q = q.filter(Q(yde_number__contains=number) | 
+                           Q(tracking_number__contains=number))
+        
+        results = {}
+        count = q.count()
+        results['count'] = count or 0
+        if count == 0:
+            results['parcels'] = []
+            return results
+        last_page = int(math.ceil(float(count) / float(rows)))
+        if page * rows > count:
+            page = last_page
+        
+        start = (page - 1) * rows
+        end = page * rows
+        if end > count:
+            end = count
+        results['start'] = start
+        results['end'] = end
+        results['page'] = page
+        results['rows'] = rows
+        results['last_page'] = last_page   
+        tz = getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+        local = pytz.timezone(tz)
+        results['parcels'] = []
+        for parcel in q.order_by('-created_at')[start:end]:
+            results['parcels'].append(get_retoure_info(parcel, local))
+        
+        return results
+
+class RetourePdfView(PDFTemplateView):
+    filename = "retoure-label.pdf"
+    template_name = 'parcel/dhl_retoure.html'
+    cmd_options = {
+        'orientation': 'landscape',
+        'no-outline':True,  # 不产生index
+        # 'collate': True,
+        # 'quiet': None,
+    }
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(RetourePdfView, self).dispatch(*args, **kwargs)
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(RetourePdfView, self).get_context_data(*args, **kwargs)
+        if self.request.method == 'GET':
+            yids = self.request.GET.get('yids', '')
+            yids = yids.split('.')
+            user_id = self.request.session.get('_auth_user_id')
+            parcels = []
+            for yid in yids:
+                try:
+                    parcel = DhlRetoureLabel.objects.get(yid=yid,
+                                                       user_id=user_id,
+                                                       is_deleted=False,
+                                                       status__in=['confirmed', 'finished'])
+                    parcels.append(parcel)
+                    if not parcel.printed_at:
+                        parcel.printed_at = datetime.now()
+                        parcel.save()
+                except DhlRetoureLabel.DoesNotExist:
+                    pass
+            if parcels:
+                context.update({'parcels':parcels})
+            else:
+                raise Http404('No retoure label found!')
+        
+        return context
+    
+#############################################################################
+# # part intl parcel
+# #
+#############################################################################
+
+@json_response
+@secure_required
+@login_required
+def json_parcel_types(request):
+    u_id = request.session.get('_auth_user_id')
+    if u_id:
+        user = User.objects.get(id=u_id)
+        default_level = Level.objects.get(code="default")
+        
+        try:
+            level = user.userprofile.level
+        except Level.DoesNotExist:
+            level = default_level
+            
+        currency_type = user.userprofile.deposit_currency_type or "eur"
+        parcel_types = []
+        if user.userprofile.allow_dhl_no_retoure:
+            q = ParcelType.objects.all()
+        else:
+            q = ParcelType.objects.filter(show_to_all=True)
+        for parcel_type in q:
+            try:
+                price_level = PriceLevel.objects.get(level=level,
+                                                   currency_type=currency_type,
+                                                   parcel_type=parcel_type)
+            except PriceLevel.DoesNotExist:
+                try:
+                    price_level = PriceLevel.objects.get(level=default_level,
+                                                   currency_type=currency_type,
+                                                   parcel_type=parcel_type)
+                except PriceLevel.DoesNotExist:
+                    # TODO add logging                  
+                    return {"error500":"true"}
+            parcel_types.append({'name':parcel_type.name,
+                                 'code':parcel_type.code,
+                                 'currency_type':currency_type,
+                                 'json_prices':price_level.json_prices,
+                                 'description':parcel_type.description})
+        return parcel_types
+
+@json_response
+@secure_required
+@login_required
+def json_post_intl_parcel(request):
+    u_id = request.session.get('_auth_user_id')
+    user = User.objects.get(id=u_id)
+    if request.method == 'POST':    
+        parcel_form = IntlParcelForm(request.POST, request.FILES)
+        detail_forms = []
+        is_valid = True
+        detail_errors = []
+        for i in range(0, int(request.POST.get('detail_num', 0))):
+            detail = dict(
+                description=request.POST.get('description-' + str(i)),
+                cn_customs_tax_catalog_name=request.POST.get('cn_customs_tax_catalog_name-' + str(i)),
+                cn_customs_tax_name=request.POST.get('cn_customs_tax_name-' + str(i)),
+                qty=request.POST.get('qty-' + str(i)),
+                item_net_weight_kg=request.POST.get('item_net_weight_kg-' + str(i)),
+                item_price_eur=request.POST.get('item_price_eur-' + str(i)))
+            detail_form = ParcelDetailForm(detail)
+            if detail_form.is_valid():
+                detail_forms.append(ParcelDetailForm(detail))
+            else:
+                is_valid = False
+                detail_errors.append({
+                    'key':request.POST.get('key-' + str(i)),
+                    'errors':detail_form.errors
+                })
+                
+        if not parcel_form.is_valid():
+            is_valid = False
+            parcel_errors = parcel_form.errors
+        
+        if is_valid:
+            parcel_clean_data = parcel_form.clean()
+            yid = request.POST.get('yid', False)
+            if yid:
+                # edit a parcel
+                try:
+                    parcel = IntlParcel.objects.get(user=user, yid=yid, is_deleted=False)
+                    if parcel.status in ['draft']:
+                        # update intel parcel
+                        update_parcel_form = IntlParcelForm(request.POST, instance=parcel)
+                        update_parcel_form.save()
+                        
+                        type = ParcelType.objects.get(code=parcel_clean_data['type_code'])
+                        parcel.type = type
+                        
+                        # #get price level
+                        default_level = Level.objects.get(code="default")
+                        level = user.userprofile.level or default_level 
+                        try:
+                            price_level = PriceLevel.objects.get(level=level,
+                                                               currency_type=parcel.currency_type,
+                                                               parcel_type=type)
+                        except PriceLevel.DoesNotExist:
+                            price_level = PriceLevel.objects.get(level=default_level,
+                                                               currency_type=parcel.currency_type,
+                                                               parcel_type=type)
+                        
+                        parcel.json_prices = price_level.json_prices
+                        parcel.save()
+                        parcel.get_sfz_status()
+                        
+                        # delete goods details and create new goods details
+                        parcel.goodsdetails.all().delete()
+                        for detail_form in detail_forms:
+                            detail = detail_form.save(commit=False)
+                            detail.intl_parcel = parcel
+                            detail.save()
+                        
+                        # create sender and receiver template if checked
+                        if parcel_clean_data['save_sender'] == "true":
+                            try:
+                                template = SenderTemplate.objects.create(
+                                    user=user,
+                                    sender_name=parcel_clean_data['sender_name'],
+                                    sender_name2=parcel_clean_data['sender_name2'],
+                                    sender_company=parcel_clean_data['sender_company'],
+                                    sender_city=parcel_clean_data['sender_city'],
+                                    sender_postcode=parcel_clean_data['sender_postcode'],
+                                    sender_street=parcel_clean_data['sender_street'],
+                                    sender_add=parcel_clean_data['sender_add'],
+                                    sender_hause_number=parcel_clean_data['sender_hause_number'],
+                                    sender_tel=parcel_clean_data['sender_tel'],
+                                    sender_email=parcel_clean_data['sender_email'],
+                                    )
+                                template.yid = hashlib.md5("sendertemplate%d" % template.id).hexdigest()
+                                template.save()
+                            except Exception as e:
+                                logger.debug(e)
+                        if parcel_clean_data['save_receiver'] == "true":
+                            try:
+                                template = ReceiverTemplate.objects.create(
+                                    user=user,
+                                    receiver_name=parcel_clean_data['receiver_name'],
+                                    receiver_company=parcel_clean_data['receiver_company'],
+                                    receiver_province=parcel_clean_data['receiver_province'],
+                                    receiver_city=parcel_clean_data['receiver_city'],
+                                    receiver_district=parcel_clean_data['receiver_district'],
+                                    receiver_postcode=parcel_clean_data['receiver_postcode'],
+                                    receiver_address=parcel_clean_data['receiver_address'],
+                                    receiver_address2=parcel_clean_data['receiver_address2'],
+                                    receiver_mobile=parcel_clean_data['receiver_mobile'],
+                                    receiver_email=parcel_clean_data['receiver_email'],
+                                    )
+                                template.yid = hashlib.md5("receivertemplate%d" % template.id).hexdigest()
+                                template.save()
+                            except Exception as e:
+                                logger.debug(e)
+                        
+                        return dict(state="success",
+                            yid=parcel.yid)
+                        
+                    else:
+                        return dict(state="error",
+                            msg=u"邮单已提交，不能被修改")
+                except IntlParcel.DoesNotExist:
+                    return dict(state="error",
+                            msg=u"邮单不存在或者已被删除")
+            else:
+                # create a new parcel
+                
+                parcel = parcel_form.save(commit=False)
+                parcel.user = user
+                currency_type = user.userprofile.deposit_currency_type
+                parcel.currency_type = currency_type
+                
+                type = ParcelType.objects.get(code=parcel_clean_data['type_code'])
+                parcel.type = type
+                
+                # #get price level
+                default_level = Level.objects.get(code="default")
+                level = user.userprofile.level or default_level 
+                try:
+                    price_level = PriceLevel.objects.get(level=level,
+                                                       currency_type=currency_type,
+                                                       parcel_type=type)
+                except PriceLevel.DoesNotExist:
+                    price_level = PriceLevel.objects.get(level=default_level,
+                                                       currency_type=currency_type,
+                                                       parcel_type=type)
+                
+                parcel.json_prices = price_level.json_prices
+                parcel.save()
+                parcel.yid = hashlib.md5("intlparcel%d" % parcel.id).hexdigest()
+                parcel.save()
+                parcel.get_sfz_status()
+                
+                for detail_form in detail_forms:
+                    detail = detail_form.save(commit=False)
+                    detail.intl_parcel = parcel
+                    detail.save()
+                
+                if parcel_clean_data['save_sender'] == "true":
+                    try:
+                        template = SenderTemplate.objects.create(
+                            user=user,
+                            sender_name=parcel_clean_data['sender_name'],
+                            sender_name2=parcel_clean_data['sender_name2'],
+                            sender_company=parcel_clean_data['sender_company'],
+                            sender_city=parcel_clean_data['sender_city'],
+                            sender_postcode=parcel_clean_data['sender_postcode'],
+                            sender_street=parcel_clean_data['sender_street'],
+                            sender_add=parcel_clean_data['sender_add'],
+                            sender_hause_number=parcel_clean_data['sender_hause_number'],
+                            sender_tel=parcel_clean_data['sender_tel'],
+                            sender_email=parcel_clean_data['sender_email'],
+                            )
+                        template.yid = hashlib.md5("sendertemplate%d" % template.id).hexdigest()
+                        template.save()
+                    except Exception as e:
+                        logger.debug(e)
+                if parcel_clean_data['save_receiver'] == "true":
+                    try:
+                        template = ReceiverTemplate.objects.create(
+                            user=user,
+                            receiver_name=parcel_clean_data['receiver_name'],
+                            receiver_company=parcel_clean_data['receiver_company'],
+                            receiver_province=parcel_clean_data['receiver_province'],
+                            receiver_city=parcel_clean_data['receiver_city'],
+                            receiver_district=parcel_clean_data['receiver_district'],
+                            receiver_postcode=parcel_clean_data['receiver_postcode'],
+                            receiver_address=parcel_clean_data['receiver_address'],
+                            receiver_address2=parcel_clean_data['receiver_address2'],
+                            receiver_mobile=parcel_clean_data['receiver_mobile'],
+                            receiver_email=parcel_clean_data['receiver_email'],
+                            )
+                        template.yid = hashlib.md5("receivertemplate%d" % template.id).hexdigest()
+                        template.save()
+                    except Exception as e:
+                        logger.debug(e)
+                return dict(state="success",
+                            yid=parcel.yid)
+        else:
+            return dict(state='error',
+                        parcel_errors=parcel_errors,
+                        detail_errors=detail_errors)
+            
+            # user = form.save()  
+    else:
+        return {'error':True}
+
+def get_parcel_info(parcel, local=None):
+    result = {}
+    
+    if not local:
+        tz = getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+        local = pytz.timezone(tz)
+    local_dt = parcel.created_at.astimezone(local)
+    
+    result['created_at'] = parcel.created_at.astimezone(local).strftime("%Y-%m-%d %H:%M")
+    
+    result['sender_name'] = parcel.sender_name
+    result['sender_name2'] = parcel.sender_name2
+    result['sender_company'] = parcel.sender_company
+    result['sender_city'] = parcel.sender_city
+    result['sender_postcode'] = parcel.sender_postcode
+    result['sender_street'] = parcel.sender_street
+    result['sender_add'] = parcel.sender_add
+    result['sender_hause_number'] = parcel.sender_hause_number
+    result['sender_tel'] = parcel.sender_tel
+    result['sender_email'] = parcel.sender_email
+    
+    result['receiver_name'] = parcel.receiver_name
+    result['receiver_company'] = parcel.receiver_company
+    result['receiver_province'] = parcel.receiver_province
+    result['receiver_city'] = parcel.receiver_city
+    result['receiver_district'] = parcel.receiver_district
+    result['receiver_postcode'] = parcel.receiver_postcode
+    result['receiver_address'] = parcel.receiver_address
+    result['receiver_address2'] = parcel.receiver_address2
+    result['receiver_mobile'] = parcel.receiver_mobile
+    result['receiver_email'] = parcel.receiver_email
+    
+    result['ref'] = parcel.ref
+    result['weight_kg'] = parcel.weight_kg
+    result['length_cm'] = parcel.length_cm
+    result['width_cm'] = parcel.width_cm
+    result['height_cm'] = parcel.height_cm
+    result['currency_type'] = parcel.currency_type
+    result['yde_number'] = parcel.yde_number or u"草稿,未生成订单号"
+    result['yid'] = parcel.yid
+    result['type_code'] = parcel.type.code
+    result['type_code_name'] = parcel.type.name
+    result['tracking_number'] = parcel.tracking_number
+    result['retoure_tracking_number'] = parcel.retoure_tracking_number
+    result['cn_customs_paid_by'] = parcel.cn_customs_paid_by
+    if parcel.cn_customs_paid_by == "sender":
+        result['cn_customs_paid_by_name'] = "发件人"
+    else:
+        result['cn_customs_paid_by_name'] = "收件人"
+    result['json_prices'] = parcel.json_prices
+    result['status'] = parcel.status
+    result['sfz_status'] = parcel.get_sfz_status()
+    if  parcel.printed_at:
+        result['printed'] = True
+    else:
+        result['printed'] = False
+    return result
+
+@json_response
+@secure_required
+@login_required
+def json_get_intl_parcel(request, yid):
+    u_id = request.session.get('_auth_user_id')
+    user = User.objects.get(id=u_id)
+    
+    if yid:
+        try:
+            tz = getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+            local = pytz.timezone(tz)
+            
+            parcel = IntlParcel.objects.get(yid=yid, user=user)
+            result = get_parcel_info(parcel, local)            
+            details = []
+            for detail in parcel.goodsdetails.all():
+                details.append({
+                    "description":detail.description,
+                    "cn_customs_tax_catalog_name":detail.cn_customs_tax_catalog_name,
+                    "cn_customs_tax_name":detail.cn_customs_tax_name,
+                    "qty":detail.qty,
+                    "item_net_weight_kg":detail.item_net_weight_kg,
+                    "item_price_eur":detail.item_price_eur, })
+            result['details'] = details
+            
+            histories = []
+            for history in parcel.histories.filter(visible_to_customer=True).order_by('created_at'):
+                histories.append({
+                    "created_at":history.created_at.astimezone(local).strftime("%Y-%m-%d %H:%M"),
+                    "description":history.description, })
+            result['histories'] = histories
+            
+            return {"state":'success', "parcel":result}
+            
+            
+            
+        except IntlParcel.DoesNotExist:
+            return dict(state="error", msg=u"未找到该国际包裹单")
+
+@json_response
+@secure_required
+@login_required
+def json_confirm_intl_parcel(request):
+    results = []
+    try:
+        if request.method == 'POST':
+            
+            user_id = request.session.get('_auth_user_id')
+            user = User.objects.get(id=user_id)
+            yids = request.POST.get('yids', False)
+            p = re.compile(u'^[a-zA-Z0-9\+]+$')
+            if yids and p.match(yids):
+                yids = yids.split('+')
+                parcels = IntlParcel.objects.filter(yid__in=yids, user_id=user_id, status='draft', is_deleted=False)
+                for parcel in parcels:
+                    if not parcel.yde_number:
+                        parcel.yde_number = get_seq_by_code('yde', True)
+                    fee = parcel.get_fee()
+                    fee_to_book = fee - parcel.booked_fee
+                    # ## deduct the fee
+                    (success, msg) = user.userprofile.deposit_deduct(fee_to_book, parcel.yde_number, u"国际邮单。订单号：" + parcel.yde_number)
+                    
+                    if success:
+                        # 扣款成功
+                        numbers = get_parcel_numbers(parcel)
+                        if numbers['success']:
+                            logger.debug("aaaa1")
+                            parcel.tracking_number = numbers['tracking_number']
+                            parcel.tracking_number_created_at = datetime.now()
+                            parcel.retoure_tracking_number = numbers['retoure_tracking_number']
+                            parcel.retoure_tracking_number_created_at = datetime.now()
+                            parcel.retoure_routing_code = numbers['retoure_routing_code']
+                            parcel.pdf_info = numbers['pdf_info']
+                            parcel.status = 'confirmed'
+                            parcel.booked_fee = fee
+                            logger.debug("aaaa2")
+                            History.objects.create(intl_parcel=parcel, created_at=datetime.now(), description=u"扣款成功。下一步：等待包裹到达处理中心")
+                            logger.debug("aaaa3")
+                            results.append({
+                                        'success':True,
+                                        'yid':parcel.yid,
+                                        'yde_number':parcel.yde_number,
+                                        'tracking_number':numbers['tracking_number'],
+                                        'retoure_tracking_number':numbers['retoure_tracking_number']
+                                        })
+                        else:
+                            # 未正确生成相应单号，退回扣款
+                            logger.debug("aaaa4")
+                            user.userprofile.deposit_increase(fee_to_book, parcel.yde_number, u"国际邮单。订单号：" + parcel.yde_number)
+                            results.append({
+                                        'success':False,
+                                        'yid':parcel.yid,
+                                        'yde_number':parcel.yde_number,
+                                        'msg':numbers['msg'],
+                                        })
+                                              
+                                                        
+                    else:
+                        # 扣款不成功
+                        results.append({'success':False,
+                                        'yid':parcel.yid,
+                                        'yde_number':parcel.yde_number,
+                                        'msg':"余额不足，请充值后再试"
+                                        })
+                    parcel.save()
+                return results
+    except Exception as e:
+        logger.error(e)
+        results.append({'success':False,
+                        'yid':"",
+                        'yde_number':"",
+                        'msg':u"非常抱歉，我们遇到了系统错误,烦请联系客服"
+                        })
+        return results                
+@json_response
+@secure_required
+@login_required
+def json_import_intl_parcel(request):
+    if request.method == 'POST':
+        type_code = request.POST.get('type_code', 'yd').strip()
+        cn_customs_paid_by = request.POST.get('cn_customs_paid_by', 'receiver').strip()
+        upload_file = request.FILES.get('file')
+        parcel_infos, parcel_errors = get_parcel_infos_from_excel(upload_file.read())
+        if parcel_errors:
+            return {'success':False, 'parcel_errors':parcel_errors}
+        if not parcel_infos:
+            return {'success':False, 'parcel_errors':[{'row_no':'000', 'errors':{'file_error':['服务器未读取到任何数据：文件格式错误或者内容为空。']}}]}
+        is_valid = True
+        parcel_errors = []
+        forms = []
+        for key in parcel_infos.keys():
+            parcel_info = parcel_infos[key]
+            parcel_info['type_code'] = type_code
+            parcel_info['cn_customs_paid_by'] = cn_customs_paid_by
+            parcel_form = IntlParcelForm(parcel_info)
+            if not parcel_form.is_valid():
+                is_valid = False
+                parcel_errors.append({'row_no':parcel_info['row_no'],
+                                      'errors':parcel_form.errors
+                                      })
+            goodsdetail_forms = []
+            for goodsdetail_info in parcel_info['goodsdetails']:
+                gd_form = ParcelDetailForm(goodsdetail_info)
+                if not gd_form.is_valid():
+                    is_valid = False
+                    parcel_errors.append({'row_no':goodsdetail_info['row_no'],
+                                          'errors':gd_form.errors
+                                      })
+                goodsdetail_forms.append(gd_form)
+            
+            forms.append({
+                          'parcel_form':parcel_form,
+                          'goodsdetail_forms':goodsdetail_forms
+                          })
+        
+        if is_valid:
+            
+            user_id = request.session.get('_auth_user_id')
+            user = User.objects.get(id=user_id)
+            currency_type = user.userprofile.deposit_currency_type            
+            type = ParcelType.objects.get(code=type_code)
+            # #get price level
+            default_level = Level.objects.get(code="default")
+            level = user.userprofile.level or default_level 
+            try:
+                price_level = PriceLevel.objects.get(level=level,
+                                                   currency_type=currency_type,
+                                                   parcel_type=type)
+            except PriceLevel.DoesNotExist:
+                price_level = PriceLevel.objects.get(level=default_level,
+                                                   currency_type=currency_type,
+                                                   parcel_type=type)
+            json_prices = price_level.json_prices
+            for parcel_form in forms:
+                # create parcel
+                parcel = parcel_form['parcel_form'].save(commit=False)
+                parcel.user_id = user_id
+                parcel.type = type
+                parcel.currency_type = currency_type
+                parcel.json_prices = json_prices
+                parcel.save()
+                parcel.yid = hashlib.md5("intlparcel%d" % parcel.id).hexdigest()
+                parcel.save()
+                parcel.get_sfz_status()
+                
+                for detail_form in parcel_form['goodsdetail_forms']:
+                    detail = detail_form.save(commit=False)
+                    detail.intl_parcel = parcel
+                    detail.save()
+                    
+            return {'success':True}
+        else:
+            return {'success':False, 'parcel_errors':parcel_errors}
+            
+        
+    return parcel_infos
+                 
+
+@json_response
+@secure_required
+@login_required
+def json_remove_intl_parcel(request):
+    if request.method == 'POST':
+        results = []
+        user_id = request.session.get('_auth_user_id')
+        yids = request.POST.get('yids', False)
+        p = re.compile(u'^[a-zA-Z0-9\+]+$')
+        if yids and p.match(yids):
+            yids = yids.split('+')
+            for yid in yids:
+                try:
+                    parcel = IntlParcel.objects.get(yid=yid, user_id=user_id, status='draft')
+                    parcel.is_deleted = True
+                    parcel.save()
+                    results.append({'yid':yid})
+                except IntlParcel.DoesNotExist:
+                    pass  # TODO make log
+            return results
+@json_response
+@secure_required
+@login_required
+def json_search_intl_parcel(request):
+    user_id = request.session.get('_auth_user_id')
+    
+    if request.method == 'GET': 
+        q = IntlParcel.objects.filter(user_id=user_id, is_deleted=False)       
+        page = int(request.GET.get('page', 1) or 1)
+        rows = int(request.GET.get('rows', 10) or 10)
+        if page < 1:
+            page = 1
+        if rows < 1:
+            rows = 10
+        s = request.GET.get('s', False)        
+        if s:
+            q = q.filter(Q(yde_number__contains=s) | 
+                           Q(tracking_number__contains=s) | 
+                           Q(retoure_tracking_number__contains=s) | 
+                           Q(sender_name__contains=s) | 
+                           Q(sender_company__contains=s) | 
+                           Q(sender_city__contains=s) | 
+                           Q(sender_postcode__contains=s) | 
+                           Q(sender_tel__contains=s) | 
+                           Q(sender_street__contains=s) | 
+                           Q(receiver_name__contains=s) | 
+                           Q(receiver_company__contains=s) | 
+                           Q(receiver_province__contains=s) | 
+                           Q(receiver_city__contains=s) | 
+                           Q(receiver_address__contains=s) | 
+                           Q(receiver_mobile__contains=s) | 
+                           Q(ref__contains=s)
+                           )
+        else:       
+            sender_name = request.GET.get('sender_name', False)
+            sender_company = request.GET.get('sender_company', False)
+            sender_city = request.GET.get('sender_city', False)
+            sender_postcode = request.GET.get('sender_postcode', False)
+            sender_tel = request.GET.get('sender_tel', False)
+            sender_street = request.GET.get('sender_street', False)
+            
+            receiver_name = request.GET.get('receiver_name', False)
+            receiver_company = request.GET.get('receiver_company', False)
+            receiver_province = request.GET.get('receiver_province', False)
+            receiver_city = request.GET.get('receiver_city', False)
+            receiver_address = request.GET.get('receiver_address', False)
+            receiver_mobile = request.GET.get('receiver_mobile', False)
+            
+            ref = request.GET.get('ref', False)
+            cn_customs_paid_by = request.GET.get('cn_customs_paid_by', False)
+            type_code = request.GET.get('type_code', False)        
+            status = request.GET.get('status', False)
+            number = request.GET.get('number', False)
+                    
+            
+            if sender_name:
+                q = q.filter(sender_name__contains=sender_name)
+            if sender_company:
+                q = q.filter(sender_company__contains=sender_company)
+            if sender_city:
+                q = q.filter(sender_city__contains=sender_city)
+            if sender_postcode:
+                q = q.filter(sender_postcode__contains=sender_postcode)
+            if sender_tel:
+                q = q.filter(sender_tel__contains=sender_tel)
+            if sender_street:
+                q = q.filter(sender_street__contains=sender_street)
+            if receiver_name:
+                q = q.filter(receiver_name__contains=receiver_name)
+            if receiver_company:
+                q = q.filter(receiver_company__contains=receiver_company)
+            if receiver_province:
+                q = q.filter(receiver_province__contains=receiver_province)
+            if receiver_city:
+                q = q.filter(receiver_city__contains=receiver_city)
+            if receiver_address:
+                q = q.filter(receiver_address__contains=receiver_address)
+            if receiver_mobile:
+                q = q.filter(receiver_mobile__contains=receiver_mobile)
+            if ref:
+                q = q.filter(ref__contains=ref)
+            if cn_customs_paid_by:
+                q = q.filter(cn_customs_paid_by=cn_customs_paid_by)
+            if type_code:
+                try: 
+                    type = ParcelType.objects.get(code=type_code)
+                    q = q.filter(type_id=type.id)
+                except ParcelType.DoesNotExist:
+                    q = q.filter(type_id=0)
+            if status:
+                q = q.filter(status=status)
+            if number:
+                q = q.filter(Q(yde_number__contains=number) | 
+                           Q(tracking_number__contains=number) | 
+                           Q(retoure_tracking_number__contains=number))
+        
+        results = {}
+        count = q.count()
+        results['count'] = count or 0
+        if count == 0:
+            results['parcels'] = []
+            return results
+        last_page = int(math.ceil(float(count) / float(rows)))
+        if page * rows > count:
+            page = last_page
+        
+        start = (page - 1) * rows
+        end = page * rows
+        if end > count:
+            end = count
+        results['start'] = start
+        results['end'] = end
+        results['page'] = page
+        results['rows'] = rows
+        results['last_page'] = last_page   
+        tz = getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+        local = pytz.timezone(tz)
+        results['parcels'] = []
+        for parcel in q.order_by('-created_at')[start:end]:
+            results['parcels'].append(get_parcel_info(parcel, local))
+        
+        return results
+
+
+class IntlParcelPdfView(PDFTemplateView):
+    filename = "intl-parcel-label.pdf"
+    template_name = 'parcel/intl_parcel_label.html'
+    cmd_options = {
+        'orientation': 'landscape',
+        'checkbox-checked-svg': '/opt/django_sites/checkbox2.svg',
+        'checkbox-svg':'/opt/django_sites/checkbox3.svg',
+        'no-outline':True,  # 不产生index
+        # 'collate': True,
+ #       'quiet': False,
+    }
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(IntlParcelPdfView, self).dispatch(*args, **kwargs)
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(IntlParcelPdfView, self).get_context_data(*args, **kwargs)
+        if self.request.method == 'POST':
+            yids = self.request.POST.get('yids', '')
+        elif self.request.method == 'GET':
+            yids = self.request.GET.get('yids', '')
+        yids = yids.split('.')
+        user_id = self.request.session.get('_auth_user_id')
+        user = User.objects.get(id=user_id)
+        parcels = IntlParcel.objects.filter(yid__in=yids,
+                                    status__in=['confirmed',
+                                               'proccessing_at_yde',
+                                               'transit_to_destination_country',
+                                               'custom_clearance_at_destination_country',
+                                                'distributing_at_destination_country',
+                                                'distributed_at_destination_country',
+                                                'error',
+                                               ],
+                                    is_deleted=False,
+                                    )
+        if not user.is_staff:
+            parcels = parcels.filter(user_id=user_id)
+        for parcel in parcels:
+            if not parcel.printed_at:
+                parcel.printed_at = datetime.now()
+                parcel.save()
+        
+        if parcels.count() > 0:
+            context.update({'parcels':parcels})
+        else:
+            raise Http404('No retoure label found!')
+        
+        return context
+    def post(self, request, *args, **kwargs):        
+        return super(IntlParcelPdfView, self).get(request, *args, **kwargs)
+
+class IntlParcelCustomsPdfView(PDFTemplateView):
+    filename = "intl-parcel-customs-label.pdf"
+    template_name = 'parcel/intl_parcel_customs_label.html'
+    cmd_options = {
+        'orientation': 'portrait',
+        'no-outline':True,  # 不产生index
+        # 'checkbox-checked-svg': '/home/lilee/Dropbox/Software_Project/yunda_web_app/parcel/templates/parcel/checkbox2.svg',
+        # 'checkbox-svg':'/home/lilee/Dropbox/Software_Project/yunda_web_app/parcel/templates/parcel/checkbox3.svg',
+        # 'collate': True,
+        # 'quiet': None,
+    }
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(IntlParcelCustomsPdfView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(IntlParcelCustomsPdfView, self).get_context_data(*args, **kwargs)
+        if self.request.method == 'POST':
+            yids = self.request.POST.get('yids', '')
+        elif self.request.method == 'GET':
+            yids = self.request.GET.get('yids', '')
+        yids = yids.split('.')
+        user_id = self.request.session.get('_auth_user_id')
+        user = User.objects.get(id=user_id)
+        parcels = IntlParcel.objects.filter(yid__in=yids,
+                                    status__in=['confirmed',
+                                               'proccessing_at_yde',
+                                               'transit_to_destination_country',
+                                               'custom_clearance_at_destination_country',
+                                                'distributing_at_destination_country',
+                                                'distributed_at_destination_country',
+                                                'error',
+                                               ],
+                                    is_deleted=False,
+                                    )
+        if not user.is_staff:
+            parcels = parcels.filter(user_id=user_id)
+#             parcels = []
+#             for parcel in qs:
+#                 parcels.append(parcel)
+#                 if not parcel.printed_at:
+#                     parcel.printed_at = datetime.now()
+#                     parcel.save()
+        
+        if parcels.count() > 0:
+            context.update({'parcels':parcels})
+        else:
+            raise Http404('No retoure label found!')
+        
+        return context
+    def post(self, request, *args, **kwargs):        
+        return super(IntlParcelCustomsPdfView, self).get(request, *args, **kwargs)
+
+class IntlParcelAusfuhrbescheinigungPdfView(PDFTemplateView):
+    filename = "Ausfuhrbescheinigung.pdf"
+    template_name = 'parcel/intl_parcel_export_proof.html'
+    header_template= 'parcel/header.html'
+    footer_template= 'parcel/footer.html'
+    cmd_options = {
+        'orientation': 'portrait',
+        'no-outline':True,  # 不产生index
+        # 'checkbox-checked-svg': '/home/lilee/Dropbox/Software_Project/yunda_web_app/parcel/templates/parcel/checkbox2.svg',
+        # 'checkbox-svg':'/home/lilee/Dropbox/Software_Project/yunda_web_app/parcel/templates/parcel/checkbox3.svg',
+        # 'collate': True,
+        # 'quiet': None,
+    }
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(IntlParcelAusfuhrbescheinigungPdfView, self).dispatch(*args, **kwargs)
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(IntlParcelAusfuhrbescheinigungPdfView, self).get_context_data(*args, **kwargs)
+        if self.request.method == 'POST':
+            yids = self.request.POST.get('yids', '')
+        elif self.request.method == 'GET':
+            yids = self.request.GET.get('yids', '')
+        yids = yids.split('.')
+        user_id = self.request.session.get('_auth_user_id')
+        user = User.objects.get(id=user_id)
+        parcels = IntlParcel.objects.filter(yid__in=yids,
+#                                     status__in=[
+#                                                'transit_to_destination_country',
+#                                                'custom_clearance_at_destination_country',
+#                                                 'distributing_at_destination_country',
+#                                                 'distributed_at_destination_country',
+#                                                ],
+                                    is_deleted=False,
+                                    )
+        if not user.is_staff:
+            parcels = parcels.filter(user_id=user_id)
+#             parcels = []
+#             for parcel in qs:
+#                 parcels.append(parcel)
+#                 if not parcel.printed_at:
+#                     parcel.printed_at = datetime.now()
+#                     parcel.save()
+        
+        if parcels.count() > 0:
+            context.update({'parcels':parcels})
+        else:
+            raise Http404('No parcel found!')
+        
+        return context
+    def post(self, request, *args, **kwargs):        
+        return super(IntlParcelAusfuhrbescheinigungPdfView, self).get(request, *args, **kwargs)         
+
+@json_response
+@secure_required
+@staff_member_required
+def admin_panel_json_after_scan_parcel_retoure(request):
+    user_id = request.session.get('_auth_user_id')
+    yde_number = request.GET.get('yde_number', False)
+    oc_name = request.GET.get('oc_name', u"德国法兰克福处理中心")
+    if not yde_number:
+        return {'success':False, 'msg':'No yde number'}
+    if not oc_name:
+        return {'success':False, 'msg':'No operation center name'}  
+    try:
+        parcel = IntlParcel.objects.get(yde_number=yde_number)
+        parcel_infos = get_parcel_info(parcel)
+        
+        parcel_infos['real_weight_kg'] = parcel.real_weight_kg
+        parcel_infos['real_length_cm'] = parcel.real_length_cm
+        parcel_infos['real_width_cm'] = parcel.real_width_cm
+        parcel_infos['real_height_cm'] = parcel.real_height_cm
+        parcel_infos['cn_customs'] = parcel.get_cn_customs()
+        
+        parcel_infos['receiver_name_en'] = parcel.get_receiver_name_en()
+        parcel_infos['receiver_company_en'] = parcel.get_receiver_company_en()
+        parcel_infos['receiver_province_en'] = parcel.get_receiver_province_en()
+        parcel_infos['receiver_city_en'] = parcel.get_receiver_city_en()
+        parcel_infos['receiver_district_en'] = parcel.get_receiver_district_en()
+        parcel_infos['receiver_address_en'] = parcel.get_receiver_address_en()
+        parcel_infos['receiver_address2_en'] = parcel.get_receiver_address2_en()
+        if "yd" in parcel.type.code:
+            parcel_infos['pdf_info'] = parcel.pdf_info
+        details = []
+        for detail in parcel.goodsdetails.all():
+            details.append({
+                "description":detail.description,
+                "cn_customs_tax_catalog_name":detail.cn_customs_tax_catalog_name,
+                "cn_customs_tax_name":detail.cn_customs_tax_name,
+                "qty":detail.qty,
+                "item_net_weight_kg":detail.item_net_weight_kg,
+                "item_price_eur":detail.item_price_eur, })
+        parcel_infos['details'] = details
+        History.objects.create(
+                               intl_parcel=parcel,
+                               description=u"到达：%s 已扫描" % oc_name or u"欧洲公司",
+                               visible_to_customer=True,
+                               staff_id=user_id,
+                               )
+        return {'success':True,
+                'is_parcel':True,
+                'infos':parcel_infos
+                }
+        
+    except IntlParcel.DoesNotExist:
+        try:
+            retoure = DhlRetoureLabel.objects.get(retoure_yde_number=yde_number)
+            infos = get_retoure_info(retoure)
+            RetoureHistory.objects.create(
+                                   retoure=retoure,
+                                   description=u"到达：%s 回邮包裹到达。下一步：内装包裹将会扫描并发送至目的国家" % oc_name or "欧洲公司",
+                                   visible_to_customer=True,
+                                   staff_id=user_id,
+                                   )
+            if retoure.status == "confirmed":                
+                retoure.status = "finished"
+                retoure.save()
+                return {'success':True,
+                        'is_retoure':True,
+                        'infos':infos,
+                        'colors':{'success':True,
+                            'color':COLORS['retoure_open'][COLORS['retoure_open'].keys()[0]],
+                            'sign':COLORS['retoure_open'].keys()[0]}
+                        }
+            else:                
+                return {'success':True,
+                        'is_retoure':True,
+                        'infos':infos,
+                        }
+        
+        except DhlRetoureLabel.DoesNotExist:
+            return {'success':False, 'msg':'No intl. parcel or retoure label found'}
+        except Exception as e:
+            print e
+            return {'success':False, 'msg':'System error, please inform webmaster'}
+    
+    except Exception as e:
+        print e
+        return {'success':False, 'msg':'System error, please inform webmaster'}
+
+@json_response
+@secure_required
+@staff_member_required
+def admin_panel_json_submit_retoure_second_time(request):
+    user_id = request.session.get('_auth_user_id')
+    user = User.objects.get(id=user_id)
+    oc_name = request.GET.get('oc_name', u"德国法兰克福处理中心")
+    if request.method == "POST":
+        waiting_return = {'success':True,
+                            'color':COLORS['waiting'][COLORS['waiting'].keys()[0]],
+                            'sign':COLORS['waiting'].keys()[0]}
+        yid = request.POST.get('yid', False)
+        if not yid:
+            return {'success':False, 'msg':'No yid'}
+        try: 
+            retoure = DhlRetoureLabel.objects.get(yid=yid)
+            fee = retoure.price
+            (success, msg) = retoure.user.userprofile.deposit_deduct(fee, retoure.retoure_yde_number, u"回邮单。订单号：" + retoure.retoure_yde_number)
+            if not success:
+                write_new_subject_to_customer(retoure.user.id,
+                                                  u"包裹延迟，余额不足",
+                                                  u"亲爱的客户，\n由于重复使用回邮单，且余额不足，回邮单%s内包裹暂时不能发往目的国。为保证包裹能尽快发往目的国，请尽快充值。" % (retoure.retoure_yde_number,
+                                                                                                                                                    ),
+                                                  user.get_full_name()
+                                                )
+                RetoureHistory.objects.create(retoure=retoure,
+                                   description=u"重复使用回邮单。扣款不成功。",
+                                   visible_to_customer=True,
+                                   staff_id=user_id
+                                   )
+                return waiting_return
+            else:
+                RetoureHistory.objects.create(retoure=retoure,
+                                   description=u"重复使用回邮单。扣款成功。",
+                                   visible_to_customer=True,
+                                   staff_id=user_id
+                                   )
+                return {'success':True,
+                            'color':COLORS['retoure_open'][COLORS['retoure_open'].keys()[0]],
+                            'sign':COLORS['retoure_open'].keys()[0]}
+        except DhlRetoureLabel.DoesNotExist:
+            return {'success':False, 'msg':'Retoure label does not exist'}
+        
+
+@json_response
+@secure_required
+@staff_member_required
+def admin_panel_json_submit_parcel(request):
+    user_id = request.session.get('_auth_user_id')
+    user = User.objects.get(id=user_id)
+    oc_name = request.GET.get('oc_name', u"德国法兰克福处理中心")
+    if request.method == "POST":
+        p = re.compile(u'^[a-zA-Z0-9\-]{1,20}$')
+        mawb_number = request.POST.get('mawb_number', False)
+        if not p.match(mawb_number):
+            return {'success':False, 'msg':'Mawb number not valid'}
+        yid = request.POST.get('yid', False)
+        if not yid:
+            return {'success':False, 'msg':'No yid'}
+        real_weight_kg = request.POST.get('real_weight_kg', 0)
+        if real_weight_kg < 0.1:
+            return {'success':False, 'msg':'Real weight <0.1'}
+        real_length_cm = request.POST.get('real_length_cm', 0)
+        real_width_cm = request.POST.get('real_width_cm', 0)
+        real_height_cm = request.POST.get('real_height_cm', 0)
+        
+        waiting_return = {'success':True,
+                            'color':COLORS['waiting'][COLORS['waiting'].keys()[0]],
+                            'sign':COLORS['waiting'].keys()[0]}
+        
+        try:
+            parcel = IntlParcel.objects.get(yid=yid)
+            if parcel.status not in ['confirmed', 'error']:
+                return {'success':False, 'msg':'Parcel duplicated or something wrong'}
+            parcel.real_weight_kg = float(real_weight_kg)
+            if real_length_cm:
+                parcel.real_length_cm = float(real_length_cm)
+            if real_width_cm:
+                parcel.real_width_cm = float(real_width_cm)
+            if real_height_cm:
+                parcel.real_height_cm = float(real_height_cm)
+            parcel.save()
+            
+            # 扣款
+            fee = parcel.get_real_fee()
+            fee_to_book = fee - parcel.booked_fee
+            logger.debug(u"fee_to_book: %f" % fee_to_book)
+            # ## deduct the fee
+            if fee_to_book > 0:
+                (success, msg) = parcel.user.userprofile.deposit_deduct(fee_to_book, parcel.yde_number, u"国际邮单。订单号：" + parcel.yde_number)
+                
+                if not success:
+                    # TODO inform customer short in deposit
+                    write_new_subject_to_customer(parcel.user.id,
+                                                  u"包裹延迟，余额不足",
+                                                  u"亲爱的客户，\n由于余额不足，包裹%s暂时不能发往目的国。为保证包裹能尽快发往目的国，请尽快充值。\n包裹实际重量：%.1f kg, 体积： %.1f x %.1f x %.1fcm" % (parcel.yde_number,
+                                                                                                                                                    parcel.real_weight_kg,
+                                                                                                                                                    parcel.real_length_cm,
+                                                                                                                                                    parcel.real_width_cm,
+                                                                                                                                                    parcel.real_height_cm),
+                                                  user.get_full_name()
+                                                )
+                    parcel.status = "error"
+                    parcel.save()
+                    History.objects.create(intl_parcel=parcel,
+                                       description=u"到达：%s 包裹延迟，延迟原因已通知发件人，等待发件人回复" % oc_name,
+                                       visible_to_customer=True,
+                                       staff_id=user_id
+                                       )
+                    return waiting_return
+                parcel.booked_fee = fee
+                parcel.save()
+            
+            if parcel.get_sfz_status() == "2":
+                # TODO inform customer no sfz
+                write_new_subject_to_customer(parcel.user.id,
+                                                  u"包裹延迟，未上传身份证图片",
+                                                  u"亲爱的客户，\n根据中国海关规定，韵达自营小包裹需要收件人身份证图片，包裹%s暂时不能发往目的国。为保证包裹能尽快发往目的国，请尽快上传身份证图片。\n\n<a target='_blank' href='http://yunda-express.eu/shenfenzheng/?name=%s&mobile=%s'><u>++点击这里直接上传身份证++</u></a>" \
+                                                  % (parcel.yde_number,parcel.receiver_name,parcel.receiver_mobile),
+                                                  user.get_full_name()
+                                                )
+                # TODO inform receiver no sfz
+                parcel.status = "error"
+                parcel.save()
+                History.objects.create(intl_parcel=parcel,
+                                       description=u"到达：%s 包裹延迟，等待上传身份证" % oc_name,
+                                       visible_to_customer=True,
+                                       staff_id=user_id
+                                       )
+                return waiting_return
+            
+            color, sign = add_to_mawb(mawb_number, yid,
+                                    parcel.receiver_name + parcel.receiver_mobile,
+                                    parcel.sender_name + parcel.sender_tel,
+                                    parcel.get_total_value())
+            if color:
+                if parcel.status in ["confirmed"]:
+                    if "yd" in parcel.type.code:
+                        description = u"到达：%s 下一步，出口清关" % oc_name
+                    else:
+                        description = u"包裹到达韵达欧洲处理中心。下一步：包裹运往韵达合作伙伴处理中心"
+                elif parcel.status in ['error']:
+                    if "yd" in parcel.type.code:
+                        description = u"到达：%s 包裹状态正常。下一步，出口清关" % oc_name
+                    else:
+                        description = u"包裹状态正常。下一步：包裹运往韵达合作伙伴处理中心"
+                History.objects.create(intl_parcel=parcel,
+                                       description=description,
+                                       visible_to_customer=True,
+                                       staff_id=user_id
+                                       )
+                parcel.status = "proccessing_at_yde"                
+                parcel.save()
+                return {'success':True, 'color':color, 'sign':sign}
+            else:
+                parcel.status = "error"
+                parcel.save()
+                History.objects.create(intl_parcel=parcel,
+                                       description=u"到达：%s 出口清关延迟" % oc_name,
+                                       visible_to_customer=True,
+                                       staff_id=user_id
+                                       )
+                return waiting_return
+            
+        except IntlParcel.DoesNotExist:
+            return {'success':False, 'msg':'Intl. parcel does not exist'}
+
+def get_mawb_info(mawb):
+    mawb_info = {
+               'mawb_number':mawb.mawb_number,
+               'cn_customs':mawb.cn_customs,
+               'need_receiver_name_mobiles':mawb.need_receiver_name_mobiles,
+               'need_total_value_per_sender':mawb.need_total_value_per_sender,
+               'status':mawb.status,
+               'status_display':mawb.get_status_display(),
+               'id':mawb.id,
+               'batches':[],
+               }
+    for batch in mawb.batches.all():
+        batch_info = {
+                    'order_number':batch.order_number,
+                    'sign':batch.sign,
+                    'color':batch.color,
+                    'max_value':batch.max_value
+                    }
+        mawb_info['batches'].append(batch_info)
+    return mawb_info
+
+COLORS = {
+                "dhl":{'car':'#FF9900',  # orange
+                       },
+                'postnl':{'tree':'#008000',  # green 
+                          },
+                "ctu":{ 'star':'#00FFFF',  # aqua-
+                        'flash':'#808080',  # gray-
+                        'key':'#800000',  # maroon-
+                        'apple':'#808000',  # olive-
+                        },
+                "default":{'envelope':'#0000FF',  # blue-
+                           'umbrella':'#000080',  # navy-
+                           'camera':'#FF00FF',  # magenta-
+                           'glass':'#800080',  # purple-
+                           },
+                'waiting':{'plane':'#000000',  # black-
+                           },
+                'error':{'times':'#FF0000',  # red
+                         },
+                'retoure_open':{'unlock':'#EE0000',  # 
+                         },
+                }
+@json_response
+@secure_required
+@staff_member_required
+def admin_panel_available_mawbs(request):
+    #cn_customses = ['dhl', 'postnl', 'ctu', 'default']
+    cn_customses = ['dhl',  'ctu', 'default']
+
+    mawb_infos = {}
+    for cn_customs in cn_customses:
+        mawbs = Mawb.objects.filter(status="warehouse_open", cn_customs=cn_customs)
+        infos = []
+        for mawb in mawbs:        
+            infos.append(get_mawb_info(mawb))
+        mawb_infos[cn_customs] = infos
+            
+    return {'mawbs':mawb_infos,
+            'colors':COLORS,
+            }
+
+@json_response
+@secure_required
+@staff_member_required
+def admin_panel_get_colors(request): 
+    return COLORS
+
+@json_response
+@secure_required
+@staff_member_required
+def admin_panel_post_mawbs(request):
+    user_id = request.session.get('_auth_user_id')
+    if request.method == "POST":
+        p = re.compile(u'^[a-zA-Z0-9\-]{1,20}$')
+        mawb_number = request.POST.get('mawb_number', False)
+        if not p.match(mawb_number):
+            return {'success':False, 'msg':'Mawb number not valid'}
+        cn_customs = request.POST.get('cn_customs', False)
+        if not p.match(cn_customs):
+            return {'success':False, 'msg':'CN customs code not valid'}
+        
+        
+        msg = []
+        mawb_form = MawbForm(request.POST)
+        is_valid = True
+        batch_forms = []
+        if not mawb_form.is_valid():
+            is_valid = False
+            msg.append(mawb_form.errors)
+        
+        for i in range(0, int(request.POST.get('batch_num', 0))):
+            dict = {
+                  'order_number':request.POST.get('order_number-' + str(i), ''),
+                  'sign':request.POST.get('sign-' + str(i), ''),
+                  'color':request.POST.get('color-' + str(i), ''),
+                  'max_value':request.POST.get('max_value-' + str(i), 0),
+                  }
+            batch_form = BatchForm(dict)
+            if batch_form.is_valid():
+                batch_forms.append(batch_form)
+            else:
+                is_valid = False
+                msg.append(batch_form.errors)
+        if is_valid:
+            mawb = mawb_form.save()
+            # mawb.status = "warehouse_open"
+            mawb.receiver_name_mobiles = []
+            mawb.save()
+            for batch_form in batch_forms:
+                batch = batch_form.save(commit=False)
+                batch.mawb = mawb
+                batch.total_value_per_sender = {}
+                batch.yids = []
+                batch.save()
+            return {'success':True,
+                    'mawb':get_mawb_info(mawb),
+                    }
+        else:
+            return {'success':False, 'msg':msg}
+
+@json_response
+@secure_required
+@staff_member_required
+def admin_panel_search_mawbs(request):
+    user_id = request.session.get('_auth_user_id')
+    
+    if request.method == 'GET': 
+        q = Mawb.objects     
+        page = int(request.GET.get('page', 1))
+        rows = int(request.GET.get('rows', 10))
+        
+        s = request.GET.get('s', False)      
+        if s:
+            s = s.strip()
+            q = q.filter(mawb_number__contains=s) 
+        cn_customs = request.GET.get('cn_customs', False)
+        if cn_customs:
+            q = q.filter(cn_customs__contains=cn_customs) 
+        status = request.GET.get('status', False)
+        if status:
+            q = q.filter(status__contains=status) 
+        
+        results = {}
+        count = q.count()
+        results['count'] = count or 0
+        results['mawbs'] = []
+        results['colors'] = COLORS
+        if count == 0:            
+            return results
+        last_page = int(math.ceil(float(count) / float(rows)))
+        if page * rows > count:
+            page = last_page
+        
+        start = (page - 1) * rows
+        end = page * rows
+        if end > count:
+            end = count
+        results['start'] = start
+        results['end'] = end
+        results['page'] = page
+        results['rows'] = rows
+        results['last_page'] = last_page   
+        tz = getattr(settings, 'TIME_ZONE', 'Europe/Berlin')
+        local = pytz.timezone(tz)
+        for mawb in q.order_by('-created_at')[start:end]:
+            results['mawbs'].append({
+                                        'mawb_number':mawb.mawb_number,
+                                        'cn_customs':mawb.cn_customs,
+                                        'need_receiver_name_mobiles':mawb.need_receiver_name_mobiles,
+                                        'need_total_value_per_sender':mawb.need_total_value_per_sender,
+                                        'created_at':mawb.created_at.astimezone(local).strftime("%Y-%m-%d %H:%M"),
+                                        'status':mawb.status,
+                                        'status_display':mawb.get_status_display(),
+                                        'id':mawb.id,
+                                    })
+        
+        return results
+       
+@json_response
+@secure_required
+@staff_member_required
+def json_get_mawb(request, id):
+    user_id = request.session.get('_auth_user_id')
+        
+    if id:
+        try:            
+            mawb = Mawb.objects.get(id=id)
+            tz = getattr(settings, 'TIME_ZONE', 'Europe/Berlin')
+            local = pytz.timezone(tz)
+            result = {
+                        'mawb_number':mawb.mawb_number,
+                        'cn_customs':mawb.cn_customs,
+                        'need_receiver_name_mobiles':mawb.need_receiver_name_mobiles,
+                        'need_total_value_per_sender':mawb.need_total_value_per_sender,
+                        'created_at':mawb.created_at.astimezone(local).strftime("%Y-%m-%d %H:%M"),
+                        'status':mawb.status,
+                        'status_display':mawb.get_status_display(),
+                        'id':mawb.id,
+                        'histories':mawb.histories,
+                    }
+            
+            
+            batches = []
+            for batch in mawb.batches.order_by('order_number').all():
+                batches.append({
+                                'order_number':batch.order_number,
+                                'sign':batch.sign,
+                                'color':batch.color,
+                                'total_value_per_sender':batch.total_value_per_sender,
+                                'max_value':batch.max_value,
+                                'yids':batch.yids,
+                                'status':batch.status,
+                                'status_display':batch.get_status_display(),
+                                'id':batch.id,
+                                })
+            result['batches'] = batches
+            
+            return {"state":'success', "mawb":result}
+            
+            
+            
+        except Mawb.DoesNotExist:
+            return dict(state="error", msg=u"Mawb does not exist")
+
+_excel_column = {
+    'xuhao':0,
+    'fendanhao':1,
+    'shxingming':2,
+    'shdizhi':3,
+    'shdianhua':4,
+    'shzhengjianhao':5,
+    'wupingmingcheng':9,
+    'shuliang':10,
+    'danjia':11,
+    'shuihao':12,
+    'shuilv':13,
+    'jianshu':14,
+    'zhongliang':15
+        }  
+@secure_required
+@staff_member_required
+def get_mawb_haiguan_excel(request, id):
+    user_id = request.session.get('_auth_user_id')        
+    if id:
+        try:            
+            mawb = Mawb.objects.get(id=id, cn_customs__in=['ctu', 'default'])
+            yids = []
+            for batch in mawb.batches.all():
+                yids += batch.yids
+            parcels = IntlParcel.objects.filter(yid__in=yids)
+            book = Workbook(encoding='utf8')
+            sheet1 = book.add_sheet('Sheet 1')
+                       
+            current_row = 3
+            fendanbiaoshi = 1
+            zhongzhongliang = 0
+            for parcel in parcels:
+                sheet1.write(current_row, _excel_column['shxingming'], parcel.receiver_name or u'')
+                sheet1.write(current_row, _excel_column['shdizhi'], (parcel.receiver_province or '') + \
+                             (parcel.receiver_city or '') + (parcel.receiver_district or '') + \
+                             (parcel.receiver_address or '') + (parcel.receiver_address2 or ''))
+                sheet1.write(current_row, _excel_column['shdianhua'], parcel.receiver_mobile or u'')
+                sheet1.write(current_row, _excel_column['shzhengjianhao'], parcel.get_sfz_number())
+                sheet1.write(current_row, _excel_column['zhongliang'], parcel.real_weight_kg or u'')
+                sheet1.write(current_row, _excel_column['jianshu'], 1)
+                zhongzhongliang += parcel.real_weight_kg
+                shipment_number = parcel.tracking_number
+                for detail in parcel.goodsdetails.all():
+                    sheet1.write(current_row, _excel_column['xuhao'], str(fendanbiaoshi))
+                    sheet1.write(current_row, _excel_column['fendanhao'], shipment_number or u'')
+                    sheet1.write(current_row, _excel_column['wupingmingcheng'], (detail.description or u'') + u' ' + 
+                                 (detail.cn_customs_tax_name or u'') + u' ' + str(int((detail.item_net_weight_kg or 1) * 1000)) + u'g')
+                    cn_customs_tax = CnCustomsTax.objects.get(is_active=True, cn_name=detail.cn_customs_tax_name)
+                    if cn_customs_tax.charge_by_weight:
+                        shuliang = (detail.qty  or 1) * (detail.item_net_weight_kg or 1)
+                        danjia = cn_customs_tax.standard_unit_price_cny
+                        shuilv = 0.1
+                    else:
+                        shuliang = detail.qty  or 1
+                        danjia = detail.item_price_eur * 7 or 1
+                        shuilv = cn_customs_tax.tax_rate  or 0.1
+                    sheet1.write(current_row, _excel_column['shuliang'], shuliang)
+                    sheet1.write(current_row, _excel_column['danjia'], danjia)
+                    sheet1.write(current_row, _excel_column['shuihao'], cn_customs_tax.cn_custom_number  or u'')
+                    sheet1.write(current_row, _excel_column['shuilv'], shuilv)
+                    current_row += 1
+                fendanbiaoshi += 1
+            sheet1.write(0, 0, u'主单号')
+            sheet1.write(0, 1, mawb.mawb_number or u'')
+            sheet1.write(0, 2, u'航班号')
+            sheet1.write(0, 3, u'')
+            sheet1.write(0, 4, u'总件数')
+            sheet1.write(0, 5, fendanbiaoshi - 1)
+            sheet1.write_merge(0, 0, 6, 7, u'总重量  (小于等于运单重量）')
+            sheet1.write(0, 8, zhongzhongliang)
+            sheet1.write(0, 9, u'分单票数')
+            sheet1.write_merge(0, 0, 10, 11, fendanbiaoshi - 1)
+            sheet1.write(0, 12, u'始发港')
+            sheet1.write(0, 13, u'')
+            sheet1.write_merge(0, 0, 14, 15, u'委托方')
+            sheet1.write(0, 16, u'YUNDA Europe')
+            
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=%s.xls' % mawb.mawb_number
+            book.save(response)
+            return response      
+            
+            
+        except Mawb.DoesNotExist:
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=empty.xls'
+            return response
+        except Exception as e:
+            logger.error(e)
+
+@secure_required
+@staff_member_required
+def get_sfz_images(request):
+    if request.method == "POST":
+        yids = request.POST.get('yids', False)
+        file_name = request.POST.get('file_name', 'mawb')
+    if request.method == "GET":
+        yids = request.GET.get('yids', False)
+        file_name = request.GET.get('file_name', 'mawb')
+    if yids:
+        complete_sign = ""  # ""表示完整
+        yids = yids.split('+')
+        with closing(StringIO()) as buff:
+            zf=zipfile.ZipFile(buff,mode="w")
+            for parcel in IntlParcel.objects.filter(yid__in=yids):
+                (number, image_file) = parcel.get_sfz_image()
+                if number:
+                    zf.writestr(number + ".jpg",
+                                base64.b64decode(image_file)
+                                # compress_type=compression
+                                )
+                else:
+                    complete_sign = u"_NOT_COMPLETE"
+            zf.close()
+            ff=buff.getvalue()          
+        response = HttpResponse(content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=%s%s.zip' % (file_name, complete_sign)
+        response.write(ff)
+        return response             
+
+    # return empty
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=empty.zip'
+    response.write("")
+    return response
+
+@secure_required
+@staff_member_required
+def get_mawb_dhl_lieferschein(request, id):
+    user_id = request.session.get('_auth_user_id')
+        
+    if id:
+        try:            
+            mawb = Mawb.objects.get(id=id, cn_customs__contains="dhl")
+            parcels = IntlParcel.objects.filter(yid__in=mawb.yids)
+            for parcel in parcels:
+                pass        
+            
+            
+        except Mawb.DoesNotExist:
+            return dict(state="error", msg=u"Mawb does not exist")
+
+@secure_required
+@staff_member_required
+def get_mawb_dhl_3d_file(request, id):
+    user_id = request.session.get('_auth_user_id')
+        
+    if id:
+        try:            
+            mawb = Mawb.objects.get(id=id, cn_customs__contains="dhl")
+            parcels = IntlParcel.objects.filter(yid__in=mawb.yids)
+            for parcel in parcels:
+                pass        
+            
+            
+        except Mawb.DoesNotExist:
+            return dict(state="error", msg=u"Mawb does not exist")
+
+
+@secure_required
+@staff_member_required
+def get_batch_manifest_excel(request, id):
+    user_id = request.session.get('_auth_user_id')        
+    if id:
+        try:            
+            batch = Batch.objects.get(id=id)
+            parcels = IntlParcel.objects.filter(yid__in=batch.yids)
+            book = Workbook(encoding='utf8')
+            sheet1 = book.add_sheet('Sheet 1')
+                                   
+            batch_total_weight = 0
+            current_row = 11
+            for shipment in parcels:
+                detail_text = u""
+                for detail in shipment.goodsdetails.all():
+                    detail_text += u"%s %d X %.3fkg /%.2fEUR\n" % ((detail.description or u""),
+                                                                 (detail.qty or 0),
+                                                                 (detail.item_net_weight_kg or 0.1),
+                                                                 ((detail.qty or 1) * (detail.item_price_eur or 1)))
+                sender_add = u"%s\n%s %s\n%s %s, Germany\nTel.: %s" % (shipment.sender_name or u"",
+                                                           shipment.sender_street or u"",
+                                                           shipment.sender_hause_number or u"",
+                                                           shipment.sender_postcode or u"",
+                                                           shipment.sender_city or u"",
+                                                           shipment.sender_tel or u"",
+                                                           )
+                sheet1.write_merge(current_row, current_row + 1, 1, 1, shipment.yde_number + "\nTracking#" + (shipment.tracking_number or u''))
+                sheet1.write_merge(current_row, current_row + 1, 2, 2, u'1')
+                sheet1.write_merge(current_row, current_row + 1, 3, 3, u'%.3f' % shipment.real_weight_kg)
+                sheet1.write_merge(current_row, current_row + 1, 4, 4, shipment.sender_city + u",DE/" + \
+                                   (shipment.get_receiver_province_en() or u'') + u" " + \
+                                   (shipment.get_receiver_city_en() or u'') + ",CN")
+                sheet1.write_merge(current_row, current_row + 1, 5, 5, u'PPD')
+                sheet1.write(current_row, 6 , u"Shipper")
+                sheet1.write(current_row + 1, 6 , u"Consignee")
+                sheet1.write_merge(current_row, current_row, 7, 8 , sender_add)
+                sheet1.write_merge(current_row + 1, current_row + 1, 7, 8 , (shipment.get_receiver_name_en() or u"") + u"\n" + \
+                                   (shipment.get_receiver_district_en() or u"") + u" " + (shipment.get_receiver_address_en() or u"")
+                                   + u"\nTel.: "
+                                   + (shipment.receiver_mobile or u""))
+                sheet1.write_merge(current_row, current_row + 1, 9, 9, detail_text)
+                current_row += 2
+                
+            # write the head 
+            sheet1.write(1, 1, u'Consolidation Manifest')
+            sheet1.write_merge(1, 1, 7, 8, batch.mawb.mawb_number + str(batch.order_number) or u"")
+            sheet1.write(2, 1, batch.mawb.created_at.strftime("%d.%m.%Y"))
+            sheet1.write(3, 1, u"Carrier")  
+            sheet1.write(3, 2, u"")  
+            sheet1.write(4, 1, u"Shipper")  
+            sheet1.write_merge(4, 4, 2, 6, u"")             
+            sheet1.write(5, 1, u"Origin")  
+            sheet1.write(5, 2, u"")
+            sheet1.write(6, 1, u"Destination")  
+            sheet1.write(6, 2, u"")
+            sheet1.write(7, 1, u"Flight")  
+            sheet1.write(7, 2, u"")
+            sheet1.write(8, 1, u"HAWBs")  
+            sheet1.write(8, 2, len(batch.yids) or 0)
+            
+            sheet1.write(4, 7, u"Consignee")  
+            sheet1.write_merge(4, 4, 8, 9, u"")             
+            sheet1.write(5, 7, u"MAWB")  
+            sheet1.write(5, 8, batch.mawb.mawb_number or u"")
+            sheet1.write(6, 7, u"Pieces")  
+            sheet1.write(6, 8, len(batch.yids) or 0)
+            sheet1.write(7, 7, u"Weight")  
+            sheet1.write(7, 8, u"%.3fK" % (batch_total_weight or 0))
+            
+            sheet1.write(10, 1, u"HAWB")
+            sheet1.write(10, 2, u"Pieces")
+            sheet1.write(10, 3, u"Weight")
+            sheet1.write(10, 4, u"Orig/Dest")
+            sheet1.write(10, 5, u"PPD/COLL")
+            sheet1.write(10, 9, u"Details")
+            
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=%s.xls' % (batch.mawb.mawb_number + str(batch.order_number))
+            book.save(response)
+            return response      
+            
+            
+        except Mawb.DoesNotExist:
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=empty.xls'
+            return response
+
+@json_response
+@secure_required
+@staff_member_required
+def json_remove_mawb(request):
+    if request.method == 'POST':
+        results = []
+        ids = request.POST.get('ids', False)
+        p = re.compile(u'^[0-9\+]+$')
+        if ids and p.match(ids):
+            ids = ids.split('+')
+            for id in ids:
+                try:
+                    mawb = Mawb.objects.get(id=id, status='draft')
+                    mawb.delete()
+                    results.append({'id':id})
+                except Mawb.DoesNotExist:
+                    pass  # TODO make log
+            return results
+
+
+@json_response
+@secure_required
+@staff_member_required
+def json_mawb_change_status(request):
+    user_id = request.session.get('_auth_user_id')  
+    user = User.objects.get(id=user_id)
+    user_name = user.get_full_name()
+    oc_name = request.GET.get('oc_name', u"德国法兰克福处理中心")
+    if request.method == 'POST':
+        year = request.POST.get('year', False)
+        month = request.POST.get('month', False)
+        day = request.POST.get('day', False)
+        hour = request.POST.get('hour', False)
+        minute = request.POST.get('minute', False)
+        second = request.POST.get('second', False)
+        if (not year) or (not month) or (not day) or (not hour) or (not minute) or (not second):
+            changed_at = datetime(int(year), int(month), int(day), int(hour), int(minute), int(second))
+        else:
+            changed_at = datetime.now()
+        id = request.POST.get('id', False)
+        status = request.POST.get('status', False)
+        p = re.compile(u'^[0-9]+$')
+        if id and p.match(id) and status:
+            if status == "warehouse_open":
+                try:
+                    mawb = Mawb.objects.get(id=id, status='draft')
+                    mawb.status = status
+                    histories = mawb.histories
+                    histories.append({"status":status,
+                                      "status_display":mawb.get_status_display(),
+                                      "datetime":datetime.now().isoformat(),
+                                      'staff':user_name})
+                    mawb.histories = histories
+                    mawb.save()
+                    return {'success':True, 'status':status, 'status_display':mawb.get_status_display()}
+                except Mawb.DoesNotExist:
+                    # TODO make log
+                    return {'success':False}
+            elif status == "warehouse_closed":
+                try:
+                    mawb = Mawb.objects.get(id=id, status='warehouse_open')
+                    mawb.status = status
+                    histories = mawb.histories
+                    histories.append({"status":status,
+                                      "status_display":mawb.get_status_display(),
+                                      "datetime":datetime.now().isoformat(),
+                                      'staff':user_name})
+                    mawb.histories = histories
+                    mawb.save()
+                    return {'success':True, 'status':status, 'status_display':mawb.get_status_display()}
+                except Mawb.DoesNotExist:
+                    # TODO make log
+                    return {'success':False}
+            elif status == "transfered_to_partner":
+                try:
+                    mawb = Mawb.objects.get(id=id, status='warehouse_closed', cn_customs__in=['dhl', 'postnl'])
+                    mawb.status = status
+                    histories = mawb.histories
+                    histories.append({"status":status,
+                                      "status_display":mawb.get_status_display(),
+                                      "datetime":datetime.now().isoformat(),
+                                      'staff':user_name})
+                    mawb.histories = histories
+                    mawb.save()
+                    yids = []
+                    for batch in mawb.batches.all():
+                        yids += batch.yids
+                    for parcel in IntlParcel.objects.filter(yid__in=yids):
+                        History.objects.create(intl_parcel=parcel,
+                                               description=u"包裹运送至合作公司处理中心途中",
+                                                visible_to_customer=True,
+                                                staff_id=user_id,
+                                               )
+                    return {'success':True, 'status':status, 'status_display':mawb.get_status_display()}
+                except Mawb.DoesNotExist:
+                    # TODO make log
+                    return {'success':False}
+            elif status == "flied_to_dest":
+                try:
+                    mawb = Mawb.objects.get(id=id, status='warehouse_closed', cn_customs__in=['ctu', 'default'])
+                    mawb.status = status
+                    histories = mawb.histories
+                    histories.append({"status":status,
+                                      "status_display":mawb.get_status_display(),
+                                      "datetime":datetime.now().isoformat(),
+                                      'staff':user_name})
+                    mawb.histories = histories
+                    mawb.save()
+                    yids = []
+                    for batch in mawb.batches.all():
+                        yids += batch.yids
+                    for parcel in IntlParcel.objects.filter(yid__in=yids):
+                        History.objects.create(intl_parcel=parcel,
+                                               description=u"到达：%s 包裹飞往目的国家" % oc_name,
+                                                visible_to_customer=True,
+                                                staff_id=user_id,
+                                               )
+                    return {'success':True, 'status':status, 'status_display':mawb.get_status_display()}
+                except Mawb.DoesNotExist:
+                    # TODO make log
+                    return {'success':False}
+            elif status == "landed_at_dest":
+                try:
+                    mawb = Mawb.objects.get(id=id, status='flied_to_dest', cn_customs__in=['ctu', 'default'])
+                    mawb.status = status
+                    histories = mawb.histories
+                    histories.append({"status":status,
+                                      "status_display":mawb.get_status_display(),
+                                      "datetime":datetime.now().isoformat(),
+                                      'staff':user_name})
+                    mawb.histories = histories
+                    mawb.save()
+                    yids = []
+                    for batch in mawb.batches.all():
+                        yids += batch.yids
+                    for parcel in IntlParcel.objects.filter(yid__in=yids):
+                        History.objects.create(intl_parcel=parcel,
+                                               description=u"到达：国际部 抵达目的国，下一步：目的国进口清关",
+                                                visible_to_customer=True,
+                                                staff_id=user_id,
+                                               )
+                    return {'success':True, 'status':status, 'status_display':mawb.get_status_display()}
+                except Mawb.DoesNotExist:
+                    # TODO make log
+                    return {'success':False}
+            elif status == "customs_cleared":
+                try:
+                    mawb = Mawb.objects.get(id=id, status='landed_at_dest', cn_customs__in=['ctu', 'default'])
+                    mawb.status = status
+                    histories = mawb.histories
+                    histories.append({"status":status,
+                                      "status_display":mawb.get_status_display(),
+                                      "datetime":datetime.now().isoformat(),
+                                      'staff':user_name})
+                    mawb.histories = histories
+                    mawb.save()
+                    yids = []
+                    for batch in mawb.batches.all():
+                        yids += batch.yids
+                    for parcel in IntlParcel.objects.filter(yid__in=yids):
+                        History.objects.create(intl_parcel=parcel,
+                                               description=u"到达：国际部 目的国进口清关完成。下一步：进入派送流程",
+                                                visible_to_customer=True,
+                                                staff_id=user_id,
+                                               )
+                    return {'success':True, 'status':status, 'status_display':mawb.get_status_display()}
+                except Mawb.DoesNotExist:
+                    # TODO make log
+                    return {'success':False}
+
+@json_response
+@secure_required
+@staff_member_required
+def json_batch_change_status(request):
+    user_id = request.session.get('_auth_user_id')  
+    user = User.objects.get(id=user_id)
+    user_name = user.get_full_name()
+    oc_name = request.GET.get('oc_name', u"德国法兰克福处理中心")
+    if request.method == 'POST':
+        id = request.POST.get('id', False)
+        status = request.POST.get('status', False)
+        p = re.compile(u'^[0-9]+$')
+        if id and p.match(id) and status:
+            if status == "warehouse_closed":
+                try:
+                    batch = Batch.objects.get(id=id, status='warehouse_open')
+                    batch.status = status
+                    histories = batch.histories
+                    histories.append({"status":status,
+                                      "status_display":batch.get_status_display(),
+                                      "datetime":datetime.now().isoformat(),
+                                      'staff':user_name})
+                    batch.histories = histories
+                    batch.save()
+                    return {'success':True, 'status':status, 'status_display':batch.get_status_display()}
+                except Batch.DoesNotExist:
+                    # TODO make log
+                    return {'success':False}
+            elif status == "export_customs_cleared":
+                try:
+                    batch = Batch.objects.get(id=id, status='warehouse_closed', mawb__cn_customs__in=['ctu', 'default'])
+                    batch.status = status
+                    histories = batch.histories
+                    histories.append({"status":status,
+                                      "status_display":batch.get_status_display(),
+                                      "datetime":datetime.now().isoformat(),
+                                      'staff':user_name})
+                    batch.histories = histories
+                    batch.save()
+                    yids = batch.yids
+                    for parcel in IntlParcel.objects.filter(yid__in=yids):
+                        History.objects.create(intl_parcel=parcel,
+                                               description=u"到达：%s 出口清关完成,下一步：包裹运送至目的国家" % oc_name,
+                                                visible_to_customer=True,
+                                                staff_id=user_id,
+                                               )
+                    return {'success':True, 'status':status, 'status_display':batch.get_status_display()}
+                except Batch.DoesNotExist:
+                    # TODO make log
+                    return {'success':False}
+
+@json_response
+@secure_required
+@staff_member_required
+def admin_json_search_intl_parcel(request):
+    user_id = request.session.get('_auth_user_id')
+    
+    if request.method == 'GET': 
+        q = IntlParcel.objects.filter(is_deleted=False)       
+        page = int(request.GET.get('page', 1) or 1)
+        rows = int(request.GET.get('rows', 10) or 10)
+        if page < 1:
+            page = 1
+        if rows < 1:
+            rows = 10
+        s = request.GET.get('s', False)        
+        if s:
+            q = q.filter(Q(yde_number__contains=s) | 
+                           Q(tracking_number__contains=s) | 
+                           Q(retoure_tracking_number__contains=s) | 
+                           Q(sender_name__contains=s) | 
+                           Q(sender_company__contains=s) | 
+                           Q(sender_city__contains=s) | 
+                           Q(sender_postcode__contains=s) | 
+                           Q(sender_tel__contains=s) | 
+                           Q(sender_street__contains=s) | 
+                           Q(receiver_name__contains=s) | 
+                           Q(receiver_company__contains=s) | 
+                           Q(receiver_province__contains=s) | 
+                           Q(receiver_city__contains=s) | 
+                           Q(receiver_address__contains=s) | 
+                           Q(receiver_mobile__contains=s) | 
+                           Q(ref__contains=s)
+                           )
+        
+        cn_customs_paid_by = request.GET.get('cn_customs_paid_by', False)
+        type_code = request.GET.get('type_code', False)        
+        status = request.GET.get('status', False)
+        customer_number = request.GET.get('customer_number', False)
+        customer_number = customer_number and customer_number.strip()
+        sfz_status = request.GET.get('sfz_status', False)
+                
+        
+        if cn_customs_paid_by:
+            q = q.filter(cn_customs_paid_by=cn_customs_paid_by)
+        if type_code:
+            try: 
+                parcel_type = ParcelType.objects.get(code=type_code)
+                q = q.filter(type_id=parcel_type.id)
+            except ParcelType.DoesNotExist:
+                q = q.filter(type_id=0)
+        if status:
+            q = q.filter(status=status)
+        
+        if customer_number:
+            try: 
+                customer = UserProfile.objects.get(customer_number=customer_number)
+                q = q.filter(user_id=customer.user_id)
+            except UserProfile.DoesNotExist:
+                q = q.filter(user_id=0)
+        if sfz_status:
+            tmp_parcels = IntlParcel.objects.exclude(status="draft").filter(sfz_status="2")
+            for tmp_parcel in tmp_parcels:
+                tmp_parcel.get_sfz_status()
+            q = q.filter(sfz_status=sfz_status)
+        
+        results = {}
+        count = q.count()
+        results['count'] = count or 0
+        if count == 0:
+            results['parcels'] = []
+            return results
+        last_page = int(math.ceil(float(count) / float(rows)))
+        if page * rows > count:
+            page = last_page
+        
+        start = (page - 1) * rows
+        end = page * rows
+        if end > count:
+            end = count
+        results['start'] = start
+        results['end'] = end
+        results['page'] = page
+        results['rows'] = rows
+        results['last_page'] = last_page   
+        tz = getattr(settings, 'TIME_ZONE', 'Europe/Berlin')
+        local = pytz.timezone(tz)
+        results['parcels'] = []
+        for parcel in q.order_by('-created_at')[start:end]:
+            parcel_info = get_parcel_info(parcel, local)
+            if parcel_info['yde_number'] == u"草稿,未生成订单号":
+                parcel_info['yde_number'] = "Draft"
+            parcel_info['customer_number'] = parcel.user.userprofile.customer_number
+            parcel_info['real_weight_kg'] = parcel.real_weight_kg
+            parcel_info['real_length_cm'] = parcel.real_length_cm
+            parcel_info['real_width_cm'] = parcel.real_width_cm

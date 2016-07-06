@@ -1,0 +1,49 @@
+{% extends 'userena/base_userena.html' %}
+{% load i18n %}
+{% load url from future %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Signin" %}{% endblock %}
+{% block content_title %}
+    <i class="ace-icon fa fa-coffee red"></i>
+    {% trans 'Signin' %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+  {% csrf_token %}
+  <fieldset>
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    {{ field.errors }}
+    {% comment %} Displaying checkboxes differently {% endcomment %}
+    {% if field.name == 'remember_me' %}
+    <!-- p class="checkbox" -->
+    {% bootstrap_field field %}
+    <!-- /p -->
+    {% else %}
+    <p>
+    {% bootstrap_field field %}
+    </p>
+    {% endif %}
+    {% endfor %}
+  </fieldset>
+  {% buttons %}
+        <button type="submit" class="btn btn-sm btn-danger btn-block">
+           <i class="ace-icon fa fa-key"></i>
+           <span class="bigger-110"><b>{% trans "Signin" %}</b></span>
+        </button>
+    {% endbuttons %}
+  
+  {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+</form>
+<div class="row">
+	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+	        <p class="forgot-password"><a href="{% url 'userena_password_reset' %}" title="{% trans 'Forgot your password?' %}">{% trans "Forgot your password?" %}</a></p>
+	    </div>
+	    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+	        <p class="new-signup pull-right"><a href="{% url 'userena_signup' %}" title="{% trans 'Signup' %}">{% trans "Signup new account" %}</a></p>
+	    </div>  
+	</div>
+</div>
+{% endblock %}

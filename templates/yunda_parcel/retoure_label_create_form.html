@@ -1,0 +1,378 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Create retoure label" %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>
+        {% trans 'Retoure label' %} <small> <i
+            class="ace-icon fa fa-angle-double-right"></i> {% trans 'Create a new retoure label' %}
+        </small>
+    </h1>
+</div>
+<div class="row page-header">
+      <p>{% trans 'Deutsche Post Retoure label can transport your parcels to YUNDA operation center, max. 30kg, 120x60x60cm. It could be deliveried very conveniently at any post office, post partner shop or packstation.' %}</p>
+</div>
+<form action="" method="post" class="form-horizontal">
+  {% csrf_token %}
+  {% bootstrap_form_errors form layout='inline' %}
+    
+  
+  
+  <div class="row">
+	  <fieldset class="col-sm-6 col-md-6 col-lg-6">
+	    <p class='col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-7 col-md-7 col-lg-7'>
+           <span><i class='ace-icon fa fa-info-circle  red'></i> {% trans "Please input the sender address in german or english." %}</span>
+        </p>
+	    <p class='col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-7 col-md-7 col-lg-7'><a href="#" id="show_sender_template">{% trans "Select from my templates" %}</a></p>
+        {% bootstrap_field form.sender_name layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        {% bootstrap_field form.sender_name2 layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        {% bootstrap_field form.sender_company layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        {% bootstrap_field form.sender_street layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        {% bootstrap_field form.sender_hause_number layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        {% bootstrap_field form.sender_add layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        {% bootstrap_field form.sender_postcode layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        {% bootstrap_field form.sender_city layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        {% bootstrap_field form.sender_tel layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        
+        <div class='col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-7 col-md-7 col-lg-7'>
+	        <button type="submit" class="btn btn-danger btn-sm">{% trans "Submit" %}</button>
+	        <button type="reset" class="btn btn-cancel btn-sm">{% trans "Reset" %}</button>
+	    </div>
+        
+      </fieldset>
+  </div>
+  
+  
+</form>
+{% endblock %}
+
+{% block footer-script %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+        function updateElementIndex(el, prefix, ndx) {
+        var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+        var replacement = prefix + '-' + ndx + '-';
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex,
+        replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+        }
+        function deleteForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (formCount > 1) {
+        // Delete the item/form
+        $(btn).parents('.item').remove();
+        var forms = $('.item'); // Get all the forms
+        // Update the total number of forms (1 less than before)
+        $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+        var i = 0;
+        // Go through the forms and set their indices, names and IDs
+        for (formCount = forms.length; i < formCount; i++) {
+        $(forms.get(i)).children().children().each(function() {
+        updateElementIndex(this, prefix, i);
+        });
+        $(forms.get(i)).children().children().children().each(function() {
+        updateElementIndex(this, prefix, i);
+        });
+        }
+        } // End if
+        else {
+            BootstrapDialog.show({
+                tiele:"{% trans "Warning" %}",
+                message:"{% trans "You have to enter at least one parcel detail item!" %}",
+                type:BootstrapDialog.TYPE_WARNING,
+            });
+        }
+        return false;
+        }
+        function addForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        // You can only submit a maximum of 10 todo items
+        if (formCount < 10) {
+        // Clone a form (without event handlers) from the first form
+        var row = $(".item:first").clone(false).get(0);
+        // Insert it after the last form
+        $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+        // Remove the bits we don't want in the new row/form
+        // e.g. error messages
+        $(".errorlist", row).remove();
+        $(row).children().removeClass('error');
+        // Relabel/rename all the relevant bits
+        $(row).children().children().each(function() {
+        updateElementIndex(this, prefix, formCount);
+        if ( $(this).attr('type') == 'text' )
+        $(this).val('');
+        });
+        $(row).children().children().children().each(function() {
+        updateElementIndex(this, prefix, formCount);
+        if ( $(this).attr('type') == 'text' )
+        $(this).val('');
+        });
+        // Add an event handler for the delete item/form link
+        $(row).find('.delete').click(function() {
+        return deleteForm(this, prefix);
+        });
+        // Update the total form count
+        $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
+        } // End if
+        else {
+            BootstrapDialog.show({
+                tiele:"{% trans "Warning" %}",
+                message:"{% trans "Sorry, you can only enter a maximum of ten detail items." %}",
+                type:BootstrapDialog.TYPE_WARNING,
+            });
+        }
+        return false;
+        }
+        // Register the click event handlers
+        $("#add").click(function() {
+        return addForm(this, 'form');
+        });
+        $(".delete").click(function() {
+        return deleteForm(this, 'form');
+        });
+        
+        // start html_sender_template_tbl
+        html_sender_template_tbl=function(templates,dialog){
+            if (templates.length==0){
+                return $("{% trans 'No record.' %}");
+            }
+            var $result=$("<table class='table table-hover'><thead><tr><td>{% trans 'Name' %}</td><td>{% trans 'City' %}</td><td>{% trans 'Tel' %}</td><td></td></tr></thead><tbody></tbody></table>");
+            for (var i=0;i<templates.length;i++){
+                result_tr="<tr>";
+                
+                result_tr+="<td>";
+                result_tr+=templates[i].sender_name;
+                result_tr+="</td>";
+                
+                result_tr+="<td>";
+                result_tr+=templates[i].sender_city;
+                result_tr+="</td>";
+                
+                result_tr+="<td>";
+                result_tr+=templates[i].sender_tel;
+                result_tr+="</td>";
+                
+                result_tr+="<td><button class='btn btn-sm btn-default btn-st-useit' type='button' value='";
+                result_tr+=i;
+                result_tr+="'>Use</td>";
+                
+                result_tr+="</tr>";
+                
+                $result_tr=$(result_tr);
+                $result_tr.find('button').click(templates,function(){
+                    var a = $(this).find('button').context.value;
+                    //alert(a);
+                    //alert(templates[a].sender_name);
+                    $('#id_sender_name').val(templates[a].sender_name);
+                    $('#id_sender_name2').val(templates[a].sender_name2);
+                    $('#id_sender_company').val(templates[a].sender_company);
+                    //$('#id_sender_state').val(templates[a].sender_state);
+                    $('#id_sender_city').val(templates[a].sender_city);
+                    $('#id_sender_postcode').val(templates[a].sender_postcode);
+                    $('#id_sender_street').val(templates[a].sender_street);
+                    $('#id_sender_add').val(templates[a].sender_add);
+                    $('#id_sender_hause_number').val(templates[a].sender_hause_number);
+                    $('#id_sender_tel').val(templates[a].sender_tel);
+                    $('#id_sender_email').val(templates[a].sender_email);
+                    dialog.close();
+                });
+                $result.find('tbody').append($result_tr);
+                
+            }
+            
+            return $result;
+            
+        }; //end html_sender_template_tbl
+        
+        // start html_receiver_template_tbl
+        html_receiver_template_tbl=function(templates,dialog){
+            if (templates.length==0){
+                return $("{% trans 'No record.' %}");
+            }
+            var $result=$("<table class='table table-hover'><thead><tr><td>{% trans 'Name' %}</td><td>{% trans 'Province' %}</td><td>{% trans 'Mobile' %}</td><td></td></tr></thead><tbody></tbody></table>");
+            for (var i=0;i<templates.length;i++){
+                result_tr="<tr>";
+                
+                result_tr+="<td>";
+                result_tr+=templates[i].receiver_name;
+                result_tr+="</td>";
+                
+                result_tr+="<td>";
+                result_tr+=templates[i].receiver_province;
+                result_tr+="</td>";
+                
+                result_tr+="<td>";
+                result_tr+=templates[i].receiver_mobile;
+                result_tr+="</td>";
+                
+                result_tr+="<td><button class='btn btn-sm btn-default btn-st-useit' type='button' value='";
+                result_tr+=i;
+                result_tr+="'>Use</td>";
+                
+                result_tr+="</tr>";
+                
+                $result_tr=$(result_tr);
+                $result_tr.find('button').click(templates,function(){
+                    var a = $(this).find('button').context.value;
+                    //alert(a);
+                    //alert(templates[a].sender_name);
+                    $('#id_receiver_name').val(templates[a].receiver_name);
+                    $('#id_receiver_company').val(templates[a].receiver_company);
+                    $('#id_receiver_province').val(templates[a].receiver_province);
+                    $('#id_receiver_city').val(templates[a].receiver_city);
+                    $('#id_receiver_district').val(templates[a].receiver_district);
+                    $('#id_receiver_postcode').val(templates[a].receiver_postcode);
+                    $('#id_receiver_address').val(templates[a].receiver_address);
+                    $('#id_receiver_address2').val(templates[a].receiver_address2);
+                    $('#id_receiver_mobile').val(templates[a].receiver_mobile);
+                    $('#id_receiver_email').val(templates[a].receiver_email);
+                    dialog.close();
+                });
+                $result.find('tbody').append($result_tr);
+                
+            }
+            
+            return $result;
+            
+        }; //end html_receiver_template_tbl
+        
+        //show sender template
+        $("#show_sender_template").click(function() {
+            var curPage=1;
+            var posPerPage=10;
+            var count=0;
+            var allPages=1
+            $.getJSON("{% url 'json_sender_template_count' %}", function(data){
+                count=data.count;
+                //no template
+                if (count<1){
+                    BootstrapDialog.show({
+                        message: "{% trans 'No address found.' %}",
+                        title: "{% trans 'No address found.' %}",
+                        type:BootstrapDialog.TYPE_DANGER
+                    });
+                    return false;
+                }
+                //end no template
+                allPages=Math.ceil(count/posPerPage);
+                var start=0;
+                var end=start+posPerPage;
+                var url_json_sender_template= "{% url 'json_sender_template' %}";
+                var url=url_json_sender_template+start+"/"+end;
+                $.getJSON(url,function(templates){
+                    BootstrapDialog.show({
+                        //message:$msg,
+                        message:function(dialog){
+                            return html_sender_template_tbl(templates,dialog);
+                        },
+                        title:"{% trans 'Sender template' %}",
+                        closeByBackdrop: false,
+                        closeByKeyboard: false,
+                        type:BootstrapDialog.TYPE_DEFAULT,
+                        buttons:[{
+                            label:"{% trans 'Previous' %}",
+                            cssClass: 'btn-danger btn-sm',
+                            action:function(dialog){
+                                if (curPage > 1){
+                                    curPage--;
+                                    url=url_json_sender_template+((curPage-1)*posPerPage)+"/"+(curPage*posPerPage);
+                                    //alert(url);
+                                    $.getJSON(url,function(templates){
+                                        dialog.setMessage(html_sender_template_tbl(templates,dialog));
+                                    });
+                                }
+                            },
+                        },{
+                            label:"{% trans 'Next' %}",
+                            cssClass: 'btn-danger btn-sm',
+                            action:function(dialog){
+                                if (curPage < allPages){
+                                    curPage++;                                    
+                                    url=url_json_sender_template+((curPage-1)*posPerPage)+"/"+(curPage*posPerPage);
+                                    //alert(url);
+                                    $.getJSON(url,function(templates){
+                                        dialog.setMessage(html_sender_template_tbl(templates,dialog));
+                                    });
+                                }
+                            },
+                        }],
+                    });
+                    
+                });
+            });
+            
+            
+        });
+        //end sender template
+        //show receiver template
+        $("#show_receiver_template").click(function() {
+            var curPage=1;
+            var posPerPage=10;
+            var count=0;            
+            var allPages=1
+            $.getJSON("{% url 'json_receiver_template_count' %}", function(data){
+                count=data.count;
+                allPages=Math.ceil(count/posPerPage);
+                var start=0;
+                var end=start+posPerPage;
+                var url="{% url 'json_receiver_template' %}"+start+"/"+end;
+                $.getJSON(url,function(templates){
+                    BootstrapDialog.show({
+                        //message:$msg,
+                        message:function(dialog){
+                            return html_receiver_template_tbl(templates,dialog);
+                        },
+                        title:"{% trans 'Receiver template' %}",
+                        closeByBackdrop: false,
+                        closeByKeyboard: false,
+                        buttons:[{
+                            label:"{% trans 'Previous' %}",
+                            cssClass: 'btn-primary btn-sm',
+                            action:function(dialog){
+                                if (curPage > 1){
+                                    curPage--;
+                                    url="{% url 'json_receiver_template' %}"+((curPage-1)*posPerPage)+"/"+(curPage*posPerPage);
+                                    //alert(url);
+                                    $.getJSON(url,function(templates){
+                                        dialog.setMessage(html_receiver_template_tbl(templates,dialog));
+                                    });
+                                }
+                            },
+                        },{
+                            label:"{% trans 'Next' %}",
+                            cssClass: 'btn-primary btn-sm',
+                            action:function(dialog){
+                                if (curPage < allPages){
+                                    curPage++;                                    
+                                    url="{% url 'json_receiver_template' %}"+((curPage-1)*posPerPage)+"/"+(curPage*posPerPage);
+                                    //alert(url);
+                                    $.getJSON(url,function(templates){
+                                        dialog.setMessage(html_receiver_template_tbl(templates,dialog));
+                                    });
+                                }
+                            },
+                        }],
+                        
+                    });
+                    
+                });
+            });
+            
+            
+        });
+        //end receiver template
+        
+        });
+        </script>
+        
+        <script type="text/javascript">
+  jQuery(function($) {
+    $('#sidebar-1-retoure-label').addClass('active open');
+    $('#sidebar-1-retoure-label-create').addClass('active');
+  });
+</script>
+{% endblock %}

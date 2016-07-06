@@ -1,0 +1,20 @@
+{% extends "base/base_webapp.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap_tags %}
+{% block title %}
+    {% trans 'Sign Up' %}
+{% endblock %}  
+{% block content %}
+    <form method="POST" action="" class="form-signin">
+	    {% csrf_token %}
+	    <legend>{% trans 'Create a new account' %}</legend>
+	    {{ userform|as_bootstrap }}
+	    {{ userprofileform|as_bootstrap }}
+	    <div class="form-actions">
+	      <a href="#back" class="btn">Go back</a>
+	      <button type="submit" class="btn btn-primary">{% trans 'Create' %}</button>
+	    </div>
+    </form>
+    
+{% endblock %}  

@@ -1,0 +1,59 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block title %}上传失败{% endblock %}
+
+
+{% block content %}
+<div class="page-header">
+        <h1>
+            上传身份证图片
+        </h1>
+</div><!-- /.page-header -->
+
+<div class="row">
+	    <div class="well well-sm">
+	            <i class="fa fa-times bigger-160 red"></i> 很抱歉，上传未能成功。           
+	    </div>
+	    <div class="form-group hidden" id="return-box">
+            <a class="btn btn-danger btn-sm" id="return-a">返回</a>
+    
+        </div>
+	    
+</div>
+
+{% endblock %}
+{% block footer-script %}
+
+
+<script type="text/javascript">
+$.extend({
+  getUrlVars: function(){
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  },
+  getUrlVar: function(name){
+    return $.getUrlVars()[name];
+  }
+});
+jQuery(function($){
+    
+    
+    var prepage=$.getUrlVar('prepage');
+    if (prepage){
+        $('#return-box').removeClass('hidden');
+        $('#return-a').attr('href',prepage);
+        }      
+});
+</script>
+
+{% endblock %}

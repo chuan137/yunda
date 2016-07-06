@@ -1,0 +1,709 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+{% block title %}{% trans "Create International Parcel" %}{% endblock %} 
+
+{% block content %}
+<div class="page-header">
+    <h1>
+        {% trans 'Intl. shipment' %} <small> <i
+            class="ace-icon fa fa-angle-double-right"></i> {% trans 'Create a new intl. shipment' %}
+        </small>
+    </h1>
+</div>
+<!-- /.page-header -->
+<form action="" method="post" class="form-horizontal">
+    {% csrf_token %} 
+    
+    <div class="row">
+        <fieldset class="col-sm-6 col-md-6 col-lg-6">
+          {% bootstrap_field form_parcel.type layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        </fieldset>
+        <fieldset class="col-sm-6 col-md-6 col-lg-6">
+          {% bootstrap_field form_parcel.sender_pay_cn_customs layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+        </fieldset>
+    </div>
+
+    <div class="row">
+        <fieldset class="col-sm-6 col-md-6 col-lg-6">
+            <legend>{% trans "Sender" %}</legend>
+            <p
+                class='col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-7 col-md-7 col-lg-7'>
+                <a href="#" id="show_sender_template">{% trans "Select from my templates" %}</a>
+            </p>
+            {% bootstrap_field form_parcel.sender_name layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.sender_name2 layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %} 
+            {% bootstrap_field form_parcel.sender_company layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %} 
+            {% bootstrap_field form_parcel.sender_street layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %} 
+            {% bootstrap_field form_parcel.sender_hause_number layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.sender_add layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.sender_postcode layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.sender_city layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.sender_tel layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.sender_email layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+
+            <div class="form-group">
+                <label for="id_save_sender_template"
+                    class="col-sm-4 col-md-4 col-lg-4 control-label">&nbsp;</label>
+                <div class="col-sm-7 col-md-7 col-lg-7">
+                    <div class="checkbox">
+                        <label for="id_save_sender_template"><input
+                            type="checkbox" name="save_sender_template"
+                            id="id_save_sender_template" class="">{% trans "Save as Template" %}</label>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+        <fieldset class="col-sm-6 col-md-6 col-lg-6">
+            <legend>{% trans "Receiver" %}</legend>
+            <p
+                class='col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-7 col-md-7 col-lg-7'>
+                <a href="#" id="show_receiver_template">{% trans "Select from my templates" %}</a>
+            </p>
+            {% bootstrap_field form_parcel.receiver_name layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %} 
+            {% bootstrap_field form_parcel.receiver_company layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.receiver_province layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.receiver_city layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.receiver_district layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.receiver_address layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.receiver_address2 layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.receiver_postcode layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.receiver_mobile layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+            {% bootstrap_field form_parcel.receiver_email layout="horizontal" horizontal_label_class='col-sm-4 col-md-4 col-lg-4' horizontal_field_class='col-sm-7 col-md-7 col-lg-7' %}
+
+            <div class="form-group">
+                <label for="id_save_receiver_template"
+                    class="col-sm-4 col-md-4 col-lg-4 control-label">&nbsp;</label>
+                <div class="col-sm-7 col-md-7 col-lg-7">
+                    <div class="checkbox">
+                        <label for="id_save_receiver_template"><input
+                            type="checkbox" name="save_receiver_template"
+                            id="id_save_receiver_template" class="">{% trans "Save as Template" %}</label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <fieldset>
+        <legend>{% trans "Reference" %}</legend>
+        {% bootstrap_field form_parcel.ref layout="horizontal" horizontal_label_class='col-sm-2 col-md-2 col-lg-2' horizontal_field_class='col-sm-4 col-md-4 col-lg-4' %}
+    </fieldset>
+    <fieldset>
+        <legend>{% trans "Dimension and Weight" %}</legend>
+        {% comment %} bootstrap_form form_footer
+        form_group_class="form-inline" {% endcomment %}
+        <div class="row">
+        {% bootstrap_field form_parcel.weight_kg form_group_class="col-sm-2 col-md-2 col-lg-2"%} 
+        {% bootstrap_field form_parcel.length_cm form_group_class="col-sm-2 col-md-2 col-lg-2"%}
+        {% bootstrap_field form_parcel.width_cm form_group_class="col-sm-2 col-md-2 col-lg-2"%}
+        {% bootstrap_field form_parcel.height_cm form_group_class="col-sm-2 col-md-2 col-lg-2"%}</div>
+    </fieldset>
+
+    <style>
+@media ( min-width : 768px) {
+    .bigger-sm-hidden {
+        display: none
+    }
+    .detail_row {
+        margin-bottom: 5px
+    }
+}
+
+@media ( max-width : 768px) {
+    .smaller-sm-hidden {
+        display: none
+    }
+}
+</style>
+    <fieldset id="items-container">
+        <legend>{% trans "Parcel item" %}</legend>
+        {{ form_detail_formset.management_form }}
+
+        <div class="row smaller-sm-hidden">
+            <label class="col-sm-2 col-md-2 col-lg-2 control-label">{% trans "Description" %}</label>
+            <label class="col-sm-2 col-md-2 col-lg-2 control-label">{% trans "Main Catalog" %}</label>
+            <label class="col-sm-2 col-md-2 col-lg-2 control-label">{% trans "Catalog" %}</label> 
+            <label class="col-sm-1 col-md-1 col-lg-1 control-label">{% trans "QTY" %}</label>
+            <label class="col-sm-1 col-md-1 col-lg-1 control-label">{% trans "Unit net weight (kg)" %}</label>
+            <label class="col-sm-1 col-md-1 col-lg-1 control-label">{% trans "Unit price (EUR)" %}</label>
+            <label class="col-sm-1 col-md-1 col-lg-1 control-label">{% trans "Origin country" %}</label>
+        </div>
+        {% for form in form_detail_formset.forms %}
+        <div class="item row detail_row">
+            {% bootstrap_field form.description form_group_class="col-sm-2 col-md-2 col-lg-2" layout="horizontal" horizontal_label_class='bigger-sm-hidden' horizontal_field_class='' %}
+            <div class="col-sm-2 col-md-2 col-lg-2 bootstrap3-required">
+                <label for="id_form-main_catalog" class="bigger-sm-hidden control-label">{% trans "Main catalog" %}</label>
+                <select title="" name="form-main_catalog" id="id_cn_customs_tax_catalog_selete" class="form-control cn_customs_tax_catalog_selete">
+                </select>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2 bootstrap3-required">
+                <label for="id_form-catalog" class="bigger-sm-hidden control-label">{% trans "Catalog" %}</label>
+                <select title="" name="form-catalog" id="id_cn_customs_tax_selete" class="form-control cn_customs_tax_selete">
+                </select>
+           </div>
+            {% bootstrap_field form.qty form_group_class="col-sm-1 col-md-1 col-lg-1" layout="horizontal" horizontal_label_class='bigger-sm-hidden' horizontal_field_class='' %}
+            {% bootstrap_field form.item_net_weight_kg form_group_class="col-sm-1 col-md-1 col-lg-1" layout="horizontal" horizontal_label_class='bigger-sm-hidden' horizontal_field_class='' %}
+            {% bootstrap_field form.item_price_eur form_group_class="col-sm-1 col-md-1 col-lg-1" layout="horizontal" horizontal_label_class='bigger-sm-hidden' horizontal_field_class='' %}
+            {% bootstrap_field form.original_country form_group_class="col-sm-1 col-md-1 col-lg-1" layout="horizontal" horizontal_label_class='bigger-sm-hidden' horizontal_field_class='' %}
+            {% bootstrap_field form.cn_customs_tax_catalog form_group_class="hidden cn_customs_tax_catalog" layout="horizontal" horizontal_label_class='bigger-sm-hidden' horizontal_field_class='' %}
+            {% bootstrap_field form.cn_customs_tax form_group_class="hidden cn_customs_tax" layout="horizontal" horizontal_label_class='bigger-sm-hidden' horizontal_field_class='' %}
+            
+            <button type="button" class="delete btn btn-cancel">Delete</button>
+        </div>
+        {% endfor %}
+        
+        </fieldset>
+        <p>
+            <a id="add" href="#">Add another item</a>
+        </p>
+        {% buttons submit='OK' reset='Cancel' layout='horizontal' %}{% endbuttons %}
+</form>
+{% endblock %} {% block footer-script %}
+<script type="text/javascript">
+$(document)
+        .ready(
+                function() {
+                    $('#id_form-TOTAL_FORMS').val(1);
+                    $items_container=$('#items-container');
+                    $items_container.data={};
+                                        
+                    addCatalogOptionToSelect=function($el,data){
+                        $el.html('');
+                        $el.append($("<option>--</option>"));
+                        for (var i in data){
+                            $catalog_option=$("<option value='"
+                                    + data[i].id
+                                    + "'>"
+                                    + data[i].name
+                                    + "</option>");
+                            $el.append($catalog_option);
+                        }
+                    };
+                    
+                    initAllTaxCatalog=function(){
+                        $items_container.children().each(function(){
+                            $this=$(this);
+                            if ($this.find('.cn_customs_tax_catalog input').attr('value')!=""){
+                                $this.find('#id_cn_customs_tax_catalog_selete').val($this.find('.cn_customs_tax_catalog input').val());
+                                addCatalogOptionToSelect($this.find('#id_cn_customs_tax_selete'),$items_container.data[$this.find('.cn_customs_tax_catalog input').val()]);
+                            }
+                            if ($this.find('.cn_customs_tax input').attr('value')!=""){
+                                $this.find('#id_cn_customs_tax_selete').val($this.find('.cn_customs_tax input').val());
+                            }
+                            
+                        });
+                    };         
+                    
+                    $.getJSON("{% static 'cn_tax_catalog.json' %}",
+                                    function(data) {
+                                        console.log(data);
+                                        $detail_item = $items_container.find(".detail_row");
+                                        $items_container.find('.cn_customs_tax_catalog_selete').append($("<option>--</option>"));
+                                        for ( var i in data) {
+                                            console.log(data[i].name);
+                                            $main_catalog_option = $("<option value='"
+                                                    + data[i].id
+                                                    + "'>"
+                                                    + data[i].name
+                                                    + "</option>");
+                                            $items_container.data[data[i].id] = data[i].taxes;
+                                            $items_container.find('.cn_customs_tax_catalog_selete').append($main_catalog_option);                                            
+                                        }
+                                        initAllTaxCatalog();
+                                                                       
+                                    });
+                    
+                    
+                    
+                    $('#sidebar-1-intl-shipment').addClass('active open');
+                    $('#sidebar-1-intl-shipment-create').addClass('active');
+                    
+                    
+                    function updateElementIndex(el, prefix, ndx) {
+                        var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+                        var replacement = prefix + '-' + ndx + '-';
+                        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+                        if (el.id) el.id = el.id.replace(id_regex, replacement);
+                        if (el.name) el.name = el.name.replace(id_regex, replacement);
+                    }
+                    
+                    function deleteForm(btn, prefix) {
+                        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+                        if (formCount > 1) {
+                            // Delete the item/form
+                            $(btn).parents('.item').remove();
+                            var forms = $('.item'); // Get all the forms
+                            // Update the total number of forms (1 less than before)
+                            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+                            var i = 0;
+                            // Go through the forms and set their indices, names and IDs
+                            for (formCount = forms.length; i < formCount; i++) {
+                                $(forms.get(i)).children().children().each(function() {
+                                    updateElementIndex(this, prefix, i);
+                                });
+                                $(forms.get(i)).children().children().children().each(function() {
+                                    updateElementIndex(this, prefix, i);
+                                });
+                            }
+                        } // End if
+                        else {
+                            BootstrapDialog.show({
+                                tiele:"{% trans "Warning" %}",
+                                message:"{% trans "You have to enter at least one parcel detail item!" %}",
+                                type:BootstrapDialog.TYPE_WARNING,
+                            });
+                        }
+                        return false;
+                    }
+                    
+                    function addForm(btn, prefix) {
+                        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+                        // You can only submit a maximum of 10 todo items
+                        if (formCount < 8) {
+                            // Clone a form (without event handlers) from the first form
+                            var row = $(".item:first").clone(false).get(0);
+                            // Insert it after the last form
+                            $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+                            // Remove the bits we don't want in the new row/form
+                            // e.g. error messages
+                            $(".errorlist", row).remove();
+                            $(row).children().removeClass('error');
+                            // Relabel/rename all the relevant bits
+                            $(row).children().children().each(function() {
+                                updateElementIndex(this, prefix, formCount);
+                                if ( $(this).attr('type') == 'text' ) $(this).val('');
+                            });
+                            $(row).children().children().children().each(function() {
+                                updateElementIndex(this, prefix, formCount);
+                                if ( $(this).attr('type') == 'text' ) $(this).val('');
+                            });
+                            // Add an event handler for the delete item/form link
+                            $(row).find('.delete').click(function() {
+                                return deleteForm(this, prefix);
+                            });
+                            // add an event handler for change with main catalog
+                            $(row).find('#id_cn_customs_tax_catalog_selete').bind('change',function(){
+                                console.log(this);
+                                $this=$(this);
+                                main_catalog_id=$this.val();
+                                $(row).find('.cn_customs_tax_catalog input').attr('value',main_catalog_id);
+                                addCatalogOptionToSelect($(row).find('#id_cn_customs_tax_selete'),$items_container.data[main_catalog_id]);   
+                            });
+                            // add an event handler for change with catalog
+                            $(row).find('#id_cn_customs_tax_selete').bind('change',function(){
+                                $(row).find('.cn_customs_tax input').attr('value',$(this).val());
+                            });
+                            // Update the total form count
+                            $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
+                        } // End if
+                        else {
+                            BootstrapDialog.show({
+                                tiele:"{% trans "Warning" %}",
+                            message:"{% trans "Sorry, you can only enter maximal 8 detail items." %}",
+                            type:BootstrapDialog.TYPE_WARNING,
+                            });
+                        }
+                        return false;
+                    }
+                    // Register the click event handlers
+                    $("#add").click(function() {
+                        return addForm(this, 'form');
+                    });
+                    $(".delete").click(function() {
+                        return deleteForm(this, 'form');
+                    });
+                    
+                    taxCatalogOnChange=function(el){
+                        $el=$(el).parents();
+                        main_catalog_id=$(el).val();
+                        $el.find('.cn_customs_tax_catalog input').attr('value',main_catalog_id);
+                        addCatalogOptionToSelect($el.parents().find('.cn_customs_tax_selete'),$items_container.data[main_catalog_id]);
+                    };
+                    
+                    taxOnChange=function(el){
+                        $el=$(el).parents();
+                        $el.find('.cn_customs_tax input').attr('value',$(el).val());
+                    };
+                    
+                    $items_container.children().each(function(){
+                        $(this).find('#id_cn_customs_tax_catalog_selete').bind('change',function(){
+                            
+                            $this=$(this);
+                            main_catalog_id=$this.val();
+                            $row=$this.parents().parents();
+                            $row.find('.cn_customs_tax_catalog input').attr('value',main_catalog_id);
+                            addCatalogOptionToSelect($row.find('#id_cn_customs_tax_selete'),$items_container.data[main_catalog_id]);
+                            console.log($this);
+                        });
+                        $(this).find('#id_cn_customs_tax_selete').bind('change',function(){
+                            $row=$(this).parents().parents();
+                            $row.find('.cn_customs_tax input').attr('value',$(this).val());
+                        });
+                    });
+                    
+                    //$('.cn_customs_tax_catalog_selete').bind('change',function(){
+                    //    $el=$(this).parents();
+                    //    main_catalog_id=$(this).val();
+                    //    $el.find('.cn_customs_tax_catalog input').val(main_catalog_id);
+                    //    addCatalogOptionToSelect($el.find('.cn_customs_tax_catalog_selete'),$items_container.data[main_catalog_id]);
+                    //});
+                    //$('.cn_customs_tax_selete').bind('change',function(){
+                    //    $el=$(this).parents();
+                    //    $el.find('.cn_customs_tax input').val($(this).val());
+                    //});
+                    
+                    // start html_sender_template_tbl
+                    html_sender_template_tbl = function(templates, dialog) {
+                        if (templates.length == 0) {
+                            return $("{% trans 'No record.' %}");
+                        }
+                        var $result = $("<table class='table table-hover'><thead><tr><td>{% trans 'Name' %}</td><td>{% trans 'City' %}</td><td>{% trans 'Tel' %}</td><td></td></tr></thead><tbody></tbody></table>");
+                        for ( var i = 0; i < templates.length; i++) {
+                            result_tr = "<tr>";
+
+                            result_tr += "<td>";
+                            result_tr += templates[i].sender_name;
+                            result_tr += "</td>";
+
+                            result_tr += "<td>";
+                            result_tr += templates[i].sender_city;
+                            result_tr += "</td>";
+
+                            result_tr += "<td>";
+                            result_tr += templates[i].sender_tel;
+                            result_tr += "</td>";
+
+                            result_tr += "<td><button class='btn btn-sm btn-default btn-st-useit' type='button' value='";
+                            result_tr += i;
+                            result_tr += "'>Use</td>";
+
+                            result_tr += "</tr>";
+
+                            $result_tr = $(result_tr);
+                            $result_tr
+                                    .find('button')
+                                    .click(
+                                            templates,
+                                            function() {
+                                                var a = $(this).find('button').context.value;
+                                                // alert(a);
+                                                // alert(templates[a].sender_name);
+                                                $('#id_sender_name')
+                                                        .val(
+                                                                templates[a].sender_name);
+                                                $('#id_sender_name2')
+                                                        .val(
+                                                                templates[a].sender_name2);
+                                                $('#id_sender_company')
+                                                        .val(
+                                                                templates[a].sender_company);
+                                                // $('#id_sender_state').val(templates[a].sender_state);
+                                                $('#id_sender_city')
+                                                        .val(
+                                                                templates[a].sender_city);
+                                                $('#id_sender_postcode')
+                                                        .val(
+                                                                templates[a].sender_postcode);
+                                                $('#id_sender_street')
+                                                        .val(
+                                                                templates[a].sender_street);
+                                                $('#id_sender_add')
+                                                        .val(
+                                                                templates[a].sender_add);
+                                                $('#id_sender_hause_number')
+                                                        .val(
+                                                                templates[a].sender_hause_number);
+                                                $('#id_sender_tel')
+                                                        .val(
+                                                                templates[a].sender_tel);
+                                                $('#id_sender_email')
+                                                        .val(
+                                                                templates[a].sender_email);
+                                                dialog.close();
+                                            });
+                            $result.find('tbody').append($result_tr);
+
+                        }
+
+                        return $result;
+
+                    }; // end html_sender_template_tbl
+
+                    // start html_receiver_template_tbl
+                    html_receiver_template_tbl = function(templates, dialog) {
+                        if (templates.length == 0) {
+                            return $("{% trans 'No record.' %}");
+                        }
+                        var $result = $("<table class='table table-hover'><thead><tr><td>{% trans 'Name' %}</td><td>{% trans 'Province' %}</td><td>{% trans 'Mobile' %}</td><td></td></tr></thead><tbody></tbody></table>");
+                        for ( var i = 0; i < templates.length; i++) {
+                            result_tr = "<tr>";
+
+                            result_tr += "<td>";
+                            result_tr += templates[i].receiver_name;
+                            result_tr += "</td>";
+
+                            result_tr += "<td>";
+                            result_tr += templates[i].receiver_province;
+                            result_tr += "</td>";
+
+                            result_tr += "<td>";
+                            result_tr += templates[i].receiver_mobile;
+                            result_tr += "</td>";
+
+                            result_tr += "<td><button class='btn btn-sm btn-default btn-st-useit' type='button' value='";
+                            result_tr += i;
+                            result_tr += "'>Use</td>";
+
+                            result_tr += "</tr>";
+
+                            $result_tr = $(result_tr);
+                            $result_tr
+                                    .find('button')
+                                    .click(
+                                            templates,
+                                            function() {
+                                                var a = $(this).find('button').context.value;
+                                                // alert(a);
+                                                // alert(templates[a].sender_name);
+                                                $('#id_receiver_name')
+                                                        .val(
+                                                                templates[a].receiver_name);
+                                                $('#id_receiver_company')
+                                                        .val(
+                                                                templates[a].receiver_company);
+                                                $('#id_receiver_province')
+                                                        .val(
+                                                                templates[a].receiver_province);
+                                                $('#id_receiver_city')
+                                                        .val(
+                                                                templates[a].receiver_city);
+                                                $('#id_receiver_district')
+                                                        .val(
+                                                                templates[a].receiver_district);
+                                                $('#id_receiver_postcode')
+                                                        .val(
+                                                                templates[a].receiver_postcode);
+                                                $('#id_receiver_address')
+                                                        .val(
+                                                                templates[a].receiver_address);
+                                                $('#id_receiver_address2')
+                                                        .val(
+                                                                templates[a].receiver_address2);
+                                                $('#id_receiver_mobile')
+                                                        .val(
+                                                                templates[a].receiver_mobile);
+                                                $('#id_receiver_email')
+                                                        .val(
+                                                                templates[a].receiver_email);
+                                                dialog.close();
+                                            });
+                            $result.find('tbody').append($result_tr);
+
+                        }
+
+                        return $result;
+
+                    }; // end html_receiver_template_tbl
+
+                    // show sender template
+                    $("#show_sender_template")
+                            .click(
+                                    function() {
+                                        var curPage = 1;
+                                        var posPerPage = 10;
+                                        var count = 0;
+                                        var allPages = 1
+                                        $
+                                                .getJSON(
+                                                        "{% url 'json_sender_template_count' %}",
+                                                        function(data) {
+                                                            count = data.count;
+                                                            allPages = Math
+                                                                    .ceil(count
+                                                                            / posPerPage);
+                                                            var start = 0;
+                                                            var end = start
+                                                                    + posPerPage;
+                                                            var url_json_sender_template = "{% url 'json_sender_template' %}";
+                                                            var url = url_json_sender_template
+                                                                    + start
+                                                                    + "/" + end;
+                                                            $
+                                                                    .getJSON(
+                                                                            url,
+                                                                            function(
+                                                                                    templates) {
+                                                                                BootstrapDialog
+                                                                                        .show({
+                                                                                            // message:$msg,
+                                                                                            message : function(
+                                                                                                    dialog) {
+                                                                                                return html_sender_template_tbl(
+                                                                                                        templates,
+                                                                                                        dialog);
+                                                                                            },
+                                                                                            title : "{% trans 'Sender template' %}",
+                                                                                            closeByBackdrop : false,
+                                                                                            closeByKeyboard : false,
+                                                                                            buttons : [
+                                                                                                    {
+                                                                                                        label : "{% trans 'Previous' %}",
+                                                                                                        cssClass : 'btn-primary btn-sm',
+                                                                                                        action : function(
+                                                                                                                dialog) {
+                                                                                                            if (curPage > 1) {
+                                                                                                                curPage--;
+                                                                                                                url = url_json_sender_template
+                                                                                                                        + ((curPage - 1) * posPerPage)
+                                                                                                                        + "/"
+                                                                                                                        + (curPage * posPerPage);
+                                                                                                                // alert(url);
+                                                                                                                $
+                                                                                                                        .getJSON(
+                                                                                                                                url,
+                                                                                                                                function(
+                                                                                                                                        templates) {
+                                                                                                                                    dialog
+                                                                                                                                            .setMessage(html_sender_template_tbl(
+                                                                                                                                                    templates,
+                                                                                                                                                    dialog));
+                                                                                                                                });
+                                                                                                            }
+                                                                                                        },
+                                                                                                    },
+                                                                                                    {
+                                                                                                        label : "{% trans 'Next' %}",
+                                                                                                        cssClass : 'btn-primary btn-sm',
+                                                                                                        action : function(
+                                                                                                                dialog) {
+                                                                                                            if (curPage < allPages) {
+                                                                                                                curPage++;
+                                                                                                                url = url_json_sender_template
+                                                                                                                        + ((curPage - 1) * posPerPage)
+                                                                                                                        + "/"
+                                                                                                                        + (curPage * posPerPage);
+                                                                                                                // alert(url);
+                                                                                                                $
+                                                                                                                        .getJSON(
+                                                                                                                                url,
+                                                                                                                                function(
+                                                                                                                                        templates) {
+                                                                                                                                    dialog
+                                                                                                                                            .setMessage(html_sender_template_tbl(
+                                                                                                                                                    templates,
+                                                                                                                                                    dialog));
+                                                                                                                                });
+                                                                                                            }
+                                                                                                        },
+                                                                                                    } ],
+                                                                                        });
+
+                                                                            });
+                                                        });
+
+                                    });
+                    // end sender template
+                    // show receiver template
+                    $("#show_receiver_template")
+                            .click(
+                                    function() {
+                                        var curPage = 1;
+                                        var posPerPage = 10;
+                                        var count = 0;
+                                        var allPages = 1
+                                        $
+                                                .getJSON(
+                                                        "{% url 'json_receiver_template_count' %}",
+                                                        function(data) {
+                                                            count = data.count;
+                                                            allPages = Math
+                                                                    .ceil(count
+                                                                            / posPerPage);
+                                                            var start = 0;
+                                                            var end = start
+                                                                    + posPerPage;
+                                                            var url = "{% url 'json_receiver_template' %}"
+                                                                    + start
+                                                                    + "/" + end;
+                                                            $
+                                                                    .getJSON(
+                                                                            url,
+                                                                            function(
+                                                                                    templates) {
+                                                                                BootstrapDialog
+                                                                                        .show({
+                                                                                            // message:$msg,
+                                                                                            message : function(
+                                                                                                    dialog) {
+                                                                                                return html_receiver_template_tbl(
+                                                                                                        templates,
+                                                                                                        dialog);
+                                                                                            },
+                                                                                            title : "{% trans 'Receiver template' %}",
+                                                                                            closeByBackdrop : false,
+                                                                                            closeByKeyboard : false,
+                                                                                            buttons : [
+                                                                                                    {
+                                                                                                        label : "{% trans 'Previous' %}",
+                                                                                                        cssClass : 'btn-primary btn-sm',
+                                                                                                        action : function(
+                                                                                                                dialog) {
+                                                                                                            if (curPage > 1) {
+                                                                                                                curPage--;
+                                                                                                                url = "{% url 'json_receiver_template' %}"
+                                                                                                                        + ((curPage - 1) * posPerPage)
+                                                                                                                        + "/"
+                                                                                                                        + (curPage * posPerPage);
+                                                                                                                // alert(url);
+                                                                                                                $
+                                                                                                                        .getJSON(
+                                                                                                                                url,
+                                                                                                                                function(
+                                                                                                                                        templates) {
+                                                                                                                                    dialog
+                                                                                                                                            .setMessage(html_receiver_template_tbl(
+                                                                                                                                                    templates,
+                                                                                                                                                    dialog));
+                                                                                                                                });
+                                                                                                            }
+                                                                                                        },
+                                                                                                    },
+                                                                                                    {
+                                                                                                        label : "{% trans 'Next' %}",
+                                                                                                        cssClass : 'btn-primary btn-sm',
+                                                                                                        action : function(
+                                                                                                                dialog) {
+                                                                                                            if (curPage < allPages) {
+                                                                                                                curPage++;
+                                                                                                                url = "{% url 'json_receiver_template' %}"
+                                                                                                                        + ((curPage - 1) * posPerPage)
+                                                                                                                        + "/"
+                                                                                                                        + (curPage * posPerPage);
+                                                                                                                // alert(url);
+                                                                                                                $
+                                                                                                                        .getJSON(
+                                                                                                                                url,
+                                                                                                                                function(
+                                                                                                                                        templates) {
+                                                                                                                                    dialog
+                                                                                                                                            .setMessage(html_receiver_template_tbl(
+                                                                                                                                                    templates,
+                                                                                                                                                    dialog));
+                                                                                                                                });
+                                                                                                            }
+                                                                                                        },
+                                                                                                    } ],
+
+                                                                                        });
+
+                                                                            });
+                                                        });
+
+                                    });
+                    // end receiver template
+
+                });
+</script>
+{% endblock %}

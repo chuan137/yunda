@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Sender templates" %}{% endblock %}
+{% block content_title %}<h1>{% trans "Sender templates" %}</h1>{% endblock %}
+{% block content %}
+<div class="row">
+        <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>{% trans "CN name" %}</th>
+                  <th>{% trans "CN customs number" %}</th>
+                  <th>{% trans "Tax rate" %}</th>
+                  <th>{% trans "Standard unit price (CNY)" %}</th>
+                  <th>{% trans "Charge by weight?" %}</th>
+                  <th>{% trans "Is forbidden" %}</th>
+              </tr>
+          </thead>
+          <tbody>
+          {% for tax in taxs %}
+              <tr>
+                <th>{{ tax.cn_name}}</th>
+                <th>{{ tax.cn_custom_number}}</th>
+                <th>{{ tax.tax_rate}}</th>
+                <th>{{ tax.standard_unit_price_cny}}</th>
+                <th>{{ tax.charge_by_weight}}</th>
+                <th>{{ tax.is_forbidden}}</th>
+              </tr>
+          {% endfor %}
+          </tbody>          
+        </table>
+</div>
+<div class="row">
+        {% ifnotequal curPage 1 %}  
+            <a href="?curPage={{ curPage }}&&allPage={{ allPage }}&&pageType=pageUp">  
+                {% trans 'Previous page' %}   
+            </a>  
+        {% endifnotequal %}   
+      
+            {% trans 'Page' %} {{ curPage }}/{{ allPage }}
+      
+             <!-- 如果当前是最后一页，就不显示【下一页】链接 -->  
+        {% ifnotequal curPage allPage %}  
+            <a href="?curPage={{ curPage }}&&allPage={{ allPage }}&&pageType=pageDown">  
+                {% trans 'Next page' %}  
+            </a>  
+        {% endifnotequal %} 
+    </div>
+{% endblock %}
+
+

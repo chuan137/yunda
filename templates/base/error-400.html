@@ -1,0 +1,58 @@
+{% extends 'base/ace-base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}
+    {% trans '400 Bad request' %} - {% trans 'YUNDA Europe' %}
+{% endblock %}
+{% block content %}
+<!-- #section:pages/error -->
+                                <div class="error-container">
+    <div class="well">
+                                        <h1 class="grey lighter smaller">
+                                            <span class="red bigger-125">
+                                                <i class="ace-icon fa fa-sitemap"></i>
+                                                400
+                                            </span>
+                                            {% trans 'Bad request' %}
+                                        </h1>
+
+                                        <hr />
+                                        <h3 class="lighter smaller">{% trans "The server cannot process the request due to something that is perceived to be a client error" %}</h3>
+
+                                        <div>
+                                           
+
+                                            <div class="space"></div>
+                                            <h4 class="smaller">{% trans 'Try one of the following' %}:</h4>
+
+                                            <ul class="list-unstyled spaced inline bigger-110 margin-15">
+                                               
+                                                <li>
+                                                    <i class="ace-icon fa fa-hand-o-right red"></i>
+                                                    {% trans 'Read the faq' %}
+                                                </li>
+
+                                                <li>
+                                                    <i class="ace-icon fa fa-hand-o-right red"></i>
+                                                    {% trans 'Tell us about it' %}
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <hr />
+                                        <div class="space"></div>
+
+                                        <div class="left">
+                                            <a href="javascript:history.back()" class="btn btn-danger">
+                                                <i class="ace-icon fa fa-arrow-left"></i>
+                                                {% trans 'Go Back' %}
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                <!-- /section:pages/error -->
+{% endblock %}
+

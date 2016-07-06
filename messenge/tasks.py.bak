@@ -1,0 +1,169 @@
+from celery import task
+import logging
+from django.shortcuts import get_object_or_404
+import pytz
+logger = logging.getLogger('sourceDns.webdns.async')
+from django.conf import settings
+import xmlrpclib
+# from warehause import models as warehause_models
+from messenge import models as messenge_models
+# from accounts import models as userprofile_models
+from datetime import datetime
+from django.contrib.auth.models import User
+
+@task
+def subject_sync_to_erp(subject):
+    
+    subject.sync_status = 'waiting_to_sync'
+    subject.save()
+    
+    # TODO sync
+    tz=getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+    local=pytz.timezone(tz)
+    local_dt=local.localize(subject.created_at, is_dst=None)
+    utc_dt=local_dt.astimezone(pytz.utc)
+    url = getattr(settings, 'ODOO_URL', 'localhost:8069')
+    username = getattr(settings, 'ODOO_USERNAME', '')
+    password = getattr(settings, 'ODOO_PASSWORD', '')
+    db = getattr(settings, 'ODOO_DB', '')
+    company_code = getattr(settings, 'ODOO_COMPANY_CODE', '')
+    common = xmlrpclib.ServerProxy('%s/xmlrpc/2/common' % url)
+    uid = common.authenticate(db, username, password, {})
+    models = xmlrpclib.ServerProxy('%s/xmlrpc/2/object' % url)
+    try:
+        
+        id = models.execute_kw(db, uid, password, 'yunda2.customer.message.subject', 'create', [{
+            
+        'customer_number':subject.user.username,
+        'yde_number':subject.yde_number,
+        'user_id': False,
+        'title':subject.title,
+        'company_code': company_code,
+        'has_unread_message':True,
+        'created_at':utc_dt.isoformat(),
+        'state_sync':'no_need_to_sync'
+            }])
+        logger.debug('cn_shenfenzheng synced to erp')
+        subject.sync_status = 'synced'
+        subject.save()
+    except Exception as e:
+        logger.error(e)
+        subject.sync_status = 'error'
+        subject.save()
+    
+    return u'Subject %s synced to erp' % (subject.yde_number)
+
+@task
+def messenge_sync_to_erp(messenge):
+    
+    messenge.sync_status = 'waiting_to_sync'
+    messenge.save()
+    
+    # TODO sync 
+    tz=getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+    local=pytz.timezone(tz)
+    local_dt=local.localize(messenge.created_at, is_dst=None)
+    utc_dt=local_dt.astimezone(pytz.utc)
+    
+    url = getattr(settings, 'ODOO_URL', 'localhost:8069')
+    username = getattr(settings, 'ODOO_USERNAME', '')
+    password = getattr(settings, 'ODOO_PASSWORD', '')
+    db = getattr(settings, 'ODOO_DB', '')
+    company_code = getattr(settings, 'ODOO_COMPANY_CODE', '')
+    common = xmlrpclib.ServerProxy('%s/xmlrpc/2/common' % url)
+    uid = common.authenticate(db, username, password, {})
+    models = xmlrpclib.ServerProxy('%s/xmlrpc/2/object' % url)
+    try:
+        id = models.execute_kw(db, uid, password, 'yunda2.customer.message.message', 'create', [{
+            
+        'user_id':False,
+        'subject_yde_number':messenge.subject.yde_number,
+        
+        'context':messenge.content,
+        'company_code': company_code,
+        'has_unread_message':True,
+        'created_at':utc_dt.isoformat(),
+        'state_sync':'no_need_to_sync'
+            }])
+        logger.debug('cn_shenfenzheng synced to erp')
+        messenge.sync_status = 'synced'
+        messenge.save()
+    except Exception as e:
+        logger.error(e)
+        messenge.sync_status = 'error'
+        messenge.save()
+    
+    return u'A messenge to subject %s synced to erp' % (messenge.subject.yde_number)
+
+@task
+def get_subject_from_erp():
+    logger.debug("cron called")
+    local_tz=getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
+    local=pytz.timezone(local_tz)
+#     local_dt=local.localize(messenge.created_at, is_dst=None)
+#     utc_dt=local_dt.astimezone(pytz.utc)
+    url = getattr(settings, 'ODOO_URL', 'localhost:8069')
+    username = getattr(settings, 'ODOO_USERNAME', '')
+    password = getattr(settings, 'ODOO_PASSWORD', '')
+    db = getattr(settings, 'ODOO_DB', '')
+    company_code = getattr(settings, 'ODOO_COMPANY_CODE', '')
+    common = xmlrpclib.ServerProxy('%s/xmlrpc/2/common' % url)
+    uid = common.authenticate(db, username, password, {})
+    models = xmlrpclib.ServerProxy('%s/xmlrpc/2/object' % url)
+    
+    
+    warehause_codes = [company_code]
+    
+    
+    try:
+        subjects_messages = models.execute_kw(db, uid, password,
+                                 'yunda2.customer.message.subject',
+                                 'get_subjects_to_sync',
+                                 [warehause_codes])
+        print subjects_messages;
+        subjects = subjects_messages['subjects']
+        sids=[]
+        for subject in subjects:
+            user = get_object_or_404(User, username__iexact=subject['customer_number'])
+            dt=datetime.strptime(subject['created_at'],"%Y-%m-%d %H:%M:%S")
+            utc_dt=pytz.utc.localize(dt, is_dst=None)
+            
+            obj=messenge_models.Subject(user=user,
+                                    yde_number=subject['yde_number'],
+                                    created_at=utc_dt.astimezone(local),
+                                    created_by_stuff=subject['created_by_stuff'],
+                                    warehause_code=subject['warehause_code'],
+                                    title=subject['title'],
+                                    sync_status='no_need_to_sync')
+            obj.save()
+            sids.append(subject['id'])
+            
+        messenges = subjects_messages['messages']
+        mids=[]
+        for messenge in messenges:
+            dt=datetime.strptime(messenge['created_at'],"%Y-%m-%d %H:%M:%S")
+            utc_dt=pytz.utc.localize(dt, is_dst=None)
+            subject= get_object_or_404(messenge_models.Subject,yde_number=messenge['subject_yde_number'])
+            obj=messenge_models.Messenge(subject=subject,
+                                         created_at=utc_dt.astimezone(local),
+                                         content=messenge['content'],
+                                         created_by_stuff=messenge['created_by_stuff'],
+                                         stuff_name=messenge['stuff_name'],
+                                         sync_status='no_need_to_sync')
+            obj.save()
+            mids.append(messenge['id'])
+        models.execute_kw(db, uid, password,
+                                 'yunda2.customer.message.subject',
+                                 'write',
+                                 [sids,{'state_sync':'synced'}])
+        models.execute_kw(db, uid, password,
+                                 'yunda2.customer.message.message',
+                                 'write',
+                                 [mids,{'state_sync':'synced'}])
+        logger.debug('cn_shenfenzheng synced to erp')
+        
+    except Exception as e:
+        logger.error(e)
+        
+    
+    # return u'%s-%s.jpg synced to erp' % (cn_shenfenzheng.number, cn_shenfenzheng.mobile)

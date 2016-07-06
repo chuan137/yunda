@@ -1,0 +1,589 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-24 09:26+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: yunda_parcel/admin.py:77
+msgid "Deactive"
+msgstr ""
+
+#: yunda_parcel/admin.py:96
+msgid "Create json js"
+msgstr ""
+
+#: yunda_parcel/forms.py:14 yunda_parcel/views.py:849
+msgid "Sender"
+msgstr ""
+
+#: yunda_parcel/forms.py:15 yunda_parcel/views.py:873
+msgid "Receiver"
+msgstr ""
+
+#: yunda_parcel/forms.py:17
+msgid "Cn customs tax pay by"
+msgstr ""
+
+#: yunda_parcel/forms.py:23
+msgid "Parcel type"
+msgstr ""
+
+#: yunda_parcel/models.py:41
+#, python-format
+msgid ""
+"Only german/english alphabeta, numbers, and \",.-()\" allowed: %(value)s"
+msgstr ""
+
+#: yunda_parcel/models.py:46
+#, python-format
+msgid "Only chinese allowed: %(value)s"
+msgstr ""
+
+#: yunda_parcel/models.py:51
+#, python-format
+msgid "Only chinese, alphabeta, number and \"-,.()\" allowed: %(value)s"
+msgstr ""
+
+#: yunda_parcel/models.py:56
+#, python-format
+msgid "Chinese mobile number wrong.pls without 0086 or +86: %(value)s"
+msgstr ""
+
+#: yunda_parcel/models.py:61
+#, python-format
+msgid "Chinese postcode should be 6 digits, not with 0 start: %(value)s"
+msgstr ""
+
+#: yunda_parcel/models.py:66
+#, python-format
+msgid "German postcode should be 5 digits: %(value)s"
+msgstr ""
+
+#: yunda_parcel/models.py:70
+msgid "Name"
+msgstr ""
+
+#: yunda_parcel/models.py:71
+msgid "Code"
+msgstr ""
+
+#: yunda_parcel/models.py:72 yunda_parcel/models.py:486
+msgid "Description"
+msgstr ""
+
+#: yunda_parcel/models.py:73
+msgid "Destination country"
+msgstr ""
+
+#: yunda_parcel/models.py:73
+msgid "ISO country code."
+msgstr ""
+
+#: yunda_parcel/models.py:74
+msgid "Max weight (kg)"
+msgstr ""
+
+#: yunda_parcel/models.py:75
+msgid "Need shenfenzheng"
+msgstr ""
+
+#: yunda_parcel/models.py:76
+msgid "Customs "
+msgstr ""
+
+#: yunda_parcel/models.py:76 yunda_parcel/models.py:463
+msgid "Use comma between different customs."
+msgstr ""
+
+#: yunda_parcel/models.py:77
+msgid "Has CN customs tax"
+msgstr ""
+
+#: yunda_parcel/models.py:80 yunda_parcel/models.py:153
+#: yunda_parcel/models.py:174 yunda_parcel/models.py:188
+#: yunda_parcel/models.py:318
+msgid "Start price (EUR)"
+msgstr ""
+
+#: yunda_parcel/models.py:81 yunda_parcel/models.py:154
+#: yunda_parcel/models.py:175 yunda_parcel/models.py:189
+#: yunda_parcel/models.py:319
+msgid "Start weight (KG)"
+msgstr ""
+
+#: yunda_parcel/models.py:82 yunda_parcel/models.py:155
+#: yunda_parcel/models.py:176 yunda_parcel/models.py:190
+#: yunda_parcel/models.py:320
+msgid "Continuing price (EUR)"
+msgstr ""
+
+#: yunda_parcel/models.py:83 yunda_parcel/models.py:156
+#: yunda_parcel/models.py:177 yunda_parcel/models.py:191
+#: yunda_parcel/models.py:321
+msgid "Continuing weight (KG)"
+msgstr ""
+
+#: yunda_parcel/models.py:84 yunda_parcel/models.py:157
+#: yunda_parcel/models.py:178 yunda_parcel/models.py:192
+#: yunda_parcel/models.py:322
+msgid "Volume weight rate"
+msgstr ""
+
+#: yunda_parcel/models.py:86 yunda_parcel/models.py:159
+#: yunda_parcel/models.py:324
+msgid "Branch start price (EUR)"
+msgstr ""
+
+#: yunda_parcel/models.py:87 yunda_parcel/models.py:160
+#: yunda_parcel/models.py:325
+msgid "Branch start weight (KG)"
+msgstr ""
+
+#: yunda_parcel/models.py:88 yunda_parcel/models.py:161
+#: yunda_parcel/models.py:326
+msgid "Branch continuing price (EUR)"
+msgstr ""
+
+#: yunda_parcel/models.py:89 yunda_parcel/models.py:162
+#: yunda_parcel/models.py:327
+msgid "Branch continuing weight (KG)"
+msgstr ""
+
+#: yunda_parcel/models.py:90 yunda_parcel/models.py:163
+#: yunda_parcel/models.py:328
+msgid "Branch volume weight rate"
+msgstr ""
+
+#: yunda_parcel/models.py:93
+msgid "Next value"
+msgstr ""
+
+#: yunda_parcel/models.py:165 yunda_parcel/models.py:180
+#: yunda_parcel/models.py:194
+msgid "Monthly minimal qty"
+msgstr ""
+
+#: yunda_parcel/models.py:203 yunda_parcel/models.py:210
+#: yunda_parcel/models.py:253 yunda_parcel/views.py:370
+#: yunda_parcel/views.py:808
+msgid "Draft"
+msgstr ""
+
+#: yunda_parcel/models.py:204 yunda_parcel/models.py:254
+#: yunda_parcel/views.py:374 yunda_parcel/views.py:812
+msgid "Paid"
+msgstr ""
+
+#: yunda_parcel/models.py:205
+msgid "Need pay rest"
+msgstr ""
+
+#: yunda_parcel/models.py:206 yunda_parcel/models.py:207
+#: yunda_parcel/models.py:208 yunda_parcel/models.py:213
+#: yunda_parcel/models.py:214 yunda_parcel/models.py:215
+#: yunda_parcel/models.py:218 yunda_parcel/models.py:219
+#: yunda_parcel/models.py:222 yunda_parcel/models.py:223
+msgid "Complete"
+msgstr ""
+
+#: yunda_parcel/models.py:211
+msgid "Paid by sender"
+msgstr ""
+
+#: yunda_parcel/models.py:212
+msgid "Need pay rest by sender"
+msgstr ""
+
+#: yunda_parcel/models.py:216
+msgid "No Tax"
+msgstr ""
+
+#: yunda_parcel/models.py:217
+msgid "Need pay"
+msgstr ""
+
+#: yunda_parcel/models.py:220
+msgid "Receiver will pay"
+msgstr ""
+
+#: yunda_parcel/models.py:221
+msgid "Need pay by receiver"
+msgstr ""
+
+#: yunda_parcel/models.py:225 yunda_parcel/models.py:257
+msgid "At sender"
+msgstr ""
+
+#: yunda_parcel/models.py:226
+msgid "Way from sender to operation center"
+msgstr ""
+
+#: yunda_parcel/models.py:227 yunda_parcel/models.py:258
+msgid "At operation center"
+msgstr ""
+
+#: yunda_parcel/models.py:228
+msgid "Waiting to export"
+msgstr ""
+
+#: yunda_parcel/models.py:229
+msgid "Flied"
+msgstr ""
+
+#: yunda_parcel/models.py:230
+msgid "At destination customs"
+msgstr ""
+
+#: yunda_parcel/models.py:231
+msgid "At destination yunda"
+msgstr ""
+
+#: yunda_parcel/models.py:232 yunda_parcel/models.py:259
+msgid "Canceled"
+msgstr ""
+
+#: yunda_parcel/models.py:235 yunda_parcel/models.py:242
+#: yunda_parcel/models.py:262 yunda_parcel/models.py:268
+msgid "Others"
+msgstr ""
+
+#: yunda_parcel/models.py:239 yunda_parcel/models.py:266
+msgid "Payment status"
+msgstr ""
+
+#: yunda_parcel/models.py:240 yunda_parcel/models.py:267
+msgid "Position status"
+msgstr ""
+
+#: yunda_parcel/models.py:241
+msgid "CN tax status"
+msgstr ""
+
+#: yunda_parcel/models.py:280 yunda_parcel/models.py:519
+#: yunda_parcel/models.py:565
+msgid "Sender name"
+msgstr ""
+
+#: yunda_parcel/models.py:281 yunda_parcel/models.py:520
+#: yunda_parcel/models.py:566
+msgid "Sender name2"
+msgstr ""
+
+#: yunda_parcel/models.py:282 yunda_parcel/models.py:521
+#: yunda_parcel/models.py:567
+msgid "Sender company"
+msgstr ""
+
+#: yunda_parcel/models.py:283 yunda_parcel/models.py:522
+#: yunda_parcel/models.py:568
+msgid "Sender state"
+msgstr ""
+
+#: yunda_parcel/models.py:284 yunda_parcel/models.py:523
+#: yunda_parcel/models.py:569
+msgid "Sender city"
+msgstr ""
+
+#: yunda_parcel/models.py:285 yunda_parcel/models.py:524
+#: yunda_parcel/models.py:570
+msgid "Sender postcode"
+msgstr ""
+
+#: yunda_parcel/models.py:286 yunda_parcel/models.py:525
+#: yunda_parcel/models.py:571
+msgid "Sender street"
+msgstr ""
+
+#: yunda_parcel/models.py:287 yunda_parcel/models.py:526
+#: yunda_parcel/models.py:572
+msgid "Sender street addition"
+msgstr ""
+
+#: yunda_parcel/models.py:288 yunda_parcel/models.py:527
+#: yunda_parcel/models.py:573
+msgid "Sender hause number"
+msgstr ""
+
+#: yunda_parcel/models.py:289 yunda_parcel/models.py:528
+#: yunda_parcel/models.py:574
+msgid "Sender telephone"
+msgstr ""
+
+#: yunda_parcel/models.py:290 yunda_parcel/models.py:529
+#: yunda_parcel/models.py:575
+msgid "Sender email"
+msgstr ""
+
+#: yunda_parcel/models.py:291 yunda_parcel/models.py:530
+msgid "Sender country"
+msgstr ""
+
+#: yunda_parcel/models.py:293 yunda_parcel/models.py:543
+msgid "Receiver name"
+msgstr ""
+
+#: yunda_parcel/models.py:294 yunda_parcel/models.py:544
+msgid "Receiver company"
+msgstr ""
+
+#: yunda_parcel/models.py:295 yunda_parcel/models.py:545
+msgid "Receiver province"
+msgstr ""
+
+#: yunda_parcel/models.py:296 yunda_parcel/models.py:546
+msgid "Receiver city"
+msgstr ""
+
+#: yunda_parcel/models.py:297 yunda_parcel/models.py:547
+msgid "Receiver district"
+msgstr ""
+
+#: yunda_parcel/models.py:298 yunda_parcel/models.py:548
+msgid "Receiver postcode"
+msgstr ""
+
+#: yunda_parcel/models.py:299 yunda_parcel/models.py:549
+msgid "Receiver address"
+msgstr ""
+
+#: yunda_parcel/models.py:300 yunda_parcel/models.py:550
+msgid "Receiver address2"
+msgstr ""
+
+#: yunda_parcel/models.py:301 yunda_parcel/models.py:551
+msgid "Receiver mobilephone"
+msgstr ""
+
+#: yunda_parcel/models.py:302 yunda_parcel/models.py:552
+msgid "Receiver email"
+msgstr ""
+
+#: yunda_parcel/models.py:303 yunda_parcel/models.py:553
+msgid "Receiver country"
+msgstr ""
+
+#: yunda_parcel/models.py:305
+msgid "Ref number"
+msgstr ""
+
+#: yunda_parcel/models.py:307
+msgid "Weight (kg)"
+msgstr ""
+
+#: yunda_parcel/models.py:308
+msgid "Length (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:309
+msgid "Width (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:310
+msgid "Height (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:311
+msgid "Real weight (kg)"
+msgstr ""
+
+#: yunda_parcel/models.py:312
+msgid "Real Length (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:313
+msgid "Real Width (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:314
+msgid "Real Height (cm)"
+msgstr ""
+
+#: yunda_parcel/models.py:316
+msgid "Real customs tax (CNY)"
+msgstr ""
+
+#: yunda_parcel/models.py:330 yunda_parcel/models.py:332
+#: yunda_parcel/models.py:577
+msgid "Tracking number"
+msgstr ""
+
+#: yunda_parcel/models.py:333
+msgid "Created at"
+msgstr ""
+
+#: yunda_parcel/models.py:334 yunda_parcel/models.py:581
+msgid "Printed at"
+msgstr ""
+
+#: yunda_parcel/models.py:365
+msgid "Edit"
+msgstr ""
+
+#: yunda_parcel/models.py:366 yunda_parcel/models.py:640
+msgid "Pay"
+msgstr ""
+
+#: yunda_parcel/models.py:366 yunda_parcel/models.py:640
+msgid "Delete"
+msgstr ""
+
+#: yunda_parcel/models.py:369 yunda_parcel/models.py:643
+msgid "Print again"
+msgstr ""
+
+#: yunda_parcel/models.py:371 yunda_parcel/models.py:645
+msgid "Print"
+msgstr ""
+
+#: yunda_parcel/models.py:374
+msgid "Pay rest"
+msgstr ""
+
+#: yunda_parcel/models.py:417 yunda_parcel/models.py:600
+msgid "Already deleted"
+msgstr ""
+
+#: yunda_parcel/models.py:421 yunda_parcel/models.py:423
+msgid "More than one piece when > 1000 CNY."
+msgstr ""
+
+#: yunda_parcel/models.py:426
+msgid "is forbidden by chinese customs."
+msgstr ""
+
+#: yunda_parcel/models.py:431 yunda_parcel/models.py:604
+msgid "Short of deposit, please charge your deposit."
+msgstr ""
+
+#: yunda_parcel/models.py:456 yunda_parcel/models.py:503
+#: yunda_parcel/models.py:512
+msgid "Chinese name"
+msgstr ""
+
+#: yunda_parcel/models.py:457 yunda_parcel/models.py:504
+msgid "English name"
+msgstr ""
+
+#: yunda_parcel/models.py:458
+msgid "CN custom number"
+msgstr ""
+
+#: yunda_parcel/models.py:459
+msgid "HS code"
+msgstr ""
+
+#: yunda_parcel/models.py:460
+msgid "Tax rate"
+msgstr ""
+
+#: yunda_parcel/models.py:461
+msgid "Standard unit price (CNY)"
+msgstr ""
+
+#: yunda_parcel/models.py:462
+msgid "Charge by weight"
+msgstr ""
+
+#: yunda_parcel/models.py:463
+msgid "Forbidden customs "
+msgstr ""
+
+#: yunda_parcel/models.py:488
+msgid "Qty"
+msgstr ""
+
+#: yunda_parcel/models.py:489
+msgid "Item net weight (KG)"
+msgstr ""
+
+#: yunda_parcel/models.py:490
+msgid "Item price (EUR)"
+msgstr ""
+
+#: yunda_parcel/models.py:491
+msgid "Original country"
+msgstr ""
+
+#: yunda_parcel/models.py:511
+msgid "Shenfengzheng number"
+msgstr ""
+
+#: yunda_parcel/models.py:513
+msgid "Mobilephone"
+msgstr ""
+
+#: yunda_parcel/models.py:514
+msgid "Image"
+msgstr ""
+
+#: yunda_parcel/models.py:518 yunda_parcel/models.py:542
+msgid "YDE number"
+msgstr ""
+
+#: yunda_parcel/models.py:602
+msgid "Already paid"
+msgstr ""
+
+#: yunda_parcel/views.py:148 yunda_parcel/views.py:266
+#: yunda_parcel/views.py:292 yunda_parcel/views.py:295
+#: yunda_parcel/views.py:611 yunda_parcel/views.py:632
+msgid "Error"
+msgstr ""
+
+#: yunda_parcel/views.py:148
+msgid "Shipment cannot be edited any more!"
+msgstr ""
+
+#: yunda_parcel/views.py:266
+msgid "Shipment cannot be deleted any more!"
+msgstr ""
+
+#: yunda_parcel/views.py:295
+msgid "No shipment found!"
+msgstr ""
+
+#: yunda_parcel/views.py:369 yunda_parcel/views.py:373
+#: yunda_parcel/views.py:377 yunda_parcel/views.py:381
+#: yunda_parcel/views.py:385 yunda_parcel/views.py:433
+msgid "Intl. shipment"
+msgstr ""
+
+#: yunda_parcel/views.py:378
+msgid "Waiting sender pay rest"
+msgstr ""
+
+#: yunda_parcel/views.py:382
+msgid "Waiting receiver pay"
+msgstr ""
+
+#: yunda_parcel/views.py:386 yunda_parcel/views.py:434
+#: yunda_parcel/views.py:816
+msgid "All"
+msgstr ""
+
+#: yunda_parcel/views.py:632
+msgid "Retoure label can't be deleted!"
+msgstr ""
+
+#: yunda_parcel/views.py:807 yunda_parcel/views.py:811
+#: yunda_parcel/views.py:815
+msgid "Retoure label"
+msgstr ""
+
+#: yunda_parcel/views.py:848 yunda_parcel/views.py:872
+msgid "Address book"
+msgstr ""
