@@ -321,7 +321,7 @@ ALIPAY_URL_AFTER_RETURN="http://website_root_url/de/index.html#/accounting/depos
 
 STATISTICS_SEND_TO_EMAILS=["Mr. Abc <abc@abc.com>"]
 
-WEB_APP_ROOT_URL="http://website_root_url/de/index.html#"
+WEB_APP_ROOT_URL="http://52.59.11.251/de/index.html#"
 
 
 PRODUCT_SMALL_IMAGE_ROOT="/opt/static_site/de/media/standardproduct/small_pic"

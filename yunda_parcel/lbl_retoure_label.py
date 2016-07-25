@@ -6,7 +6,7 @@ class Dhl_Retoure():
     #static method
     @classmethod 
     def getLabel(self, firstname, lastname, street, streetNumber, postcode, city, customerReference, \
-                 userName=u"weblobling", password=u"Lbl456123!", portalId="lobling", deliveryName="RetourenWeb03", \
+                 userName=u"weblobling", password=u"Lbl456123!", portalId="lobling", deliveryName="RetourenWeb02", \
                  host=u"amsel.dpwn.net", apiUrl=u"/abholportal/gw/lp/SoapConnector"):
         request = u"""<?xml version="1.0" encoding="iso-8859-1"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:var="https://amsel.dpwn.net/abholportal/gw/lp/schema/1.0/var3bl">
