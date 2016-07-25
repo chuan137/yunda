@@ -75,12 +75,13 @@ def preview(request):
     pass
 
 def ajax_upload_image(request):
+#    logger.debug("+++++++++++++++++++++++++++++++++++++++++++++++++++++")
     if request.method == 'POST':
         sfz_root_dir = settings.SFZ_ROOT_DIR
         form = CnShenfenzhengForm(request.POST)       
         if form.is_valid():
             data = form.clean()
-            number = data['number']
+            number = data['number'].upper()
             mobile = data['mobile']
             name = data['name']
             obj, created = models.CnShenfengzheng.objects.get_or_create(name=name, number=number, mobile=mobile)

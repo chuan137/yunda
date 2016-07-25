@@ -34,6 +34,6 @@ def field_validator_german_postcode(value):
     if not p.match(value):
         raise ValidationError(_('German postcode should be 5 digits: %(value)s'), params={'value': value},)
 def field_validator_cn_shenfenzheng(value):
-    p = re.compile("(^\d{15}$)|(^\d{17}([0-9]|X)$)")
+    p = re.compile("(^\d{15}$)|(^\d{17}([0-9]|X|x)$)")
     if not p.match(value):
         raise ValidationError(u"身份证号码错误")

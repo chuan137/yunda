@@ -1,6 +1,6 @@
 #from celery import task
 import logging
-logger = logging.getLogger('sourceDns.webdns.async')
+logger = logging.getLogger('django')
 from django.conf import settings
 import xmlrpclib
 import base64
@@ -28,6 +28,8 @@ def cn_shenfenzheng_sync_to_erp(cn_shenfenzheng):
     try:
         with open(save_path, 'rb') as image_file:
             encoded_string = base64.b64encode(image_file.read())
+#            logger.error(encoded_string)
+#            logger.debug(u"number %s, cn name %s, mobile %s" %(cn_shenfenzheng.number,cn_shenfenzheng.name, cn_shenfenzheng.mobile))
         id = models.execute_kw(db, uid, password, 'yunda2.shipment.cn.idcard', 'create', [{
             'idcard_number': cn_shenfenzheng.number,
             'cn_name':cn_shenfenzheng.name,
