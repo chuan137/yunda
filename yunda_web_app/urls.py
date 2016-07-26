@@ -4,8 +4,7 @@ from django.conf.urls.i18n import i18n_patterns
 from yunda_web_app import views
 from rest_framework import routers
 import yunda_rest_api
-
-
+import cn_shenfenzheng
 
 urlpatterns = patterns('',
     # Examples:
@@ -32,7 +31,7 @@ urlpatterns = patterns('',
     url(r'^app/de/uksqhtp18inv/', include(admin.site.urls)),
     url(r'^app/de/ydeadmin/', include("yadmin.urls")),
     url(r'^app/de/api/', include('yunda_rest_api.urls')),
-    url(r'^app/de/shenfenzheng/', include('cn_shenfenzheng.urls')),
+    url(r'^app/de/shenfenzheng/', include(cn_shenfenzheng.urls)),
     url(r'^app/de/customer-service/', include('messenge.urls')),
     url(r'^app/de/json-get-csrf-token/', views.json_get_csrf_token, name='json_get_csrf_token'),
     url(r'^app/de/jiankong/', include("jiankong.urls")),
