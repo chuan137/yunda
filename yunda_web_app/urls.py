@@ -5,6 +5,7 @@ from yunda_web_app import views
 from rest_framework import routers
 import yunda_rest_api
 import cn_shenfenzheng
+#import yadmin
 
 urlpatterns = patterns('',
     # Examples:

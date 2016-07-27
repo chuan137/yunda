@@ -32,7 +32,7 @@ import hashlib
 from django.core.context_processors import csrf
 
 import logging
-logger = logging.getLogger('django')
+logger = logging.getLogger('django.yunda_parcel')
 
 
 def return_error_info(request, title, msg):
@@ -582,6 +582,7 @@ def json_receiver_template_onpage(request, start=0, end=0):
 @secure_required
 @login_required
 def create_dhl_retoure_label(request):
+    logger.info('create dhl retoure label')
     if request.method == 'POST':
         form = forms.DhlRetoureLabelForm(request.POST)
         if form.is_valid():

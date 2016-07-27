@@ -12,7 +12,7 @@ import hashlib
 from django.conf import settings
 import logging
 from django.utils.datetime_safe import strftime
-logger = logging.getLogger('django')
+logger = logging.getLogger('django.parcel')
 
 def create_retoure_label(ref, parcel):
     name = (parcel.sender_name or "") + u" " + (parcel.sender_name2 or "") + u" " + (parcel.sender_company or "")
@@ -29,9 +29,14 @@ def create_retoure_label(ref, parcel):
 
 def get_parcel_numbers(parcel):
     result = {}
+    logger.info(parcel.type.code)
+    # logger.info(dir(parcel))
+    # logger.info(parcel.get_sfz_image())
     # 韵达 不含回邮单
-    if parcel.type.code in ["yd", "yd-nf", "yd-xzx"]:
+    # if parcel.type.code in ["yd", "yd-nf", "yd-xzx"]:
+    if parcel.type.code in ["yd", "yd_taxfree", "yd_taxed", "yd_nf_allinc", "yd_mix"]:
         result = gss_create_tracking_number(parcel)
+        logger.info(result)
         if result:
             result['retoure_tracking_number'] = ''
             result['retoure_routing_code'] = ''
@@ -48,8 +53,9 @@ def get_parcel_numbers(parcel):
             return result
             
     # 韵达含回邮单
-    elif parcel.type.code in ["yd-retoure", "yd-retoure-nf","yd-retoure-xzx"]:
+    elif parcel.type.code in ["yd_retoure", "yd_retoure_taxfree","yd_retoure_taxed", "yd_retoure_nf", "yd_retoure_mix"]:
         attributes, pdf = create_retoure_label(parcel.yde_number, parcel)
+        # logger.info(pdf)
         logger.debug(attributes)
         if not attributes:
             logger.debug(pdf)
@@ -143,6 +149,8 @@ def _gss_create_tracking_number(parcels, cn_customs_code='default'):
         gss = Gss.objects.get(cn_customs_code=cn_customs_code)
     except:
         gss = Gss.objects.get(cn_customs_code='default')
+
+    logger.info(gss)
     
     results = []
     if not parcels:
@@ -224,8 +232,10 @@ def _gss_create_tracking_number(parcels, cn_customs_code='default'):
                }
     try:
         r = requests.post(gss.qr_api_url, data=all_infor)        
-        logger.debug(r)
-        logger.debug(r.content)
+        logger.info(gss.qr_api_url)
+        logger.info(r)
+        logger.info(r.content)
+        logger.info(dir(r))
         text = r.text.encode('ascii', 'xmlcharrefreplace')
         tree = ET.fromstring(text)
            
@@ -243,19 +253,19 @@ def _gss_create_tracking_number(parcels, cn_customs_code='default'):
                 send_mail(u"Error when create mail no bei GOS",
                   "",
                   u'Kuaidi DE <info@mail.yunda-express.eu>',
-                  ['lik.li@yunda-express.eu'],
+                  ['cmiao.yunda@gmail.com'],
                   fail_silently=False,
                   html_message=u"%s: %s\nYDE Number: %s" % (status, msg, response.find('hawbno').text))
                 results.append({'yde_number':response.find('hawbno').text, 'pdf_info':"", 'tracking_number':""})
                                 
         return results
     except Exception as e:  
-        logger.error(e)  
+        # logger.exception('gss error')
         # send mail
         send_mail(u"Connection Error when create mail no bei GOS",
               "",
               u'Kuaidi DE <info@mail.yunda-express.eu>',
-              ['lik.li@yunda-express.eu'],
+              ['cmiao.yunda@gmail.com'],
               fail_silently=False,
               html_message=e)
         return []
@@ -312,7 +322,7 @@ def cancel_parcel(hawbs, cn_customs_code):
                 send_mail(u"Error when cancel mail no bei GOS",
                   "",
                   u'Kuaidi DE <info@mail.yunda-express.eu>',
-                  ['lik.li@yunda-express.eu'],
+                  ['cmiao.yunda@gmail.com'],
                   fail_silently=False,
                   html_message=u"%s: %s\nYDE Number: %s" % (status, msg, response.find('hawbno').text))
                                 
@@ -322,7 +332,7 @@ def cancel_parcel(hawbs, cn_customs_code):
         send_mail(u"Connection Error when cancel mail no bei GOS",
               "",
               u'Kuaidi DE <info@mail.yunda-express.eu>',
-              ['lik.li@yunda-express.eu'],
+              ['cmiao.yunda@gmail.com'],
               fail_silently=False,
               html_message=e)
         return []
@@ -363,7 +373,7 @@ def query_parcel_gss(mailno):
                 send_mail(u"Error when query mail no bei GOS",
                   "",
                   u'韵达德国 <info@mail.yunda-express.eu>',
-                  ['lik.li@yunda-express.eu'],
+                  ['cmiao.yunda@gmail.com'],
                   fail_silently=False,
                   html_message=u"%s: %s\nYDE Number: %s" % (status, msg, response.find('hawbno').text))
                                 
@@ -424,7 +434,7 @@ def query_parcel(hawbs, cn_customs_code=None):
                 send_mail(u"Error when query mail no bei GOS",
                   "",
                   u'韵达德国 <info@mail.yunda-express.eu>',
-                  ['lik.li@yunda-express.eu'],
+                  ['cmiao.yunda@gmail.com'],
                   fail_silently=False,
                   html_message=u"%s: %s\nYDE Number: %s" % (status, msg, response.find('hawbno').text))
                                 
@@ -434,7 +444,7 @@ def query_parcel(hawbs, cn_customs_code=None):
         send_mail(u"Connection Error when query mail no bei GOS",
               "",
               u'韵达德国 <info@mail.yunda-express.eu>',
-              ['lik.li@yunda-express.eu'],
+              ['cmiao.yunda@gmail.com'],
               fail_silently=False,
               html_message=e)
         return []
@@ -499,7 +509,7 @@ def tracking_push(scan_infos, cn_customs_code=None):
                 send_mail(u"Error when push tracking records bei GOS",
                   "",
                   u'韵达德国 <info@mail.yunda-express.eu>',
-                  ['lik.li@yunda-express.eu'],
+                  ['cmiao.yunda@gmail.com'],
                   fail_silently=False,
                   html_message=u"%s: %s\nYDE Number: %s" % (status, msg, response.find('hawbno').text))
         return results
@@ -508,7 +518,7 @@ def tracking_push(scan_infos, cn_customs_code=None):
         send_mail(u"Connection Error when push tracking records bei GOS",
               "",
               u'韵达德国 <info@mail.yunda-express.eu>',
-              ['lik.li@yunda-express.eu'],
+              ['cmiao.yunda@gmail.com'],
               fail_silently=False,
               html_message=e)
         return []
@@ -580,7 +590,7 @@ def tracking_fetch(scan_infos, cn_customs_code=None):
         send_mail(u"Error when fetch tracking records bei GOS",
               "",
               u'韵达德国 <info@mail.yunda-express.eu>',
-              ['lik.li@yunda-express.eu'],
+              ['cmiao.yunda@gmail.com'],
               fail_silently=False,
               html_message=e)
         return []

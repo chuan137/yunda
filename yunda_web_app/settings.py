@@ -29,7 +29,7 @@ ALLOWED_HOSTS =['localhost',]
 
 MAIN_ROOT_URL="/" #用于身份证上传二维码
 
-WKHTMLTOPDF_CMD = '/bin/wkhtmltopdf'
+WKHTMLTOPDF_CMD = '/usr/local/bin/wkhtmltopdf'
 
 # Application definition
 
@@ -88,8 +88,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'chuan137@gmail.com'
-EMAIL_HOST_PASSWORD = 'lele&doudou1249'
+EMAIL_HOST_USER = 'cmiao.yunda@gmail.com'
+EMAIL_HOST_PASSWORD = '$yunda_deguo$'
 
 
 ANONYMOUS_USER_ID = -1
@@ -119,9 +119,17 @@ WSGI_APPLICATION = 'yunda_web_app.wsgi.application'
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'yunda',
+        'USER': 'yunda',
+        'PASSWORD': '$yunda$',
+        'HOST': 'localhost',
+        'PORT': ''
     }
 }
 
@@ -193,7 +201,7 @@ REST_FRAMEWORK = {
         'PAGINATE_BY': 100,
     }
 
-SFZ_ROOT_DIR = "/var/sfz/"
+SFZ_ROOT_DIR = "/home/ubuntu/data/uploaded_sfz/"
 SFZ_TMP_DIR_AT_MEDIA_ROOT = "idtmp/"
 
 # CELERY SETTINGS
@@ -227,12 +235,12 @@ CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 #}
 
 # Odoo Settings used for sfz management
-ODOO_URL = "http://localhost"
-ODOO_UID = 1
-ODOO_USERNAME = "chuan137@gmail.com"
-ODOO_PASSWORD = "qweasd"
-ODOO_DB = "yunda_db"
-ODOO_COMPANY_CODE="yunda_company_code"
+ODOO_URL = "http://52.59.55.23:8069"
+# ODOO_UID = 1099
+ODOO_USERNAME = "cmiao.yunda@gmail.com"
+ODOO_PASSWORD = "lele1239"
+ODOO_DB = "yunda"
+ODOO_COMPANY_CODE="yunda"
 
 ############
 # logging
@@ -252,7 +260,7 @@ LOGGING = {
             'include_html': True,
         },
         'default': {
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': '/var/log/django/de/all.log',     #日志输出文件
             'maxBytes': 1024*1024*5,                  #文件大小

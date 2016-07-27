@@ -13,7 +13,7 @@ import hashlib
 import random
 from django.core.urlresolvers import reverse
 import logging
-logger = logging.getLogger('django')
+logger = logging.getLogger('django.%s' % __name__)
 
 # Create your views here.
 def get_img_from_idtmp(file_name):
@@ -75,7 +75,6 @@ def preview(request):
     pass
 
 def ajax_upload_image(request):
-#    logger.debug("+++++++++++++++++++++++++++++++++++++++++++++++++++++")
     if request.method == 'POST':
         sfz_root_dir = settings.SFZ_ROOT_DIR
         form = CnShenfenzhengForm(request.POST)       
@@ -95,14 +94,17 @@ def ajax_upload_image(request):
                 for chunk in img.chunks():
                     parser.feed(chunk)
                 img = parser.close()
-                
                 img.save(sfz_root_dir + number + "-" + mobile + ".jpg", 'JPEG')
             except Exception as e:
                 obj.delete()
-                logger.error(e)
+                logger.exception('Failed to save file to disk')
                 return HttpResponse(json.dumps({'result':False, 'info':u"系统故障，暂时不能提交身份证"}), content_type="application/json")
             # tasks.cn_shenfenzheng_sync_to_erp.delay(obj)
-            tasks.cn_shenfenzheng_sync_to_erp(obj)
+            try:
+                tasks.cn_shenfenzheng_sync_to_erp(obj)
+            except:
+                logger.exception('Failed to save file to ERP')
+
             return HttpResponse(json.dumps({'result':True, 'info':u"身份证图片提交成功"}), content_type="application/json")
         else:
             return HttpResponse(json.dumps({'result':False, 'info':u"姓名、电话号码或身份证号码填写错误，请检查"}), content_type="application/json")

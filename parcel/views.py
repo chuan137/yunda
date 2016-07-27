@@ -44,7 +44,7 @@ import xlwt
 from yunda_commen import imagekit
 from django.template import loader, Context
 from yunda_user.models import DepositTransferNew
-logger = logging.getLogger('django')
+logger = logging.getLogger('django.parcel')
 from django.core.mail.message import EmailMessage
 from email.mime.base import MIMEBase
 from StringIO import StringIO
@@ -66,6 +66,7 @@ except:
 @secure_required
 @login_required
 def json_post_retoure(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
     if request.method == 'POST':
@@ -167,6 +168,7 @@ def json_post_retoure(request):
         return {'error':True}
 
 def get_retoure_info(parcel, local=None):
+    logger.info('')
     result = {}
 
     if not local:
@@ -201,6 +203,7 @@ def get_retoure_info(parcel, local=None):
 @secure_required
 @login_required
 def json_get_retoure(request, yid):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if yid:
@@ -231,6 +234,7 @@ def json_get_retoure(request, yid):
 @secure_required
 @login_required
 def json_confirm_retoure(request):
+    logger.info('')
     if request.method == 'POST':
         results = []
         user_id = request.session.get('_auth_user_id')
@@ -287,6 +291,7 @@ def json_confirm_retoure(request):
 @secure_required
 @login_required
 def json_remove_retoure(request):
+    logger.info('')
     if request.method == 'POST':
         results = []
         user_id = request.session.get('_auth_user_id')
@@ -307,6 +312,7 @@ def json_remove_retoure(request):
 @secure_required
 @login_required
 def json_search_retoure(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if request.method == 'GET':
@@ -431,6 +437,7 @@ class RetourePdfView(PDFTemplateView):
 @secure_required
 @login_required
 def json_parcel_types(request):
+    logger.info('')
     u_id = request.session.get('_auth_user_id')
     if u_id:
         user = User.objects.get(id=u_id)
@@ -440,6 +447,8 @@ def json_parcel_types(request):
             level = user.userprofile.level
         except Level.DoesNotExist:
             level = default_level
+
+        logger.info(level)
 
         currency_type = user.userprofile.deposit_currency_type or "eur"
         parcel_types = []
@@ -467,17 +476,14 @@ def json_parcel_types(request):
                                  'currency_type':currency_type,
                                  'json_prices':price_level.json_prices,
                                  'description':parcel_type.description})
-        #
-        # logger.debug("#####################################################")
-        # logger.debug(parcel_types)
-        # logger.debug("#####################################################")
-        #
+
         return parcel_types
 
 @json_response
 @secure_required
 @login_required
 def json_post_intl_parcel(request):
+    logger.info('')
     u_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=u_id)
     if request.method == 'POST':
@@ -678,6 +684,7 @@ def json_post_intl_parcel(request):
         return {'error':True}
 
 def get_parcel_info(parcel, local=None):
+    logger.info('')
     try:
         result = {}
 
@@ -742,6 +749,7 @@ def get_parcel_info(parcel, local=None):
 @secure_required
 @login_required
 def json_get_intl_parcel(request, yid):
+    logger.info('')
     u_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=u_id)
 
@@ -781,6 +789,7 @@ def json_get_intl_parcel(request, yid):
 @secure_required
 @login_required
 def json_confirm_intl_parcel(request):
+    logger.info('')
     results = []
     try:
         if request.method == 'POST':
@@ -799,6 +808,9 @@ def json_confirm_intl_parcel(request):
                     fee = parcel.get_fee()
                     fee_to_book = fee - parcel.booked_fee
                     # ## deduct the fee
+                    logger.info(fee)
+                    logger.info(parcel.booked_fee)
+                    logger.info(fee_to_book)
                     (success, msg) = user.userprofile.deposit_deduct(fee_to_book, parcel.yde_number, u"国际邮单。订单号：" + parcel.yde_number)
                     if success:
                         # 扣款成功
@@ -807,6 +819,7 @@ def json_confirm_intl_parcel(request):
                         parcel.save()
 ########################################################
                         numbers = get_parcel_numbers(parcel)
+                        logger.info(numbers)
                         if numbers['success']:
                             parcel.tracking_number = numbers['tracking_number']
                             parcel.tracking_number_created_at = datetime.now()
@@ -849,7 +862,8 @@ def json_confirm_intl_parcel(request):
                     parcel.save()
                 return results
     except Exception as e:
-        logger.error(e)
+        logger.exception('')
+        # logger.error(e)
         results.append({'success':False,
                         'yid':"",
                         'yde_number':"",
@@ -860,6 +874,7 @@ def json_confirm_intl_parcel(request):
 @secure_required
 @login_required
 def json_import_intl_parcel(request):
+    logger.info('')
     if request.method == 'POST':
         type_code = request.POST.get('type_code', 'yd').strip()
         cn_customs_paid_by = request.POST.get('cn_customs_paid_by', 'receiver').strip()
@@ -944,6 +959,7 @@ def json_import_intl_parcel(request):
 @secure_required
 @login_required
 def json_remove_intl_parcel(request):
+    logger.info('')
     if request.method == 'POST':
         results = []
         user_id = request.session.get('_auth_user_id')
@@ -964,6 +980,7 @@ def json_remove_intl_parcel(request):
 @secure_required
 @login_required
 def json_search_intl_parcel(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if request.method == 'GET':
@@ -1089,8 +1106,8 @@ class IntlParcelPdfView(PDFTemplateView):
     template_name = 'parcel/intl_parcel_label.html'
     cmd_options = {
         'orientation': 'landscape',
-        'checkbox-checked-svg': '/opt/django_sites/checkbox2.svg',
-        'checkbox-svg':'/opt/django_sites/checkbox3.svg',
+        'checkbox-checked-svg': '/srv/django/checkbox2.svg',
+        'checkbox-svg':'/srv/django/checkbox3.svg',
         'no-outline':True,  # 不产生index
         # 'collate': True,
  #       'quiet': False,
@@ -1106,11 +1123,15 @@ class IntlParcelPdfView(PDFTemplateView):
         elif self.request.method == 'GET':
             yids = self.request.GET.get('yids', '')
 
+        logger.info(self.request.method)
+        logger.info(yids)
+
         if self.request.GET.get('wsm', ''):
+            logger.info('GET ?')
             self.cmd_options = {
                 #'orientation': 'landscape',
-                'checkbox-checked-svg': '/opt/django_sites/checkbox2.svg',
-                'checkbox-svg':'/opt/django_sites/checkbox3.svg',
+                'checkbox-checked-svg': '/srv/django/checkbox2.svg',
+                'checkbox-svg':'/srv/django/checkbox3.svg',
                 'no-outline':True,  # 不产生index
                 'page-size':'A5',
                 'margin-top':1,
@@ -1138,7 +1159,9 @@ class IntlParcelPdfView(PDFTemplateView):
                                     ).order_by("yde_number")
         if not user.is_staff:
             parcels = parcels.filter(user_id=user_id)
+        logger.info(parcels)
         for parcel in parcels:
+            logger.info(parcel.printed_at)
             if not parcel.printed_at:
                 parcel.printed_at = datetime.now()
                 parcel.save()
@@ -1148,8 +1171,18 @@ class IntlParcelPdfView(PDFTemplateView):
         else:
             raise Http404('No retoure label found!')
 
+        view = context['view']
+        view.show_content_in_browser = True
+        context.update({'view': view})
+
+        logger.info(dir(view))
+        logger.info(view.show_content_in_browser)
+        # logger.info(view.get_context_data())
+        # logger.info(view.header_template)
+
         return context
     def post(self, request, *args, **kwargs):
+        logger.info("function");
         return super(IntlParcelPdfView, self).get(request, *args, **kwargs)
 
 class IntlParcelCustomsPdfView(PDFTemplateView):
@@ -1205,6 +1238,12 @@ class IntlParcelCustomsPdfView(PDFTemplateView):
                 context.update({'parcels':parcels})
             else:
                 raise Http404('No parcel found!')
+
+            view = context['view']
+            logger.info(dir(view))
+            # logger.info(view.get_context_data())
+            logger.info(view.header_template)
+            logger.info(view.footer_template)
 
             return context
         except Exception as e:
@@ -1276,6 +1315,7 @@ class IntlParcelAusfuhrbescheinigungPdfView(PDFTemplateView):
 @secure_required
 @staff_member_required
 def admin_panel_json_after_scan_parcel_retoure(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     yde_number = request.GET.get('yde_number', False)
     oc_name = request.GET.get('oc_name', u"德国法兰克福处理中心")
@@ -1363,6 +1403,7 @@ def admin_panel_json_after_scan_parcel_retoure(request):
 @secure_required
 @staff_member_required
 def admin_panel_json_submit_retoure_second_time(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
     oc_name = request.GET.get('oc_name', u"德国法兰克福处理中心")
@@ -1407,6 +1448,7 @@ def admin_panel_json_submit_retoure_second_time(request):
 @secure_required
 @staff_member_required
 def admin_panel_json_submit_parcel(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
     oc_name = request.GET.get('oc_name', u"德国法兰克福处理中心")
@@ -1526,6 +1568,7 @@ def admin_panel_json_submit_parcel(request):
             return {'success':False, 'msg':'Intl. parcel does not exist'}
 
 def get_mawb_info(mawb):
+    logger.info('')
     mawb_info = {
                'mawb_number':mawb.mawb_number,
                'cn_customs':mawb.cn_customs,
@@ -1572,6 +1615,7 @@ COLORS = {
 @secure_required
 @staff_member_required
 def admin_panel_available_mawbs(request):
+    logger.info('')
     #cn_customses = ['dhl', 'postnl', 'ctu', 'default']
     cn_customses = ['dhl',  'ctu', 'default']
 
@@ -1591,12 +1635,14 @@ def admin_panel_available_mawbs(request):
 @secure_required
 @staff_member_required
 def admin_panel_get_colors(request):
+    logger.info('')
     return COLORS
 
 @json_response
 @secure_required
 @staff_member_required
 def admin_panel_post_mawbs(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     if request.method == "POST":
         p = re.compile(u'^[a-zA-Z0-9\-]{1,20}$')
@@ -1650,6 +1696,7 @@ def admin_panel_post_mawbs(request):
 @secure_required
 @staff_member_required
 def admin_panel_search_mawbs(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if request.method == 'GET':
@@ -1708,6 +1755,7 @@ def admin_panel_search_mawbs(request):
 @secure_required
 @staff_member_required
 def json_get_mawb(request, id):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if id:
@@ -1769,6 +1817,7 @@ _excel_column = {
 @secure_required
 @staff_member_required
 def get_mawb_haiguan_excel(request, id):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     batch_id = request.GET.get('batch_id', '').strip()
     if id:
@@ -1790,6 +1839,7 @@ def get_mawb_haiguan_excel(request, id):
 @secure_required
 @staff_member_required
 def get_mawb_dhl_lieferschein(request, id):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if id:
@@ -1806,6 +1856,7 @@ def get_mawb_dhl_lieferschein(request, id):
 @secure_required
 @staff_member_required
 def get_mawb_dhl_3d_file(request, id):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if id:
@@ -1823,6 +1874,7 @@ def get_mawb_dhl_3d_file(request, id):
 @secure_required
 @staff_member_required
 def get_batch_manifest_excel(request, id):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     if id:
         try:
@@ -1912,6 +1964,7 @@ def get_batch_manifest_excel(request, id):
 @secure_required
 @staff_member_required
 def json_remove_mawb(request):
+    logger.info('')
     if request.method == 'POST':
         results = []
         ids = request.POST.get('ids', False)
@@ -1932,6 +1985,7 @@ def json_remove_mawb(request):
 @secure_required
 @staff_member_required
 def json_mawb_change_status(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
     user_name = user.get_full_name()
@@ -2092,6 +2146,7 @@ def json_mawb_change_status(request):
 @secure_required
 @staff_member_required
 def json_batch_change_status(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
     user_name = user.get_full_name()
@@ -2156,6 +2211,7 @@ def json_batch_change_status(request):
 @secure_required
 @staff_member_required
 def admin_json_search_intl_parcel(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if request.method == 'GET':
@@ -2302,6 +2358,7 @@ _gss_moban_column = {
 @secure_required
 @staff_member_required
 def admin_get_gss_excel(request):
+    logger.info('')
     if request.method == "GET":
         yids = request.GET.get("yids", False)
         yids = yids and yids.strip()
@@ -2409,6 +2466,7 @@ def admin_get_gss_excel(request):
 @secure_required
 @staff_member_required
 def admin_upload_gss_excel(request):
+    logger.info('')
     if request.method == 'POST':
         upload_file = request.FILES.get('file')
         # parcel_infos, parcel_errors = get_parcel_infos_from_excel(upload_file.read())
@@ -2493,6 +2551,7 @@ class AdminIntlParcelPdf4ZollamtView(PDFTemplateView):
 @json_response
 @csrf_exempt
 def json_parcel_trackingv_simple(request):
+    logger.info('')
     try:
         s = False
         if request.method == 'GET':
@@ -2529,6 +2588,7 @@ def json_parcel_trackingv_simple(request):
 @json_response
 @csrf_exempt
 def json_parcel_tracking(request):
+    logger.info('')
     s = False
     if request.method == 'GET':
         s = request.GET.get('s', False)
@@ -2601,6 +2661,7 @@ def json_parcel_tracking(request):
 @secure_required
 @login_required
 def json_search_sender_template(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if request.method == 'GET':
@@ -2668,6 +2729,7 @@ def json_search_sender_template(request):
 @secure_required
 @login_required
 def json_remove_sender_template(request):
+    logger.info('')
     if request.method == 'POST':
         results = []
         user_id = request.session.get('_auth_user_id')
@@ -2687,6 +2749,7 @@ def json_remove_sender_template(request):
 @secure_required
 @login_required
 def json_post_sender_template(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     if request.method == 'POST':
         template_form = SenderTemplateForm(request.POST, request.FILES)
@@ -2742,6 +2805,7 @@ def json_post_sender_template(request):
 @secure_required
 @login_required
 def json_search_receiver_template(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
 
     if request.method == 'GET':
@@ -2809,6 +2873,7 @@ def json_search_receiver_template(request):
 @secure_required
 @login_required
 def json_remove_receiver_template(request):
+    logger.info('')
     if request.method == 'POST':
         results = []
         user_id = request.session.get('_auth_user_id')
@@ -2828,6 +2893,7 @@ def json_remove_receiver_template(request):
 @secure_required
 @login_required
 def json_post_receiver_template(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     if request.method == 'POST':
         template_form = ReceiverTemplateForm(request.POST, request.FILES)
@@ -2881,6 +2947,7 @@ def json_post_receiver_template(request):
 @secure_required
 @staff_member_required
 def tracking_push_to_gss(request):
+    logger.info('')
     tz = getattr(settings, 'TIME_ZONE', 'Asia/Shanghai')
     local = pytz.timezone(tz)
     results = []
@@ -2916,6 +2983,7 @@ def tracking_push_to_gss(request):
 @secure_required
 @staff_member_required
 def get_yd_print_data(request):  # not need any more, need to be deleted
+    logger.info('')
     if request.method == 'GET':
         yid = request.GET.get('yid', False)
         if yid:
@@ -2948,6 +3016,7 @@ def get_yd_print_data(request):  # not need any more, need to be deleted
 @secure_required
 @csrf_exempt
 def json_get_tracking_from_gss(request):
+    logger.info('')
     if request.method == 'GET':
         s = request.GET.get('s', False)
     if request.method == 'POST':
@@ -3010,6 +3079,7 @@ _parcels_sheet_cols = {
     'invoice_postcode':30,
     }
 def _write_to_parcels_sheet(parcel, sheet, row, mawb):
+    logger.info('')
     sheet.write(row, _parcels_sheet_cols['pos'], row)
     sheet.write(row, _parcels_sheet_cols['mawb'], mawb)
     sheet.write(row, _parcels_sheet_cols['customer_number'], parcel.user.userprofile.customer_number)
@@ -3053,6 +3123,7 @@ def _write_to_parcels_sheet(parcel, sheet, row, mawb):
 @secure_required
 @staff_member_required
 def mail_mawb_report(request):
+    logger.info('')
     if request.method == 'GET':
         ids = request.GET.get('ids', False)
     if request.method == 'POST':
@@ -3109,7 +3180,7 @@ def mail_mawb_report(request):
 
                 # SEND EMAIL
                 email = EmailMessage('YUNDA parcel statistics', email_body,
-                                   to=getattr(settings, 'STATISTICS_SEND_TO_EMAILS', ['Lik <lik.li@yunda-express.eu>'])
+                                   to=getattr(settings, 'STATISTICS_SEND_TO_EMAILS', ['cmiao.yunda@gmail.com'])
                                    )
                 attch_file = MIMEBase('application', 'vnd.ms-excel')
                 file_io = StringIO()
@@ -3139,6 +3210,7 @@ def mail_mawb_report(request):
 @secure_required
 @staff_member_required
 def edit_product_main_category(request):
+    logger.info('')
     if request.method == 'POST':
         cn_name = request.POST.get('cn_name', "")
         en_name = request.POST.get('en_name', "")
@@ -3172,6 +3244,7 @@ def edit_product_main_category(request):
 @secure_required
 @staff_member_required
 def edit_product_category(request):
+    logger.info('')
     if request.method == 'POST':
         cn_name = request.POST.get('cn_name', "").strip()
         en_name = request.POST.get('en_name', "").strip()
@@ -3212,6 +3285,7 @@ def edit_product_category(request):
 @secure_required
 @staff_member_required
 def edit_product_brand(request):
+    logger.info('')
     if request.method == 'POST':
         cn_name = request.POST.get('cn_name', "")
         en_name = request.POST.get('en_name', "")
@@ -3318,6 +3392,7 @@ def image_merge(images, output_dir='output', output_name='merge.jpg', restrictio
 @secure_required
 @staff_member_required
 def edit_product(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     if request.method == 'POST':
         cn_name = request.POST.get('cn_name', "").strip()
@@ -3506,6 +3581,7 @@ def edit_product(request):
 
 
 def _get_product(product, cn_tax_to_eur_rate=None):
+    logger.info('')
     if not cn_tax_to_eur_rate:
         cn_tax_to_eur_rate = YundaCommenSettings.objects.get(code="default").cn_tax_to_eur_rate
     cn_real_unit_tax_cny = product.cn_real_unit_tax_cny
@@ -3556,6 +3632,7 @@ def _get_product(product, cn_tax_to_eur_rate=None):
 @secure_required
 @staff_member_required
 def get_product(request):
+    logger.info('')
     pk = request.GET.get('pk', "").strip()
     if pk:
         try:
@@ -3573,6 +3650,7 @@ def get_product(request):
 @secure_required
 @staff_member_required
 def get_product_by_category(request):
+    logger.info('')
     pk = request.GET.get('pk', "").strip()
     if pk:
         try:
@@ -3592,6 +3670,7 @@ def get_product_by_category(request):
 @secure_required
 @staff_member_required
 def get_product_by_brand(request):
+    logger.info('')
     pk = request.GET.get('pk', "").strip()
     if pk:
         try:
@@ -3611,6 +3690,7 @@ def get_product_by_brand(request):
 @secure_required
 @staff_member_required
 def admin_get_intl_parcel(request):
+    logger.info('')
     yid = request.GET.get("yid", "").strip()
     if yid:
         try:
@@ -3672,6 +3752,7 @@ def admin_get_intl_parcel(request):
 @secure_required
 @staff_member_required
 def admin_edit_detail(request):
+    logger.info('')
     if request.method == "POST":
         description = request.POST.get("description", "").strip()
         cn_customs_tax_catalog_name = request.POST.get("cn_customs_tax_catalog_name", "").strip()
@@ -3718,6 +3799,7 @@ def admin_edit_detail(request):
 @secure_required
 @staff_member_required
 def admin_get_brands(request):
+    logger.info('')
     results = []
     for brand in ProductBrand.objects.order_by("en_name"):
         results.append({"pk":brand.id, "cn_name":brand.cn_name, "en_name":brand.en_name})
@@ -3726,6 +3808,7 @@ def admin_get_brands(request):
 @secure_required
 @staff_member_required
 def admin_get_main_categories(request):
+    logger.info('')
     results = []
     for pmc in ProductMainCategory.objects.order_by("en_name"):
         results.append({"pk":pmc.id, "cn_name":pmc.cn_name, "en_name":pmc.en_name})
@@ -3735,6 +3818,7 @@ def admin_get_main_categories(request):
 @secure_required
 @staff_member_required
 def admin_get_categories_by_main_category(request):
+    logger.info('')
     pk = request.GET.get("pk", "").strip()
     results = []
     if pk:
@@ -3756,6 +3840,7 @@ def admin_get_categories_by_main_category(request):
 @secure_required
 @staff_member_required
 def admin_get_cn_customs(request):
+    logger.info('')
     get_all = request.GET.get("get_all", "no").strip()
     try:
         if get_all == "yes":
@@ -3779,6 +3864,7 @@ def admin_get_cn_customs(request):
 @secure_required
 @staff_member_required
 def admin_set_parcel_cn_customs(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     if request.method=="POST":
         user=User.objects.get(id=user_id)
@@ -3807,6 +3893,7 @@ def admin_set_parcel_cn_customs(request):
 @secure_required
 @staff_member_required
 def admin_edit_parcel_processing_msg(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     if request.method=="POST":
         user=User.objects.get(id=user_id)
@@ -3834,6 +3921,7 @@ def admin_edit_parcel_processing_msg(request):
 @secure_required
 @staff_member_required
 def admin_add_new_msg_to_customer(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     if request.method=="POST":
         try:
@@ -3850,6 +3938,7 @@ def admin_add_new_msg_to_customer(request):
 
 # 20121225
 def _haiguan_excel_can_wtd(mawb, batch_id):
+    logger.info('')
     book = Workbook(encoding='utf8')
     sheet = book.add_sheet('importDateTemplate')
     try:
@@ -3987,6 +4076,7 @@ def _haiguan_excel_can_wtd(mawb, batch_id):
 @secure_required
 @staff_member_required
 def admin_get_price_images(request):
+    logger.info('')
     try:
         if request.method == "POST":
             yids = request.POST.get('yids', "").strip()
@@ -4007,6 +4097,7 @@ def admin_get_price_images(request):
         return HttpResponse("%s" % e)
 
 def _image_merge(images, restriction_max_width=None, restriction_max_height=None):
+    logger.info('')
     """垂直合并多张图片
     images - 要合并的图片
     restriction_max_width - 限制合并后的图片最大宽度，如果超过将等比缩小
@@ -4049,6 +4140,7 @@ def _image_merge(images, restriction_max_width=None, restriction_max_height=None
         logger.error("2222222222222222222")
     return new_img
 def _get_price_images_can_wtd(parcels, file_name):
+    logger.info('')
     try:
         product_price_image_root = settings.PRODUCT_PRICE_IMAGE_ROOT
         complete_sign=""
@@ -4086,6 +4178,7 @@ def _get_price_images_can_wtd(parcels, file_name):
 @secure_required
 @staff_member_required
 def get_sfz_images(request):
+    logger.info('')
     if request.method == "POST":
         yids = request.POST.get('yids', False)
         file_name = request.POST.get('file_name', 'mawb')
@@ -4107,6 +4200,7 @@ def get_sfz_images(request):
     return HttpResponse(u"No yids")
 
 def _get_sfz_images_can_wtd(parcels, file_name):
+    logger.info('')
     try:
         complete_sign = ""  # ""表示完整
         with closing(StringIO()) as buff:
@@ -4148,6 +4242,7 @@ def _get_sfz_images_can_wtd(parcels, file_name):
         return HttpResponse(u"%s" % e)
 
 def _get_sfz_images_default(parcels, file_name):
+    logger.info('')
     try:
         complete_sign = ""  # ""表示完整
         with closing(StringIO()) as buff:
@@ -4176,6 +4271,7 @@ def _get_sfz_images_default(parcels, file_name):
 @secure_required
 @staff_member_required
 def admin_get_label_image(request):
+    logger.info('')
     if request.method == "GET":
         yids = request.GET.get('yids', False)
         file_name = request.GET.get('file_name', 'mawb')
@@ -4217,6 +4313,7 @@ def admin_get_label_image(request):
 @secure_required
 @staff_member_required
 def admin_delete_from_mawb(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
     if request.method == "POST":
@@ -4273,6 +4370,7 @@ def admin_delete_from_mawb(request):
 @secure_required
 @staff_member_required
 def admin_upload_third_party_tracking_number_excel(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
     if request.method == 'POST':
@@ -4353,6 +4451,7 @@ def admin_upload_third_party_tracking_number_excel(request):
 @staff_member_required
 @csrf_exempt
 def admin_customer_number_excel(request):
+    logger.info('')
     if request.method == 'POST':
         upload_file = request.FILES.get('file')
         # parcel_infos, parcel_errors = get_parcel_infos_from_excel(upload_file.read())
@@ -4433,6 +4532,7 @@ def admin_customer_number_excel(request):
 ##############################
 # create excel DuiZhangDan
 def get_duizhangdan(customer_number, start_date=None, end_date=None, for_check=False):
+    logger.info('')
     if customer_number:
         try:
             userprofile = UserProfile.objects.get(customer_number=customer_number)
@@ -4631,6 +4731,7 @@ def get_duizhangdan(customer_number, start_date=None, end_date=None, for_check=F
 @secure_required
 @login_required
 def get_duizhangdan_excel(request):
+    logger.info('')
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
 
